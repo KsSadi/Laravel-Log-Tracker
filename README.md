@@ -48,6 +48,19 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 | 5.6  | 7.0 - 7.2              |
 | 5.5  | 7.0 - 7.2              |
 
+## ✅ Checked Versions
+
+| Laravel Version | PHP Version | Status |
+|-----------------|------------|--------|
+| 12.x            | 8.2, 8.3    | ⚠️ Not Tested |
+| 11.x            | 8.2, 8.3    | ✅ Working |
+| 10.x            | 8.1, 8.2    | ✅ Working |
+| 9.x             | 8.0, 8.1    | ⚠️ Not Tested |
+| 8.x             | 7.4, 8.0    | ⚠️ Not Tested |
+
+> **Note:** If you encounter issues with a specific version, feel free to report them in the [issues](https://github.com/KsSadi/Laravel-Log-Tracker/issues) section.
+
+
 # Installation
 
 1. ### **Install the package via Composer:**
@@ -57,7 +70,7 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 2. ### **Publish the configuration file:**
 
    ```bash
-   php artisan vendor:publish --tag=log-tracker-config
+   php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="config"
    ```
    This will publish the `log-tracker.php` configuration file to your `config` directory.
 
