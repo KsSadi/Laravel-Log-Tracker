@@ -13,7 +13,8 @@ class LogTrackerServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/../config/log-tracker.php' => config_path('log-tracker.php'),
-        ], 'log-tracker-config');
+        ], 'config');
+
 
     }
 
@@ -24,10 +25,11 @@ class LogTrackerServiceProvider extends ServiceProvider
             __DIR__.'/../config/log-tracker.php', 'log-tracker'
         );
 
+
         // Manually bind facade
-        $this->app->bind('log-tracker', function () {
+       /* $this->app->bind('log-tracker', function () {
             return new \Kssadi\LogTracker\Services\LogParserService();
-        });
+        });*/
     }
 
 }
