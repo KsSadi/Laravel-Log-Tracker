@@ -13,7 +13,8 @@ class LogTrackerServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/../config/log-tracker.php' => config_path('log-tracker.php'),
-        ], 'config');
+        ], 'log-tracker-config');
+
     }
 
 
