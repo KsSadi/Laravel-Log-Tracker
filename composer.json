@@ -1,0 +1,56 @@
+{
+  "name": "kssadi/log-tracker",
+  "description": "A powerful, intuitive, and efficient log viewer for Laravel applications.",
+  "keywords": ["laravel", "logs", "log viewer", "log tracker", "debugging", "monitoring"],
+  "type": "library",
+  "version": "1.0.0",
+  "license": "MIT",
+  "homepage": "https://github.com/kssadi/log-tracker",
+  "authors": [
+    {
+      "name": "KsSadi",
+      "email": "mdsadi4@gmail.com",
+      "homepage": "https://github.com/kssadi",
+      "role": "Programmer"
+    }
+  ],
+  "require": {
+    "php": ">=7.0 <=8.4.4",
+    "illuminate/support": ">=5.5 <=12.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": ">=3.6 <=9.0",
+    "phpunit/phpunit": ">=6.0 <=10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Kssadi\\LogTracker\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Kssadi\\LogTracker\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Kssadi\\LogTracker\\LogTrackerServiceProvider"
+      ],
+      "aliases": {
+        "LogTracker": "Kssadi\\LogTracker\\Facades\\LogTracker"
+      }
+    }
+  },
+  "config": {
+    "preferred-install": "dist",
+    "sort-packages": true,
+    "optimize-autoloader": true
+  },
+  "support": {
+    "issues": "https://github.com/kssadi/log-tracker/issues",
+    "source": "https://github.com/kssadi/log-tracker"
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
