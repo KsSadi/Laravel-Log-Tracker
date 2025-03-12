@@ -164,9 +164,15 @@ class LogTrackerController extends Controller
             $logData = LogTracker::getLogEntries($logFile);
             $counts[$logFile] = [
                 'total' => count($logData['entries']),
-                'error' => count(array_filter($logData['entries'], fn($entry) => $entry['level'] === 'error')),
-                'warning' => count(array_filter($logData['entries'], fn($entry) => $entry['level'] === 'warning')),
-                'info' => count(array_filter($logData['entries'], fn($entry) => $entry['level'] === 'info')),
+                'error' => count(array_filter($logData['entries'], function ($entry) {
+                    return $entry['level'] === 'error';
+                })),
+                'warning' => count(array_filter($logData['entries'], function ($entry) {
+                    return $entry['level'] === 'warning';
+                })),
+                'info' => count(array_filter($logData['entries'], function ($entry) {
+                    return $entry['level'] === 'info';
+                })),
             ];
         }
 
@@ -182,34 +188,42 @@ class LogTrackerController extends Controller
         $logConfig = config('log-tracker.log_levels', []);
 
         // Ensure $entries is defined and format timestamps
-        $entries = collect($logData['entries'] ?? [])->map(function ($entry) use ($logConfig) {
+        $entries = collect(isset($logData['entries']) ? $logData['entries'] : [])->map(function ($entry) use ($logConfig) {
             $level = strtolower($entry['level']);
 
             return [
                 'timestamp' => \Carbon\Carbon::parse($entry['timestamp'])->format('j M Y, h:i:s A'),
                 'level' => $level,
                 'message' => $entry['message'],
-                'stack' => $entry['stack'] ?? '',
-                'color' => $logConfig[$level]['color'] ?? '#6c757d', // Default gray if not found
-                'icon' => $logConfig[$level]['icon'] ?? 'fas fa-circle', // Default icon if not found
+                'stack' => isset($entry['stack']) ? $entry['stack'] : '',
+                'color' => isset($logConfig[$level]['color']) ? $logConfig[$level]['color'] : '#6c757d', // Default gray if not found
+                'icon' => isset($logConfig[$level]['icon']) ? $logConfig[$level]['icon'] : 'fas fa-circle', // Default icon if not found
             ];
         })->toArray();
 
         // Count log levels
         $counts = [
             'total' => count($entries),
-            'error' => count(array_filter($entries, fn($entry) => $entry['level'] === 'error')),
-            'warning' => count(array_filter($entries, fn($entry) => $entry['level'] === 'warning')),
-            'info' => count(array_filter($entries, fn($entry) => $entry['level'] === 'info')),
-            'debug' => count(array_filter($entries, fn($entry) => $entry['level'] === 'debug')),
+            'error' => count(array_filter($entries, function ($entry) {
+                return $entry['level'] === 'error';
+            })),
+            'warning' => count(array_filter($entries, function ($entry) {
+                return $entry['level'] === 'warning';
+            })),
+            'info' => count(array_filter($entries, function ($entry) {
+                return $entry['level'] === 'info';
+            })),
+            'debug' => count(array_filter($entries, function ($entry) {
+                return $entry['level'] === 'debug';
+            })),
         ];
 
         // Pass log level configurations to the view
         $logLevels = [];
         foreach (['error', 'warning', 'info', 'debug'] as $level) {
             $logLevels[$level] = [
-                'color' => $logConfig[$level]['color'] ?? '#6c757d',
-                'icon' => $logConfig[$level]['icon'] ?? 'fas fa-circle',
+                'color' => isset($logConfig[$level]['color']) ? $logConfig[$level]['color'] : '#6c757d',
+                'icon' => isset($logConfig[$level]['icon']) ? $logConfig[$level]['icon'] : 'fas fa-circle',
             ];
         }
 

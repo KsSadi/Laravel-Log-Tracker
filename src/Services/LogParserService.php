@@ -12,7 +12,9 @@ class LogParserService
         $logPath = storage_path('logs');
         $logFiles = File::files($logPath);
 
-        return array_map(fn($file) => $file->getFilename(), $logFiles);
+        return array_map(function ($file) {
+            return $file->getFilename();
+        }, $logFiles);
     }
     public function getLogEntries($logName, $page = 1, $perPage = 50)
     {

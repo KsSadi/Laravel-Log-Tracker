@@ -13,9 +13,9 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h6 class="text-muted mb-0">{{ ucfirst($level) }} Logs</h6>
-                                        <h3 class="mt-2 mb-0">{{ number_format($logTypesCount[$level] ?? 0) }}</h3>
+                                        <h3 class="mt-2 mb-0">{{ number_format(isset($logTypesCount[$level]) ? $logTypesCount[$level] : 0) }}</h3>
                                         <p class="mb-0" style="color: {{ $logStyles[$level]['color'] }};">
-                                            <i class="fas fa-arrow-up me-1"></i>{{ number_format($newLogsToday[$level] ?? 0) }} new today
+                                            <i class="fas fa-arrow-up me-1"></i>{{ number_format(isset($newLogsToday[$level]) ? $newLogsToday[$level] : 0) }} new today
                                         </p>
                                     </div>
                                     <div class="stats-icon" style="color: {{ $logStyles[$level]['color'] }};">

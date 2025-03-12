@@ -36,7 +36,7 @@ class LogEntry
             return $this->formatTimestamp($this->attributes['timestamp']);
         }
 
-        return $this->attributes[$key] ?? null;
+        return isset($this->attributes[$key]) ? $this->attributes[$key] : null;
     }
 
     /**
@@ -63,7 +63,7 @@ class LogEntry
      */
     public function getMessageSnippet($length = 100)
     {
-        $message = $this->attributes['message'] ?? '';
+        $message = isset($this->attributes['message']) ? $this->attributes['message'] : '';
 
         if (strlen($message) <= $length) {
             return $message;

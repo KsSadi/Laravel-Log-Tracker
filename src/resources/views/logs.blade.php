@@ -93,31 +93,31 @@
                     <tbody>
                     @foreach($logFiles as $file)
                         <tr data-log-date="{{ $file }}" class="border-bottom">
-                            <td class="py-3 px-4 align-middle fw-semibold">{{ $formattedFileNames[$file] ?? $file }}</td>
+                            <td class="py-3 px-4 align-middle fw-semibold">{{isset($formattedFileNames[$file]) ? $formattedFileNames[$file] : $file}}</td>
                             <td class="py-3 px-4 align-middle text-center">
-                                <span class="badge bg-secondary rounded-pill px-3">{{ $counts[$file]['total'] ?? 0 }}</span>
+                                <span class="badge bg-secondary rounded-pill px-3">{{isset($counts[$file]['total']) ? $counts[$file]['total'] : 0}}</span>
                             </td>
                             <td class="py-3 px-4 align-middle text-center">
                                 <span class="badge rounded-pill px-3"
                                       style="background-color: {{ config('log-tracker.log_levels.error.color', '#dc3545') }};">
-                                    {{ $counts[$file]['error'] ?? 0 }}
+                                    {{isset($counts[$file]['error']) ? $counts[$file]['error'] : 0}}
                                 </span>
                             </td>
 
                             <td class="py-3 px-4 align-middle text-center">
                                 <span class="badge rounded-pill px-3"
                                       style="background-color: {{ config('log-tracker.log_levels.warning.color', '#ffc107') }};">
-                                    {{ $counts[$file]['warning'] ?? 0 }}
+                                    {{isset($counts[$file]['warning']) ? $counts[$file]['warning'] : 0}}
                                 </span>
                             </td>
 
                             <td class="py-3 px-4 align-middle text-center">
                                 <span class="badge rounded-pill px-3"
                                       style="background-color: {{ config('log-tracker.log_levels.info.color', '#0d6efd') }};">
-                                    {{ $counts[$file]['info'] ?? 0 }}
+                                    {{isset($counts[$file]['info']) ? $counts[$file]['info'] : 0}}
                                 </span>
                             </td>
-                            <td class="py-3 px-4 align-middle">{{ $fileSizes[$file] ?? 'Unknown' }}</td>
+                            <td class="py-3 px-4 align-middle">{{isset($fileSizes[$file]) ? $fileSizes[$file] : 'Unknown'}}</td>
                             <td class="py-3 px-4 align-middle text-center log-actions">
                                 <div class="btn-group">
                                     <a href="{{ route('log-tracker.show', ['logName' => $file]) }}" class="btn btn-sm btn-outline-primary me-1" title="View">

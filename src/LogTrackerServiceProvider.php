@@ -27,9 +27,9 @@ class LogTrackerServiceProvider extends ServiceProvider
 
 
         // Manually bind facade
-       /* $this->app->bind('log-tracker', function () {
+       $this->app->bind('log-tracker', function () {
             return new \Kssadi\LogTracker\Services\LogParserService();
-        });*/
+        });
     }
 
 }

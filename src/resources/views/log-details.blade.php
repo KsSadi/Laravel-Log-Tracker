@@ -2,148 +2,148 @@
 
 @section('content')
     @push('styles')
-    <style>
-        :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --secondary: #475569;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --info: #3b82f6;
-            --success: #10b981;
-            --dark: #1e293b;
-            --light: #f8fafc;
-        }
-
-        body {
-            background-color: #f1f5f9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-
-        .stat-card .stat-value {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .stat-card .stat-label {
-            color: var(--secondary);
-            font-size: 0.875rem;
-        }
-
-        .search-box input {
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            width: 100%;
-            font-size: 0.95rem;
-            transition: all 0.2s;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-        }
-
-
-        .log-viewer {
-            max-height: 600px;
-            overflow: auto;
-            background-color: var(--dark);
-            color: var(--light);
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-        }
-
-        .log-table {
-            width: 100%;
-        }
-
-        .log-table th {
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 0.75rem 1rem;
-            font-weight: 500;
-            text-align: left;
-            color: #94a3b8;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-
-        .log-table td {
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            vertical-align: middle;
-        }
-
-        .log-level {
-            padding: 0.35rem 0.75rem;
-            border-radius: 4px;
-            font-weight: 600;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .timestamp {
-            color: #94a3b8;
-            font-size: 0.85rem;
-        }
-
-        .stack-btn {
-            background-color: var(--success);
-            color: white;
-            border: none;
-            padding: 0.35rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-        }
-
-        .stack-btn:hover {
-            background-color: #005c3e;
-        }
-
-        .stack-trace {
-            background-color: #334155;
-            padding: 1rem;
-            margin: 0;
-            border-radius: 6px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 0.85rem;
-            color: #e2e8f0;
-            overflow-x: auto;
-        }
-
-        .log-message {
-            font-family: monospace;
-            word-break: break-word;
-        }
-
-        @media (max-width: 768px) {
-            .log-stats {
-                flex-direction: column;
-                gap: 0.75rem;
+        <style>
+            :root {
+                --primary: #6366f1;
+                --primary-hover: #4f46e5;
+                --secondary: #475569;
+                --danger: #ef4444;
+                --warning: #f59e0b;
+                --info: #3b82f6;
+                --success: #10b981;
+                --dark: #1e293b;
+                --light: #f8fafc;
             }
 
-            .stat-card {
-                min-width: unset;
+            body {
+                background-color: #f1f5f9;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+
+            .stat-card .stat-value {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: var(--primary);
+            }
+
+            .stat-card .stat-label {
+                color: var(--secondary);
+                font-size: 0.875rem;
+            }
+
+            .search-box input {
+                padding: 0.75rem 1rem 0.75rem 2.5rem;
+                border-radius: 8px;
+                border: 1px solid #cbd5e1;
+                width: 100%;
+                font-size: 0.95rem;
+                transition: all 0.2s;
+            }
+
+            .search-box input:focus {
+                outline: none;
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            }
+
+
+            .log-viewer {
+                max-height: 600px;
+                overflow: auto;
+                background-color: var(--dark);
+                color: var(--light);
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+            }
+
+            .log-table {
                 width: 100%;
             }
 
-            .log-table th:nth-child(2),
-            .log-table td:nth-child(2) {
-                display: none;
+            .log-table th {
+                background-color: rgba(255, 255, 255, 0.05);
+                padding: 0.75rem 1rem;
+                font-weight: 500;
+                text-align: left;
+                color: #94a3b8;
+                position: sticky;
+                top: 0;
+                z-index: 10;
             }
-        }
-    </style>
+
+            .log-table td {
+                padding: 1rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+                vertical-align: middle;
+            }
+
+            .log-level {
+                padding: 0.35rem 0.75rem;
+                border-radius: 4px;
+                font-weight: 600;
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .timestamp {
+                color: #94a3b8;
+                font-size: 0.85rem;
+            }
+
+            .stack-btn {
+                background-color: var(--success);
+                color: white;
+                border: none;
+                padding: 0.35rem 0.75rem;
+                border-radius: 4px;
+                font-size: 0.75rem;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.35rem;
+            }
+
+            .stack-btn:hover {
+                background-color: #005c3e;
+            }
+
+            .stack-trace {
+                background-color: #334155;
+                padding: 1rem;
+                margin: 0;
+                border-radius: 6px;
+                white-space: pre-wrap;
+                font-family: monospace;
+                font-size: 0.85rem;
+                color: #e2e8f0;
+                overflow-x: auto;
+            }
+
+            .log-message {
+                font-family: monospace;
+                word-break: break-word;
+            }
+
+            @media (max-width: 768px) {
+                .log-stats {
+                    flex-direction: column;
+                    gap: 0.75rem;
+                }
+
+                .stat-card {
+                    min-width: unset;
+                    width: 100%;
+                }
+
+                .log-table th:nth-child(2),
+                .log-table td:nth-child(2) {
+                    display: none;
+                }
+            }
+        </style>
 
     @endpush
 
@@ -226,7 +226,7 @@
                                 </div>
                                 <div>
                         <span class="badge px-3 py-2" style="background-color: {{ $data['color'] }};">
-                            {{ $counts[$level] ?? 0 }}
+                            {{isset($counts[$level]) ? $counts[$level] : 0}}
                         </span>
                                 </div>
                             </div>
@@ -286,7 +286,7 @@
                     <!-- Log Tools Bar -->
                     <div class="log-tools p-2">
                         <div class="card p-3 mb-3">
-                            <input type="text" class="form-control searchLogs" placeholder="Search logs..." onkeyup="filterLogs()">
+                            <input type="text" class="form-control log-search" placeholder="Search logs..." onkeyup="filterLogs()">
                         </div>
 
                     </div>
@@ -331,6 +331,10 @@
                                     </tr>
                                 @endif
                             @endforeach
+                            <!-- "No Data Found" Row (Initially Hidden) -->
+                            <tr id="noDataRow" class="text-center">
+                                <td colspan="4" class="py-3">🚫 No logs found matching your search.</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -342,39 +346,51 @@
 
     @push('scripts')
         <script>
-            function toggleStackTrace(index) {
-                var stackTraceRow = document.getElementById("stacktrace-" + index);
-                stackTraceRow.classList.toggle("d-none");
-            }
-
             document.addEventListener("DOMContentLoaded", function () {
                 // Attach event listeners to log level filters (switches)
                 document.querySelectorAll(".log-filter").forEach(filter => {
                     filter.addEventListener("change", filterLogs);
                 });
 
-                // Attach event listener to search input
-                document.querySelector(".log-search").addEventListener("keyup", filterLogs);
+                // Attach event listener to all search inputs
+                document.querySelectorAll(".log-search").forEach(input => {
+                    input.addEventListener("keyup", filterLogs);
+                });
+
+                // Ensure the "No Data Found" row is initially hidden
+                let noDataRow = document.getElementById("noDataRow");
+                if (noDataRow) noDataRow.style.display = "none";
             });
 
             function filterLogs() {
-                // Get selected log levels
                 let selectedLevels = Array.from(document.querySelectorAll(".log-filter:checked")).map(e => e.value);
-                let searchQuery = document.querySelector(".log-search").value.toLowerCase();
+                let searchQueries = Array.from(document.querySelectorAll(".log-search"))
+                    .map(input => input.value.toLowerCase())
+                    .filter(query => query.length > 0);
 
-                document.querySelectorAll("#logTable tr").forEach(row => {
+                let logRows = document.querySelectorAll("#logTable tr[data-level]");
+                let visibleCount = 0;
+
+                logRows.forEach(row => {
                     let logLevel = row.getAttribute("data-level");
                     let logMessage = row.innerText.toLowerCase();
                     let showRow = selectedLevels.includes(logLevel);
 
-                    // Apply search filtering
-                    if (searchQuery && !logMessage.includes(searchQuery)) {
-                        showRow = false;
+                    if (searchQueries.length > 0) {
+                        showRow = searchQueries.some(query => logMessage.includes(query));
                     }
 
                     row.style.display = showRow ? "" : "none";
+                    if (showRow) visibleCount++;
                 });
+
+                // Show "No Data Found" message if no visible rows exist
+                let noDataRow = document.getElementById("noDataRow");
+                if (noDataRow) {
+                    noDataRow.style.display = (visibleCount === 0) ? "" : "none";
+                }
             }
+
 
         </script>
     @endpush

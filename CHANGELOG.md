@@ -5,16 +5,25 @@ All notable changes to this project will be documented in this file.
 ## [1.2.0] - 2025-03-12
 
 ### Added
-- Support for Laravel 12.1 (Ensuring compatibility with the latest version)
-- Support for Laravel 5.1 (Older versions now compatible)
-- Support for PHP 5.6 (Older versions now compatible)
+- **PHP 5.6+ Compatibility**
+    - Updated syntax and function usage to support **PHP 5.6 and later**.
+    - Ensured compatibility with older Laravel versions while maintaining modern standards.
 
-###  Enhancements & Improvements
-- Added Detailed Comments in Configuration File
-- Refactored Log Levels Section
+- **Enhanced Filtering System**
+    - Implemented **"No logs found"** message when no logs match the search/filter criteria.
+    - Improved search functionality for **faster and more accurate filtering**.
 
-###  Bug Fixes
-- Fixed minor inconsistencies in formatting for cleaner code.
+- **UI & UX Enhancements**
+    - **Log Level Filtering Improvement**
+        - Redesigned log level filter switches for better user experience.
+        - Users can now dynamically toggle log levels in a **more intuitive way**.
+   
+### Fixed
+- Resolved an issue where **log filtering was not applying correctly** when using multiple search inputs.
+- **Performance optimizations** in log parsing and rendering.
+- Removed unnecessary **inline PHP code** in Blade files for **cleaner templates**.
+
+
 ## [1.0.0] - 2025-03-11
 ### Added
 - Initial release of Laravel Log Tracker.
