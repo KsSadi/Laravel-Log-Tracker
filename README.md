@@ -51,8 +51,8 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 ## ✅ Checked Versions
 
 | Laravel Version | PHP Version | Status |
-|-----------------|------------|--------|
-| 12.x            | 8.2, 8.3    | ⚠️ Not Tested |
+|-----------------|-------------|--------|
+| 12.x            | 8.2, 8.4    | ✅ Working |
 | 11.x            | 8.2, 8.3    | ✅ Working |
 | 10.x            | 8.1, 8.2    | ✅ Working |
 | 9.x             | 8.0, 8.1    | ⚠️ Not Tested |
