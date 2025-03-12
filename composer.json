@@ -3,7 +3,7 @@
   "description": "A powerful, intuitive, and efficient log viewer for Laravel applications.",
   "keywords": ["laravel", "logs", "log viewer", "log tracker", "debugging", "monitoring"],
   "type": "library",
-  "version": "1.0",
+  "version": "1.0.2",
   "license": "MIT",
   "homepage": "https://github.com/kssadi/log-tracker",
   "authors": [
