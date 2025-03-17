@@ -346,6 +346,12 @@
 
     @push('scripts')
         <script>
+
+            function toggleStackTrace(index) {
+                var stackTraceRow = document.getElementById("stacktrace-" + index);
+                stackTraceRow.classList.toggle("d-none");
+            }
+
             document.addEventListener("DOMContentLoaded", function () {
                 // Attach event listeners to log level filters (switches)
                 document.querySelectorAll(".log-filter").forEach(filter => {
