@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2025-03-17
+
+### Fixed
+- Solved stack trace issue where **stack trace was not displayed** for certain log entries.
+
+
 ## [1.2.0] - 2025-03-12
 
 ### Added
