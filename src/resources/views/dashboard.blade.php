@@ -96,27 +96,29 @@
                                     <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i> Top 5 Error Types</h6>
                                 </div>
                                 <div class="card-body p-0">
-                                    <table class="table table-hover mb-0">
-                                        <thead class="table-light">
-                                        <tr>
-                                            <th>Error Type</th>
-                                            <th>Count</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($topErrors as $error => $count)
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
                                             <tr>
-                                                <td><i class="fas fa-bug text-danger me-2"></i> {{ $error }}</td>
-                                                <td><span class="badge bg-danger">{{ $count }}</span></td>
+                                                <th>Error Type</th>
+                                                <th>Count</th>
                                             </tr>
-                                        @endforeach
-                                        @if(empty($topErrors))
-                                            <tr>
-                                                <td colspan="2" class="text-center text-muted">No errors found.</td>
-                                            </tr>
-                                        @endif
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                            @foreach($topErrors as $error => $count)
+                                                <tr>
+                                                    <td><i class="fas fa-bug text-danger me-2"></i> {{ $error }}</td>
+                                                    <td><span class="badge bg-danger">{{ $count }}</span></td>
+                                                </tr>
+                                            @endforeach
+                                            @if(empty($topErrors))
+                                                <tr>
+                                                    <td colspan="2" class="text-center text-muted">No errors found.</td>
+                                                </tr>
+                                            @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -128,31 +130,33 @@
                                     <h6 class="mb-0"><i class="fas fa-clock me-2"></i> Peak Error Hours</h6>
                                 </div>
                                 <div class="card-body p-0">
-                                    <table class="table table-hover mb-0">
-                                        <thead class="table-light">
-                                        <tr>
-                                            <th>Time Range</th>
-                                            <th>Errors</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        @foreach($topPeakHours as $hour => $count)
+                                    <div class="table-responsive">
+                                        <table class="table table-hover mb-0">
+                                            <thead class="table-light">
                                             <tr>
-                                                <td>
-                                                    <i class="fas fa-clock text-warning me-2"></i>
-                                                    {{ \Carbon\Carbon::createFromTime($hour)->format('h:i A') }} -
-                                                    {{ \Carbon\Carbon::createFromTime($hour + 1)->format('h:i A') }}
-                                                </td>
-                                                <td><span class="badge bg-warning text-dark">{{ $count }} errors</span></td>
+                                                <th>Time Range</th>
+                                                <th>Errors</th>
                                             </tr>
-                                        @endforeach
-                                        @if(empty($topPeakHours))
-                                            <tr>
-                                                <td colspan="2" class="text-center text-muted">No peak error hours detected.</td>
-                                            </tr>
-                                        @endif
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                            @foreach($topPeakHours as $hour => $count)
+                                                <tr>
+                                                    <td>
+                                                        <i class="fas fa-clock text-warning me-2"></i>
+                                                        {{ \Carbon\Carbon::createFromTime($hour)->format('h:i A') }} -
+                                                        {{ \Carbon\Carbon::createFromTime($hour + 1)->format('h:i A') }}
+                                                    </td>
+                                                    <td><span class="badge bg-warning text-dark">{{ $count }} errors</span></td>
+                                                </tr>
+                                            @endforeach
+                                            @if(empty($topPeakHours))
+                                                <tr>
+                                                    <td colspan="2" class="text-center text-muted">No peak error hours detected.</td>
+                                                </tr>
+                                            @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>

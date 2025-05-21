@@ -7,7 +7,6 @@
  * @author  Md. Khaled Saifullah Sadi
  * @link    https://github.com/KsSadi/Laravel-Log-Tracker
  * @license MIT
- * @version 1.2.0
  */
 
 

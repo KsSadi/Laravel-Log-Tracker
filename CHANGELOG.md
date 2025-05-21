@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.] - 2025-05-21
+
+### Fixed
+- UI & UX Enhancements
+- Bug fixed.
+
+## [1.3.0] - 2025-04-20
+
+### Fixed
+- Bug fixed.
+
 ## [1.2.0] - 2025-03-17
 
 ### Fixed

@@ -1,9 +1,9 @@
 {
   "name": "kssadi/log-tracker",
   "description": "A powerful, intuitive, and efficient log viewer for Laravel applications.",
-  "keywords": ["laravel", "logs", "log viewer", "log tracker", "debugging", "monitoring"],
+  "keywords": ["laravel", "logs", "log viewer", "log tracker", "debugging", "monitoring", "Ks Sadi", "Log Tracker By Sadi"],
   "type": "library",
-  "version": "1.3.0",
+  "version": "1.4",
   "license": "MIT",
   "homepage": "https://github.com/kssadi/log-tracker",
   "authors": [
