@@ -30,6 +30,14 @@ class LogTrackerServiceProvider extends ServiceProvider
        $this->app->bind('log-tracker', function () {
             return new \Kssadi\LogTracker\Services\LogParserService();
         });
+
+        // NEW: Register LogExportService
+        $this->app->bind(\Kssadi\LogTracker\Services\LogExportService::class, function ($app) {
+            return new \Kssadi\LogTracker\Services\LogExportService(
+                $app->make(\Kssadi\LogTracker\Services\LogParserService::class)
+            );
+        });
+
     }
 
 }

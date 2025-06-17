@@ -12,8 +12,17 @@ Route::group([
 ], function () {
     Route::get('/', [LogTrackerController::class, 'dashboard'])->name('dashboard');
     Route::get('/log-file', [LogTrackerController::class, 'index'])->name('index');
-    Route::get('/{logName}', [LogTrackerController::class, 'show'])->name('show');
     Route::get('/download/{logName}', [LogTrackerController::class, 'download'])->name('download');
     Route::post('/delete/{logName}', [LogTrackerController::class, 'delete'])->name('delete');
+
+    //  EXPORT ROUTES
+    Route::get('/export', [LogTrackerController::class, 'exportForm'])->name('export.form');
+    Route::post('/export', [LogTrackerController::class, 'export'])->name('export');
+    Route::get('/export/{logName}/{format}', [LogTrackerController::class, 'quickExport'])->name('export.quick');
+
+    Route::get('/{logName}', [LogTrackerController::class, 'show'])->name('show');
+
+    Route::get('/api/dashboard-refresh', [LogTrackerController::class, 'dashboardRefresh'])->name('api.dashboard.refresh');
+
 });
 

@@ -39,54 +39,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Log Levels Configuration
+    | Theme Selection
     |--------------------------------------------------------------------------
     |
-    | Defines color codes and icons for different log levels.
-    | This helps in visually distinguishing logs.
-    | Each log level has:
-    | - 'color': A hexadecimal color code.
-    | - 'icon': A FontAwesome icon class.
+    | Choose the theme for the log viewer UI.
+    | Available options:
+    | - 'LiteFlow' : Minimal, clean log view.
+    | - 'GlowStack': Modern, colorful, enhanced visual log view.
+    |
+    | Default: 'GlowStack'
     |
     */
-    'log_levels' => [
-        'emergency' => [
-            'color' => '#DC143C', // Dark Red
-            'icon'  => 'fas fa-skull-crossbones' // Skull icon (Critical emergency)
-        ],
-        'alert' => [
-            'color' => '#FF0000', // Bright Red
-            'icon'  => 'fas fa-bell' // Bell icon (Alert notification)
-        ],
-        'critical' => [
-            'color' => '#FF4500', // Orange Red
-            'icon'  => 'fas fa-exclamation-triangle' // Warning triangle icon
-        ],
-        'error' => [
-            'color' => '#FF6347', // Tomato Red
-            'icon'  => 'fas fa-exclamation-circle' // Exclamation circle icon (Error)
-        ],
-        'warning' => [
-            'color' => '#FFA500', // Orange
-            'icon'  => 'fas fa-exclamation-triangle' // Warning triangle icon
-        ],
-        'notice' => [
-            'color' => '#32CD32', // Lime Green
-            'icon'  => 'fas fa-info-circle' // Info circle icon (Less severe notice)
-        ],
-        'info' => [
-            'color' => '#1E90FF', // Dodger Blue
-            'icon'  => 'fas fa-info-circle' // Info circle icon (General information)
-        ],
-        'debug' => [
-            'color' => '#696969', // Gray
-            'icon'  => 'fas fa-bug' // Bug icon (Debugging information)
-        ],
-        'total' => [
-            'color' => '#008000', // Green
-            'icon'  => 'fas fa-file-alt' // Document icon (Total logs count)
-        ],
-    ],
+
+    'theme' => 'GlowStack',
 
     /*
     |--------------------------------------------------------------------------
@@ -119,7 +84,7 @@ return [
     | Default: false (Disables log deletion).
     |
     */
-    'allow_delete' => false,
+    'allow_delete' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -131,5 +96,40 @@ return [
     |
     */
     'allow_download' => true,
+
+    /*
+   |--------------------------------------------------------------------------
+   | Export Configuration (No Dependencies Required)
+   |--------------------------------------------------------------------------
+   */
+    'export' => [
+        'enabled' => true,
+        'formats' => [
+            'csv' => [
+                'enabled' => true,
+                'description' => 'Excel-compatible CSV format'
+            ],
+            'json' => [
+                'enabled' => true,
+                'description' => 'Structured JSON with metadata'
+            ],
+            'excel' => [
+                'enabled' => true,
+                'description' => 'Native Excel XML format'
+            ],
+            'pdf' => [
+                'enabled' => true,
+                'description' => 'Print-ready HTML report'
+            ],
+        ],
+        'limits' => [
+            'max_entries' => 50000,
+            'max_file_size_mb' => 50,
+            'timeout_seconds' => 300,
+        ],
+        'storage' => [
+            'cleanup_after_days' => 7,
+        ],
+    ],
 
 ];

@@ -2,7 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.4.] - 2025-05-21
+## [2.0] - 2025-06-17
+### 🎉 Major Release - Version 2.0
+#### ✨ Added
+- **Dual Theme System**: LiteFlow (minimal) and GlowStack (modern) themes
+- **Zero-Dependency Export**: CSV, Excel, PDF, JSON export without external libraries
+- **Enhanced Export Configuration**: Detailed format settings and limits
+
+#### 🐛 Fixed
+- Enhanced UI/UX improvements across both themes
+
+## [1.4] - 2025-05-21
 
 ### Fixed
 - UI & UX Enhancements
