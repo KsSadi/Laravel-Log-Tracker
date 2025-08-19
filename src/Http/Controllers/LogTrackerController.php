@@ -63,7 +63,7 @@ class LogTrackerController extends Controller
         }
 
         foreach ($logFiles as $logFile) {
-            $logData = LogTracker::getLogEntries($logFile);
+            $logData = LogTracker::getAllLogEntries($logFile);
 
             foreach ($logData['entries'] as $entry) {
                 $summary['total']++;
@@ -170,7 +170,7 @@ class LogTrackerController extends Controller
             $todaysTotalLogs = 0;
 
             foreach ($logFiles as $logFile) {
-                $logData = LogTracker::getLogEntries($logFile);
+                $logData = LogTracker::getAllLogEntries($logFile);
 
                 foreach ($logData['entries'] as $entry) {
                     $summary['total']++;
@@ -299,9 +299,11 @@ class LogTrackerController extends Controller
             } else {
                 $fileSizes[$logFile] = '0 KB'; // Handle missing files
             }
-            $logData = LogTracker::getLogEntries($logFile);
+            
+            // Use getAllLogEntries for overview to get complete counts
+            $logData = LogTracker::getAllLogEntries($logFile);
             $counts[$logFile] = [
-                'total' => count($logData['entries']),
+                'total' => $logData['total'],
                 'error' => count(array_filter($logData['entries'], function ($entry) {
                     return $entry['level'] === 'error';
                 })),
@@ -319,10 +321,13 @@ class LogTrackerController extends Controller
 
 
 
-    public function show($logName)
+    public function show($logName, Request $request)
     {
+        $page = max(1, (int) $request->get('page', 1));
+        $perPage = config('log-tracker.per_page', 50);
+        
         $logFiles = LogTracker::getLogFiles();
-        $logData = LogTracker::getLogEntries($logName);
+        $logData = LogTracker::getLogEntries($logName, $page, $perPage);
         $logConfig = config('log-tracker.log_levels', []);
 
         // Ensure $entries is defined and format timestamps
@@ -339,9 +344,9 @@ class LogTrackerController extends Controller
             ];
         })->toArray();
 
-        // Count log levels
+        // Count log levels for current page
         $counts = [
-            'total' => count($entries),
+            'total' => $logData['total'],
             'error' => count(array_filter($entries, function ($entry) {
                 return $entry['level'] === 'error';
             })),
@@ -365,7 +370,17 @@ class LogTrackerController extends Controller
             ];
         }
 
-        return $this->themedView('log-details', compact('logFiles', 'logName', 'entries', 'counts', 'logLevels'));
+        // Pagination data
+        $pagination = [
+            'current_page' => $logData['current_page'],
+            'last_page' => $logData['last_page'],
+            'per_page' => $logData['per_page'],
+            'total' => $logData['total'],
+            'from' => $logData['from'],
+            'to' => $logData['to'],
+        ];
+
+        return $this->themedView('log-details', compact('logFiles', 'logName', 'entries', 'counts', 'logLevels', 'pagination'));
     }
 
     public function download($logName)

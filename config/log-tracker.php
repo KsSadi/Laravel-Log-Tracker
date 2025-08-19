@@ -47,7 +47,7 @@ return [
     | - 'LiteFlow' : Minimal, clean log view.
     | - 'GlowStack': Modern, colorful, enhanced visual log view.
     |
-    | Default: 'GlowStack'
+    | Default: 'LiteFlow'
     |
     */
 
@@ -96,6 +96,54 @@ return [
     |
     */
     'allow_download' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Log Level Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Define the appearance of different log levels with colors and icons.
+    | These settings control how log levels are displayed throughout the UI.
+    |
+    */
+    'log_levels' => [
+        'critical' => [
+            'color' => '#b91c1c',
+            'icon' => 'fas fa-exclamation-triangle'
+        ],
+        'emergency' => [
+            'color' => '#b91c1c',
+            'icon' => 'fas fa-exclamation-circle'
+        ],
+        'error' => [
+            'color' => '#dc2626',
+            'icon' => 'fas fa-times-circle'
+        ],
+         'alert' => [
+            'color' => '#b91c1c',
+            'icon' => 'fas fa-exclamation-circle'
+        ],
+        'warning' => [
+            'color' => '#d97706',
+            'icon' => 'fas fa-exclamation-triangle'
+        ],
+        'notice' => [
+            'color' => '#b59c1c',
+            'icon' => 'fas fa-info-circle'
+        ],
+        'info' => [
+            'color' => '#0284c7',
+            'icon' => 'fas fa-info-circle'
+        ],
+        'debug' => [
+            'color' => '#059669',
+            'icon' => 'fas fa-bug'
+        ],
+        'total' => [
+            'color' => '#6366f1',
+            'icon' => 'fas fa-chart-bar'
+        ]
+    ],
 
     /*
    |--------------------------------------------------------------------------

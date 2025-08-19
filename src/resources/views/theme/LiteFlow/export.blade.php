@@ -5,13 +5,13 @@
 @push('styles')
     <style>
 
-        /* Modern Breadcrumb */
+        /* Modern Breadcrumb - Compact */
         .breadcrumb-container {
             background: white;
             border: 1px solid var(--gray-200);
             border-radius: var(--border-radius);
-            padding: 0.75rem 1.5rem;
-            margin-bottom: 2rem;
+            padding: 0.6rem 1.25rem;
+            margin-bottom: 1.25rem;
             box-shadow: var(--shadow-sm);
         }
 
@@ -37,13 +37,13 @@
             font-weight: 600;
         }
 
-        /* Enhanced Header */
+        /* Enhanced Header - Compact Version */
         .page-header {
             background: white;
             border: 1px solid var(--gray-200);
             border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem;
             box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
@@ -55,46 +55,47 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 3px;
             background: linear-gradient(90deg, var(--primary-color) 0%, var(--info-color) 100%);
         }
 
         .header-content {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
             flex-wrap: wrap;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .header-left {
             flex: 1;
-            min-width: 300px;
+            min-width: 250px;
         }
 
         .header-title {
-            font-size: 1.75rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
             color: var(--gray-900);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .header-title i {
             color: var(--primary-color);
+            font-size: 1.25rem;
         }
 
         .header-subtitle {
             color: var(--gray-600);
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            line-height: 1.5;
+            font-size: 0.9rem;
+            margin-bottom: 0;
+            line-height: 1.4;
         }
 
         .header-icon {
-            font-size: 4rem;
+            font-size: 2.5rem;
             color: var(--gray-200);
             opacity: 0.5;
         }
@@ -191,15 +192,15 @@
             font-size: 0.85rem;
         }
 
-        /* Main Grid Layout */
+        /* Main Grid Layout - More Compact */
         .main-grid {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
+            grid-template-columns: 320px 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        /* Filters Panel */
+        /* Filters Panel - Compact */
         .filters-panel {
             background: white;
             border: 1px solid var(--gray-200);
@@ -207,12 +208,18 @@
             box-shadow: var(--shadow-sm);
             height: fit-content;
             position: sticky;
-            top: 2rem;
+            top: 1.5rem;
+            overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .filter-section {
-            padding: 1.5rem;
+            padding: 1rem 1.25rem;
             border-bottom: 1px solid var(--gray-200);
+            overflow: hidden;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .filter-section:last-child {
@@ -224,22 +231,26 @@
             align-items: center;
             font-weight: 600;
             color: var(--gray-700);
-            margin-bottom: 1rem;
-            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
             gap: 0.5rem;
         }
 
         .filter-title i {
             color: var(--primary-color);
+            font-size: 0.9rem;
         }
 
         .form-control {
             border: 1px solid var(--gray-300);
             border-radius: var(--border-radius);
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 0.875rem;
             transition: var(--transition);
             font-size: 0.875rem;
             background: white;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .form-control:focus {
@@ -249,23 +260,54 @@
         }
 
         .form-label {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             color: var(--gray-700);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             font-weight: 500;
+            display: block;
         }
 
         .date-inputs {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            gap: 0.75rem;
+            width: 100%;
+            overflow: hidden;
         }
 
-        /* Level Badges */
+        .date-inputs > div {
+            min-width: 0;
+            width: 100%;
+        }
+
+        /* Specific styling for date inputs */
+        input[type="date"].form-control {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+            position: relative;
+            background: white;
+            cursor: pointer;
+        }
+
+        input[type="date"].form-control::-webkit-calendar-picker-indicator {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        input[type="date"].form-control::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* Level Badges - More Compact */
         .level-badges {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .level-badge {
@@ -283,9 +325,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 0.75rem;
+            padding: 0.5rem 0.75rem;
             border-radius: var(--border-radius);
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             transition: var(--transition);
             width: 100%;
@@ -293,7 +335,7 @@
             cursor: pointer;
             text-align: center;
             color: white;
-            gap: 0.5rem;
+            gap: 0.35rem;
         }
 
         .level-badge input[type="checkbox"]:checked + .badge {
@@ -518,13 +560,13 @@
 
         @media (max-width: 768px) {
             .page-header {
-                padding: 1.5rem;
+                padding: 1rem;
             }
 
             .header-content {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 1.5rem;
+                gap: 1rem;
             }
 
             .header-left {
@@ -532,27 +574,58 @@
             }
 
             .header-title {
-                font-size: 1.5rem;
+                font-size: 1.25rem;
+            }
+
+            .header-subtitle {
+                font-size: 0.85rem;
             }
 
             .main-grid {
                 grid-template-columns: 1fr;
-                gap: 1.5rem;
+                gap: 1rem;
+            }
+
+            .filter-section {
+                padding: 0.75rem 1rem;
+            }
+
+            .filter-title {
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-control {
+                padding: 0.5rem 0.75rem;
             }
 
             .format-grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
+                gap: 0.75rem;
             }
 
             .date-inputs {
                 grid-template-columns: 1fr;
-                gap: 1rem;
+                gap: 0.75rem;
+            }
+
+            .date-inputs > div {
+                width: 100%;
+            }
+
+            .form-control {
+                width: 100%;
+                min-width: 0;
             }
 
             .level-badges {
                 grid-template-columns: 1fr;
-                gap: 0.5rem;
+                gap: 0.4rem;
+            }
+
+            .level-badge .badge {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.65rem;
             }
 
             .files-header {
@@ -757,7 +830,16 @@
                             Log Levels
                         </div>
                         <div class="level-badges">
-                            @foreach(config('log-tracker.log_levels', []) as $level => $config)
+                            @php
+                                $logLevels = config('log-tracker.log_levels', [
+                                    'error' => ['color' => '#dc2626', 'icon' => 'fas fa-times-circle'],
+                                    'warning' => ['color' => '#d97706', 'icon' => 'fas fa-exclamation-triangle'],
+                                    'info' => ['color' => '#0284c7', 'icon' => 'fas fa-info-circle'],
+                                    'debug' => ['color' => '#059669', 'icon' => 'fas fa-bug']
+                                ]);
+                            @endphp
+                            
+                            @foreach($logLevels as $level => $config)
                                 @if($level !== 'total')
                                     <label class="level-badge">
                                         <input type="checkbox" name="levels[]" value="{{ $level }}" checked>

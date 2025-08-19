@@ -789,6 +789,99 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
+            margin-top: 1rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .pagination-info {
+            font-size: 0.9rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .pagination-nav .pagination {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            list-style: none;
+            gap: 0.25rem;
+        }
+
+        .pagination .page-item {
+            display: flex;
+        }
+
+        .pagination .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            min-width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        .pagination .page-link:hover {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: var(--primary-gradient);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #d1d5db;
+            background: rgba(249, 250, 251, 0.8);
+            border-color: rgba(229, 231, 235, 0.5);
+            cursor: not-allowed;
+        }
+
+        .pagination .page-item.disabled .page-link:hover {
+            transform: none;
+            box-shadow: none;
+            background: rgba(249, 250, 251, 0.8);
+            color: #d1d5db;
+        }
+
+        @media (max-width: 768px) {
+            .pagination-container {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .pagination .page-link {
+                padding: 0.375rem 0.5rem;
+                min-width: 2rem;
+                height: 2rem;
+                font-size: 0.75rem;
+            }
+        }
     </style>
 @endpush
 
@@ -988,6 +1081,85 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Pagination Controls -->
+            @if(isset($pagination) && $pagination['last_page'] > 1)
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    <span>Showing {{ $pagination['from'] }} to {{ $pagination['to'] }} of {{ number_format($pagination['total']) }} entries</span>
+                </div>
+                
+                <nav class="pagination-nav">
+                    <ul class="pagination">
+                        {{-- Previous Page Link --}}
+                        @if($pagination['current_page'] > 1)
+                            <li class="page-item">
+                                <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => $pagination['current_page'] - 1]) }}">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-left"></i>
+                                </span>
+                            </li>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @php
+                            $start = max(1, $pagination['current_page'] - 2);
+                            $end = min($pagination['last_page'], $pagination['current_page'] + 2);
+                        @endphp
+
+                        @if($start > 1)
+                            <li class="page-item">
+                                <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => 1]) }}">1</a>
+                            </li>
+                            @if($start > 2)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                        @endif
+
+                        @for($i = $start; $i <= $end; $i++)
+                            @if($i == $pagination['current_page'])
+                                <li class="page-item active">
+                                    <span class="page-link">{{ $i }}</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => $i]) }}">{{ $i }}</a>
+                                </li>
+                            @endif
+                        @endfor
+
+                        @if($end < $pagination['last_page'])
+                            @if($end < $pagination['last_page'] - 1)
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            @endif
+                            <li class="page-item">
+                                <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => $pagination['last_page']]) }}">{{ $pagination['last_page'] }}</a>
+                            </li>
+                        @endif
+
+                        {{-- Next Page Link --}}
+                        @if($pagination['current_page'] < $pagination['last_page'])
+                            <li class="page-item">
+                                <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => $pagination['current_page'] + 1]) }}">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+            </div>
+            @endif
         </div>
     </div>
 @endsection

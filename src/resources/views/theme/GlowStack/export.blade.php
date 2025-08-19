@@ -769,7 +769,16 @@
                         Log Levels
                     </div>
                     <div class="level-badges">
-                        @foreach(config('log-tracker.log_levels') as $level => $config)
+                        @php
+                            $logLevels = config('log-tracker.log_levels', [
+                                'error' => ['color' => '#dc2626', 'icon' => 'fas fa-times-circle'],
+                                'warning' => ['color' => '#d97706', 'icon' => 'fas fa-exclamation-triangle'],
+                                'info' => ['color' => '#0284c7', 'icon' => 'fas fa-info-circle'],
+                                'debug' => ['color' => '#059669', 'icon' => 'fas fa-bug']
+                            ]);
+                        @endphp
+                        
+                        @foreach($logLevels as $level => $config)
                             @if($level !== 'total')
                                 <label class="level-badge">
                                     <input type="checkbox" name="levels[]" value="{{ $level }}" checked>
