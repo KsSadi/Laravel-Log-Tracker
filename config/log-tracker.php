@@ -48,7 +48,7 @@ return [
     | - 'GlowStack': Modern, colorful, enhanced visual log view.
     |
     | You can also create custom themes by following the theme structure.
-    | Default: 'LiteFlow'
+    | Default: 'GlowStack'
     |
     */
 

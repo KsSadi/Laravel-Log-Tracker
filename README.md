@@ -35,6 +35,7 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 # Table of Contents
 
 - [Installation](#installation)
+- [🔄 Upgrading to v2.1](#-upgrading-to-v21)
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Themes](#themes)
@@ -86,7 +87,61 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
    ```
    This will publish the `log-tracker.php` configuration file to your `config` directory.
 
+---
 
+# 🔄 Upgrading to v2.1
+
+## **⚠️ Important for Existing Users**
+
+If you're upgrading from a previous version (v2.0 or earlier), you **MUST** update your configuration file to get the new features and settings.
+
+### **📋 Quick Upgrade Steps:**
+
+#### **1. Update the Package**
+```bash
+composer update kssadi/log-tracker
+```
+
+#### **2. Update Configuration File** 
+**⚠️ IMPORTANT:** Choose one of these methods:
+
+**Method A: Force Re-publish (Overwrites your config)**
+```bash
+php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="config" --force
+```
+> ⚠️ **Warning:** This will overwrite your existing config. Backup your custom settings first!
+
+**Method B: Manual Merge (Recommended)**
+```bash
+# Backup your current config
+cp config/log-tracker.php config/log-tracker-backup.php
+
+# Publish new config to compare
+php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="config" --force
+
+# Manually merge your custom settings from backup
+```
+
+**Method C: Download and Compare**
+- Download the latest config: [config/log-tracker.php](https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/packages/Laravel-Log-Tracker/config/log-tracker.php)
+- Compare with your existing config and add new options
+
+### **🆕 New in v2.1 Config:**
+- `log_files_per_page` - Configure pagination for log files listing
+- Enhanced `log_levels` with dynamic colors and icons
+- Additional pagination settings
+- Improved export configurations
+
+### **✅ Verify Your Upgrade:**
+```bash
+# Check if new config options are available
+php artisan log-tracker:theme list
+
+# Test the new pagination feature
+# Visit: /log-tracker/log-file
+```
+
+---
 
 # Configuration
 
