@@ -1,6 +1,6 @@
 <br>
 <a href="https://github.com/KsSadi/Laravel-Log-Tracker">
-<img style="width: 100%; max-width: 100%;" alt="Log Tracker Laravel Package" src="/image/log-tracker-banner.png" >
+<img style="width: 100%; max-width: 100%;" alt="Log Tracker Laravel Package" src="/image/log_tracker_banner.png" >
 </a>
 
 # **📜 Laravel Log Tracker**
@@ -23,11 +23,14 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 ✅ **Error Pattern Analysis** – Identify top error types and peak error hours  
 ✅ **Advanced Filtering** – Filter logs by level, date range, or custom keywords  
 ✅ **Log File Management** – View, download, delete, and manage log files effortlessly  
+✅ **Smart File Pagination** – Efficiently handle large numbers of log files with pagination *(New in v2.1)*  
+✅ **Dynamic Log Levels** – Laravel log levels with dynamic colors and icons *(New in v2.1)*  
+✅ **Max File Size Protection** – Intelligent file size checking to prevent memory issues *(New in v2.1)*  
 ✅ **Real-time Statistics** – Live log counts and performance metrics  
 ✅ **Stack Trace Viewer** – Detailed error stack traces with syntax highlighting  
 ✅ **Responsive Design** – Works perfectly on desktop, tablet, and mobile devices  
 ✅ **Customizable Configuration** – Tailor log levels, colors, icons, and behavior to your needs  
-✅ **Performance Optimized** – Handles large log files efficiently with pagination  
+✅ **Performance Optimized** – Handles large log files efficiently with enhanced pagination *(Improved in v2.1)*  
 ✅ **Secure Access** – Built-in authentication and authorization middleware
 # Table of Contents
 
@@ -115,7 +118,8 @@ return [
     | Display Settings
     |--------------------------------------------------------------------------
     */
-    'per_page' => 50,
+    'log_per_page' => 50,
+    'log_files_per_page' => 10,
     'max_file_size' => 50, // MB
 
     /*
@@ -233,6 +237,53 @@ https://your-domain.com/log-tracker/log-file
 - Keyword search in log messages
 - Multiple search terms support
 
+### **📝 Generating Log Examples**
+
+To test and populate your logs with different types of entries, you can use Laravel's built-in `Log` facade. Here are some practical examples:
+
+```php
+<?php
+
+use Illuminate\Support\Facades\Log;
+
+// Basic log levels
+Log::info('User logged in successfully', ['user_id' => 123]);
+Log::warning('Disk space is running low', ['disk_usage' => '85%']);
+Log::error('Payment processing failed', ['order_id' => 'ORD-12345', 'error' => 'Gateway timeout']);
+
+// Emergency and Critical logs
+Log::emergency('Database connection lost completely');
+Log::critical('Memory limit exceeded', ['memory_usage' => '512MB']);
+Log::alert('Security breach detected', ['ip_address' => '192.168.1.100']);
+
+// Debug and Notice logs
+Log::debug('API response received', ['response_time' => '250ms', 'endpoint' => '/api/users']);
+Log::notice('User password changed', ['user_id' => 456]);
+
+// Logs with context data
+Log::error('File upload failed', [
+    'file_name' => 'document.pdf',
+    'file_size' => '5MB',
+    'user_id' => 789,
+    'error_code' => 'UPLOAD_TIMEOUT'
+]);
+
+// Exception logging
+try {
+    // Some risky operation
+    throw new \Exception('Sample exception for testing');
+} catch (\Exception $e) {
+    Log::error('Exception caught: ' . $e->getMessage(), [
+        'file' => $e->getFile(),
+        'line' => $e->getLine(),
+        'trace' => $e->getTraceAsString()
+    ]);
+}
+```
+
+**📊 View Generated Logs:**
+After running these examples in your Laravel application (via tinker, controllers, or artisan commands), visit your log tracker dashboard to see them categorized and displayed beautifully!
+
 ---
 
 ## **Themes**
@@ -246,6 +297,9 @@ Laravel Log Tracker offers **two distinct themes** to match your workflow and pr
 | 🌊 **LiteFlow** | Minimal, clean log view with streamlined interface | Clean design, fast loading, excellent readability |
 | ✨ **GlowStack** | Modern, colorful, enhanced visual log view | Rich colors, advanced styling, enhanced user experience |
 
+![Log Tracker Theme](/image/log_tracker_log_theme.png)
+
+
 ### **Theme Configuration**
 
 Set your preferred theme in `config/log-tracker.php`:
@@ -253,6 +307,54 @@ Set your preferred theme in `config/log-tracker.php`:
 ```php
 'theme' => 'GlowStack', // Options: 'LiteFlow', 'GlowStack'
 ```
+
+### **🎨 Theme Management via Artisan Commands**
+
+Laravel Log Tracker provides convenient Artisan commands to manage themes without editing configuration files:
+
+#### **List Available Themes**
+```bash
+php artisan log-tracker:theme list
+```
+**Output:**
+```
+Available Log Tracker Themes:
+
+  • GlowStack
+  • LiteFlow ← Current
+```
+
+#### **Check Current Theme**
+```bash
+php artisan log-tracker:theme current
+```
+**Output:**
+```
+Current Theme: LiteFlow
+```
+
+#### **Switch Theme**
+```bash
+# Switch to GlowStack theme
+php artisan log-tracker:theme set GlowStack
+
+# Switch to LiteFlow theme  
+php artisan log-tracker:theme set LiteFlow
+```
+
+**Example Usage:**
+```bash
+# Check what themes are available
+php artisan log-tracker:theme list
+
+# Switch to the modern GlowStack theme
+php artisan log-tracker:theme set GlowStack
+
+# Verify the change
+php artisan log-tracker:theme current
+```
+
+**💡 Pro Tip:** Theme changes take effect immediately - no cache clearing or server restart required!
 
 ### **Theme Features**
 
@@ -342,11 +444,11 @@ Configure export settings in `config/log-tracker.php`:
 
 # Screenshots
 
-![Log Tracker Dashboard](/image/log-tracker-dashboard.png)
+![Log Tracker Dashboard](/image/log_tracker_dashboard.png)
 
-![Log Tracker Log File](/image/log-tracker-log-file.png)
+![Log Tracker Log File](/image/log_tracker_log_file.png)
 
-![Log Tracker Log File](/image/log-tracker-log-file-view.png)
+![Log Tracker Log File](/image/log_tracker_log_file_view.png)
 
 
 ## 📚 **API Documentation**
@@ -428,6 +530,26 @@ Found a bug? Please report it with:
 - Steps to reproduce
 - Expected vs actual behavior
 - Error messages or logs
+
+---
+
+## 🎉 **What's New in v2.1**
+
+### 🚀 **Performance & Reliability Improvements**
+- **Smart File Pagination**: Handles large numbers of log files efficiently
+- **Enhanced Log Pagination**: Improved navigation through log entries
+- **Max File Size Protection**: Prevents memory issues with oversized files
+- **Dynamic Laravel Log Levels**: Beautiful colors and icons for better visual feedback
+
+### 🐛 **Bug Fixes**
+- Resolved HTML syntax errors affecting UI rendering
+- Enhanced code efficiency and performance optimizations
+- Improved error handling for edge cases
+
+### 🔧 **Technical Enhancements**
+- Optimized codebase for better maintainability
+- Enhanced memory management for large files
+- Improved UI responsiveness and reliability
 
 ---
 

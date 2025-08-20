@@ -20,7 +20,7 @@ class LogParserService
     {
         // Use config value if perPage is not provided
         if ($perPage === null) {
-            $perPage = config('log-tracker.per_page', 50);
+            $perPage = config('log-tracker.log_per_page', 50);
         }
 
         $logFile = storage_path("logs/{$logName}");
@@ -34,6 +34,27 @@ class LogParserService
                 'last_page' => 1,
                 'from' => 0,
                 'to' => 0,
+                'error' => 'Log file not found',
+            ];
+        }
+
+        // Check file size limit
+        $maxFileSizeMB = config('log-tracker.max_file_size', 50);
+        $fileSizeBytes = filesize($logFile);
+        $fileSizeMB = $fileSizeBytes / 1024 / 1024;
+
+        if ($fileSizeMB > $maxFileSizeMB) {
+            return [
+                'entries' => [],
+                'total' => 0,
+                'current_page' => $page,
+                'per_page' => $perPage,
+                'last_page' => 1,
+                'from' => 0,
+                'to' => 0,
+                'error' => "File size (" . round($fileSizeMB, 2) . " MB) exceeds maximum allowed size ({$maxFileSizeMB} MB)",
+                'file_size_mb' => $fileSizeMB,
+                'max_size_mb' => $maxFileSizeMB,
             ];
         }
 
@@ -103,6 +124,22 @@ class LogParserService
             return [
                 'entries' => [],
                 'total' => 0,
+                'error' => 'Log file not found',
+            ];
+        }
+
+        // Check file size limit
+        $maxFileSizeMB = config('log-tracker.max_file_size', 50);
+        $fileSizeBytes = filesize($logFile);
+        $fileSizeMB = $fileSizeBytes / 1024 / 1024;
+
+        if ($fileSizeMB > $maxFileSizeMB) {
+            return [
+                'entries' => [],
+                'total' => 0,
+                'error' => "File size (" . round($fileSizeMB, 2) . " MB) exceeds maximum allowed size ({$maxFileSizeMB} MB)",
+                'file_size_mb' => $fileSizeMB,
+                'max_size_mb' => $maxFileSizeMB,
             ];
         }
 

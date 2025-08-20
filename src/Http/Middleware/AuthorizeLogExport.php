@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuthorizeLogExport
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
         if (!config('log-tracker.export.enabled', true)) {
             abort(403, 'Export functionality is disabled.');

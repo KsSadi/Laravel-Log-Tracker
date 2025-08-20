@@ -42,7 +42,7 @@ class LogExportService
                 $entry['level'],
                 $this->cleanTextForCsv($entry['message']),
                 $entry['file'],
-                $this->cleanTextForCsv($entry['stack'] ?? '')
+                $this->cleanTextForCsv(isset($entry['stack']) ? $entry['stack'] : '')
             ]);
         }
 
@@ -71,7 +71,7 @@ class LogExportService
                 'generated_at' => Carbon::now()->toISOString(),
                 'total_entries' => count($data),
                 'filters_applied' => $filters,
-                'exported_by' => auth()->user()->name ?? 'System',
+                'exported_by' => (auth()->user() && auth()->user()->name) ? auth()->user()->name : 'System',
                 'version' => '1.5.0'
             ],
             'logs' => $data

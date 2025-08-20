@@ -6,29 +6,16 @@ use Illuminate\Routing\Controller;
 use Kssadi\LogTracker\Facades\LogTracker;
 use Illuminate\Support\Facades\File;
 use Kssadi\LogTracker\Services\LogExportService;
+use Kssadi\LogTracker\Traits\HasThemeSupport;
 use Illuminate\Http\Request;
 
 class LogTrackerController extends Controller
 {
-    protected $theme;
+    use HasThemeSupport;
 
     public function __construct()
     {
-        $allowedThemes = ['GlowStack', 'LiteFlow'];
-        $configuredTheme = config('log-tracker.theme', 'GlowStack');
-
-        // Check only against allowed theme names
-        if (in_array($configuredTheme, $allowedThemes)) {
-            $this->theme = $configuredTheme;
-        } else {
-            \Log::warning("LogTracker: Invalid theme '{$configuredTheme}' configured. Using default 'GlowStack'.");
-            $this->theme = 'GlowStack';
-        }
-    }
-
-    protected function themedView($view, $data = [])
-    {
-        return view("log-tracker::theme.{$this->theme}.{$view}", $data);
+        $this->initializeTheme();
     }
 
     public function dashboard()
@@ -267,56 +254,75 @@ class LogTrackerController extends Controller
     public function index()
     {
         $logFiles = LogTracker::getLogFiles();
-        // Sort log files in descending order
         rsort($logFiles); // Reverse sorting (latest logs first)
 
         $totalFiles = count($logFiles);
+        $logFilesPerPage = config('log-tracker.log_files_per_page', 10);
+        $page = request()->get('page', 1);
+        $lastPage = max(ceil($totalFiles / $logFilesPerPage), 1);
+        $page = max(1, min($page, $lastPage));
+        $offset = ($page - 1) * $logFilesPerPage;
+        $paginatedFiles = array_slice($logFiles, $offset, $logFilesPerPage);
+
         $counts = [];
         $fileSizes = [];
         $formattedFileNames = [];
         $logLevels = config('log-tracker.log_levels');
 
-        foreach ($logFiles as $logFile) {
-
+        foreach ($paginatedFiles as $logFile) {
             $filePath = storage_path("logs/{$logFile}");
-
-            // Extract date from file name (assuming format: laravel-YYYY-MM-DD.log)
             if (preg_match('/laravel-(\d{4})-(\d{2})-(\d{2})\.log/', $logFile, $matches)) {
                 $formattedFileNames[$logFile] = date('d F Y', strtotime("{$matches[1]}-{$matches[2]}-{$matches[3]}"));
             } else {
-                $formattedFileNames[$logFile] = $logFile; // Keep original name if format is unknown
+                $formattedFileNames[$logFile] = $logFile;
             }
-
             if (file_exists($filePath)) {
                 $sizeInBytes = filesize($filePath);
-
-                // Convert to KB or MB dynamically
-                if ($sizeInBytes < 102400) { // If less than 100KB
+                if ($sizeInBytes < 102400) {
                     $fileSizes[$logFile] = round($sizeInBytes / 1024, 2) . ' KB';
-                } else { // If 100KB or more, convert to MB
+                } else {
                     $fileSizes[$logFile] = round($sizeInBytes / 1048576, 2) . ' MB';
                 }
             } else {
-                $fileSizes[$logFile] = '0 KB'; // Handle missing files
+                $fileSizes[$logFile] = '0 KB';
             }
-            
-            // Use getAllLogEntries for overview to get complete counts
             $logData = LogTracker::getAllLogEntries($logFile);
-            $counts[$logFile] = [
-                'total' => $logData['total'],
-                'error' => count(array_filter($logData['entries'], function ($entry) {
-                    return $entry['level'] === 'error';
-                })),
-                'warning' => count(array_filter($logData['entries'], function ($entry) {
-                    return $entry['level'] === 'warning';
-                })),
-                'info' => count(array_filter($logData['entries'], function ($entry) {
-                    return $entry['level'] === 'info';
-                })),
-            ];
+            
+            // Check if file is too large or has error
+            if (isset($logData['error'])) {
+                $counts[$logFile] = [
+                    'total' => 0,
+                    'error' => 0,
+                    'warning' => 0,
+                    'info' => 0,
+                    'file_error' => $logData['error'],
+                ];
+            } else {
+                $counts[$logFile] = [
+                    'total' => $logData['total'],
+                    'error' => count(array_filter($logData['entries'], function ($entry) {
+                        return $entry['level'] === 'error';
+                    })),
+                    'warning' => count(array_filter($logData['entries'], function ($entry) {
+                        return $entry['level'] === 'warning';
+                    })),
+                    'info' => count(array_filter($logData['entries'], function ($entry) {
+                        return $entry['level'] === 'info';
+                    })),
+                ];
+            }
         }
 
-        return $this->themedView('logs', compact('logFiles', 'counts', 'totalFiles', 'fileSizes', 'formattedFileNames', 'logLevels'));
+        $pagination = [
+            'current_page' => $page,
+            'last_page' => $lastPage,
+            'per_page' => $logFilesPerPage,
+            'total' => $totalFiles,
+            'from' => $offset + 1,
+            'to' => min($offset + $logFilesPerPage, $totalFiles),
+        ];
+
+        return $this->themedView('logs', compact('paginatedFiles', 'logFiles', 'counts', 'totalFiles', 'fileSizes', 'formattedFileNames', 'logLevels', 'pagination'));
     }
 
 
@@ -324,11 +330,26 @@ class LogTrackerController extends Controller
     public function show($logName, Request $request)
     {
         $page = max(1, (int) $request->get('page', 1));
-        $perPage = config('log-tracker.per_page', 50);
+        $perPage = config('log-tracker.log_per_page', 50);
         
         $logFiles = LogTracker::getLogFiles();
         $logData = LogTracker::getLogEntries($logName, $page, $perPage);
         $logConfig = config('log-tracker.log_levels', []);
+
+        // Check if there's an error (file too large or not found)
+        if (isset($logData['error'])) {
+            return $this->themedView('log-details', [
+                'logFiles' => $logFiles,
+                'logName' => $logName,
+                'entries' => [],
+                'counts' => ['total' => 0, 'error' => 0, 'warning' => 0, 'info' => 0, 'debug' => 0],
+                'logLevels' => [],
+                'pagination' => ['current_page' => 1, 'last_page' => 1, 'per_page' => $perPage, 'total' => 0, 'from' => 0, 'to' => 0],
+                'error' => $logData['error'],
+                'file_size_mb' => isset($logData['file_size_mb']) ? $logData['file_size_mb'] : null,
+                'max_size_mb' => isset($logData['max_size_mb']) ? $logData['max_size_mb'] : null,
+            ]);
+        }
 
         // Ensure $entries is defined and format timestamps
         $entries = collect(isset($logData['entries']) ? $logData['entries'] : [])->map(function ($entry) use ($logConfig) {

@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1] - 2025-08-20
+### 🚀 Performance & Bug Fix Release - Version 2.1
+#### ✨ Added
+- **Log File Pagination**: Improved performance with paginated log file listing for better handling of large numbers of log files
+- **Enhanced Log Pagination**: Streamlined log entry pagination system for faster navigation
+- **Max File Size Checking**: Added intelligent file size validation to prevent memory issues with oversized log files
+- **Dynamic Laravel Log Levels**: Implemented dynamic color and icon system for Laravel log levels with improved visual feedback
+
+#### 🐛 Fixed
+- **HTML Syntax Error**: Resolved syntax error in GlowStack theme that was breaking the UI
+- **Memory Optimization**: Enhanced code efficiency for better performance with large log files
+- **UI Rendering Issues**: Improved template rendering and fixed display problems
+
+#### 🔧 Improved
+- **Code Efficiency**: Significantly optimized codebase for better performance and maintainability
+- **Error Handling**: Enhanced error handling for large files and edge cases
+- **User Experience**: Improved overall user interface responsiveness and reliability
+
 ## [2.0] - 2025-06-17
 ### 🎉 Major Release - Version 2.0
 #### ✨ Added

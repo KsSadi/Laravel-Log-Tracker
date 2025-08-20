@@ -922,6 +922,26 @@
             </nav>
         </div>
 
+        {{-- File Size Error Alert --}}
+        @if(isset($error))
+            <div class="alert alert-danger mb-4" style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 1.5rem;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-3" style="font-size: 1.5rem; color: var(--danger-color);"></i>
+                    <div>
+                        <h5 class="mb-1" style="color: #991b1b; font-weight: 600;">File Too Large</h5>
+                        <p class="mb-2" style="color: #7f1d1d;">{{ $error }}</p>
+                        @if(isset($file_size_mb) && isset($max_size_mb))
+                            <small style="color: #7f1d1d;">
+                                <strong>Current file size:</strong> {{ round($file_size_mb, 2) }} MB<br>
+                                <strong>Maximum allowed:</strong> {{ $max_size_mb }} MB<br>
+                                <strong>Tip:</strong> You can increase the limit in config/log-tracker.php
+                            </small>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        @endif
+
         <!-- Enhanced Header -->
         <div class="page-header">
             <div class="header-content">

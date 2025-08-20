@@ -251,6 +251,16 @@
             z-index: 1001;
         }
 
+        /* File error styling */
+        .log-card.file-error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border-left: 4px solid #dc2626;
+        }
+
+        .log-card.file-error:hover {
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+        }
+
         /* Add bottom spacing to avoid collision when dropdown expands */
         .logs-grid {
             padding-bottom: 150px;
@@ -598,6 +608,108 @@
                 height: 30px;
             }
         }
+
+        /* Pagination Styling */
+        .pagination {
+            margin: 0;
+            gap: 8px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination .page-item {
+            margin: 0;
+        }
+
+        .pagination .page-item .page-link {
+            border: 2px solid #e5e7eb;
+            color: #6b7280;
+            padding: 12px 16px;
+            margin: 0;
+            border-radius: 10px;
+            transition: var(--transition);
+            text-decoration: none;
+            font-weight: 600;
+            background: white;
+            min-width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background: var(--primary-gradient);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #d1d5db;
+            background-color: #f9fafb;
+            border-color: #f3f4f6;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .pagination .page-item:not(.disabled):not(.active) .page-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Pagination container styling */
+        .pagination-container {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid #f1f5f9;
+            margin-top: 20px;
+        }
+
+        /* Mobile responsive pagination */
+        @media (max-width: 768px) {
+            .pagination-container {
+                padding: 16px;
+            }
+            
+            .pagination .page-item .page-link {
+                padding: 10px 12px;
+                min-width: 40px;
+                height: 40px;
+                font-size: 13px;
+            }
+            
+            .pagination {
+                gap: 4px;
+                flex-wrap: wrap;
+            }
+            
+            .pagination .page-item:first-child .page-link,
+            .pagination .page-item:last-child .page-link {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pagination .page-item .page-link {
+                padding: 8px 10px;
+                min-width: 36px;
+                height: 36px;
+                font-size: 12px;
+            }
+            
+            .pagination-info {
+                font-size: 12px;
+            }
+        }
     </style>
 @endpush
 
@@ -703,8 +815,8 @@
                 <div class="header-cell">Actions</div>
             </div>
 
-            @forelse($logFiles as $file)
-                <div class="log-card" data-log-date="{{ $file }}" data-search-text="{{ strtolower($file) }}">
+            @forelse($paginatedFiles as $file)
+                <div class="log-card {{ isset($counts[$file]['file_error']) ? 'file-error' : '' }}" data-log-date="{{ $file }}" data-search-text="{{ strtolower($file) }}" @if(isset($counts[$file]['file_error'])) title="Error: {{ $counts[$file]['file_error'] }}" @endif>
                     <div class="log-info">
                         <div class="log-filename">{{ isset($formattedFileNames[$file]) ? $formattedFileNames[$file] : $file }}</div>
                         <div class="log-date">
@@ -725,23 +837,45 @@
                     </div>
 
                     <div class="log-stat">
-                        <div class="stat-badge total">{{ $counts[$file]['total'] ?? 0 }}</div>
-                        <div class="stat-label">Total</div>
+                        @if(isset($counts[$file]['file_error']))
+                            <div class="stat-badge" style="background: {{ config('log-tracker.log_levels.error.color', '#dc2626') }}; color: white; font-size: 0.7rem; padding: 4px 8px;">
+                                <i class="fas fa-exclamation-triangle"></i> TOO LARGE
+                            </div>
+                            <div class="stat-label" style="color: {{ config('log-tracker.log_levels.error.color', '#dc2626') }};">File Error</div>
+                        @else
+                            <div class="stat-badge" style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.total.color', '#6366f1') }} 0%, {{ config('log-tracker.log_levels.total.color', '#6366f1') }}cc 100%); color: white;">{{ $counts[$file]['total'] ?? 0 }}</div>
+                            <div class="stat-label">Total</div>
+                        @endif
                     </div>
 
                     <div class="log-stat">
-                        <div class="stat-badge error">{{ $counts[$file]['error'] ?? 0 }}</div>
-                        <div class="stat-label">Errors</div>
+                        @if(isset($counts[$file]['file_error']))
+                            <div class="stat-badge" style="background: {{ config('log-tracker.log_levels.error.color', '#dc2626') }}; opacity: 0.5; color: white;">-</div>
+                            <div class="stat-label">Errors</div>
+                        @else
+                            <div class="stat-badge" style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.error.color', '#dc2626') }} 0%, {{ config('log-tracker.log_levels.error.color', '#dc2626') }}cc 100%); color: white;">{{ $counts[$file]['error'] ?? 0 }}</div>
+                            <div class="stat-label">Errors</div>
+                        @endif
                     </div>
 
                     <div class="log-stat">
-                        <div class="stat-badge warning">{{ $counts[$file]['warning'] ?? 0 }}</div>
-                        <div class="stat-label">Warnings</div>
+                        @if(isset($counts[$file]['file_error']))
+                            <div class="stat-badge" style="background: {{ config('log-tracker.log_levels.warning.color', '#d97706') }}; opacity: 0.5; color: white;">-</div>
+                            <div class="stat-label">Warnings</div>
+                        @else
+                            <div class="stat-badge" style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.warning.color', '#d97706') }} 0%, {{ config('log-tracker.log_levels.warning.color', '#d97706') }}cc 100%); color: white;">{{ $counts[$file]['warning'] ?? 0 }}</div>
+                            <div class="stat-label">Warnings</div>
+                        @endif
                     </div>
 
                     <div class="log-stat">
-                        <div class="stat-badge info">{{ $counts[$file]['info'] ?? 0 }}</div>
-                        <div class="stat-label">Info</div>
+                        @if(isset($counts[$file]['file_error']))
+                            <div class="stat-badge" style="background: {{ config('log-tracker.log_levels.info.color', '#3b82f6') }}; opacity: 0.5; color: white;">-</div>
+                            <div class="stat-label">Info</div>
+                        @else
+                            <div class="stat-badge" style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.info.color', '#3b82f6') }} 0%, {{ config('log-tracker.log_levels.info.color', '#3b82f6') }}cc 100%); color: white;">{{ $counts[$file]['info'] ?? 0 }}</div>
+                            <div class="stat-label">Info</div>
+                        @endif
                     </div>
 
                     <div class="file-size">{{ $fileSizes[$file] ?? 'Unknown' }}</div>
@@ -800,6 +934,36 @@
                 </div>
             @endforelse
         </div>
+
+        {{-- Pagination Controls --}}
+        @if(($pagination['last_page'] ?? 1) > 1)
+            <div class="pagination-container">
+                <nav aria-label="Log file pagination">
+                    <ul class="pagination">
+                        <li class="page-item {{ $pagination['current_page'] == 1 ? 'disabled' : '' }}">
+                            <a class="page-link" href="?page={{ $pagination['current_page'] - 1 }}">
+                                <i class="fas fa-chevron-left me-1"></i>Previous
+                            </a>
+                        </li>
+                        @for($i = 1; $i <= $pagination['last_page']; $i++)
+                            <li class="page-item {{ $pagination['current_page'] == $i ? 'active' : '' }}">
+                                <a class="page-link" href="?page={{ $i }}">{{ $i }}</a>
+                            </li>
+                        @endfor
+                        <li class="page-item {{ $pagination['current_page'] == $pagination['last_page'] ? 'disabled' : '' }}">
+                            <a class="page-link" href="?page={{ $pagination['current_page'] + 1 }}">
+                                Next<i class="fas fa-chevron-right ms-1"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="pagination-info text-center mt-3">
+                    <small class="text-muted">
+                        Showing {{ $pagination['from'] ?? 0 }} to {{ $pagination['to'] ?? 0 }} of {{ $pagination['total'] ?? 0 }} files
+                    </small>
+                </div>
+            </div>
+        @endif
     </div>
 
     <!-- Custom Date Range Modal -->

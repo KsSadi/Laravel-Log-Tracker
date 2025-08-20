@@ -39,7 +39,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Theme Selection
+    | Theme Configuration
     |--------------------------------------------------------------------------
     |
     | Choose the theme for the log viewer UI.
@@ -47,22 +47,28 @@ return [
     | - 'LiteFlow' : Minimal, clean log view.
     | - 'GlowStack': Modern, colorful, enhanced visual log view.
     |
+    | You can also create custom themes by following the theme structure.
     | Default: 'LiteFlow'
     |
     */
 
     'theme' => 'GlowStack',
 
+
     /*
     |--------------------------------------------------------------------------
     | Pagination Settings
     |--------------------------------------------------------------------------
     |
-    | 'per_page' controls how many log entries are displayed per page.
+    | 'log_per_page' controls how many log entries are displayed per page.
     | Default: 50 entries per page.
     |
+    | 'log_files_per_page' controls how many log files are shown per page
+    | in the file listing. Default: 10 files per page.
+    |
     */
-    'per_page' => 50,
+    'log_per_page' => 50,
+    'log_files_per_page' => 10,
 
     /*
     |--------------------------------------------------------------------------

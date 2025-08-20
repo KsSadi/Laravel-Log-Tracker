@@ -15,7 +15,12 @@ class LogTrackerServiceProvider extends ServiceProvider
             __DIR__ . '/../config/log-tracker.php' => config_path('log-tracker.php'),
         ], 'config');
 
-
+        // Register commands
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                \Kssadi\LogTracker\Console\Commands\ThemeCommand::class,
+            ]);
+        }
     }
 
 
@@ -25,6 +30,10 @@ class LogTrackerServiceProvider extends ServiceProvider
             __DIR__.'/../config/log-tracker.php', 'log-tracker'
         );
 
+        // Register Theme Manager as singleton
+        $this->app->singleton(\Kssadi\LogTracker\Services\ThemeManager::class, function ($app) {
+            return new \Kssadi\LogTracker\Services\ThemeManager();
+        });
 
         // Manually bind facade
        $this->app->bind('log-tracker', function () {
