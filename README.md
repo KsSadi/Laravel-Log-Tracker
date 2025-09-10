@@ -35,7 +35,7 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 # Table of Contents
 
 - [Installation](#installation)
-- [🔄 Upgrading to v2.2](#-upgrading-to-v21)
+- [🔄 Upgrading to v2.2](#-upgrading-to-v22)
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Themes](#themes)
@@ -126,7 +126,7 @@ php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvid
 - Download the latest config: [config/log-tracker.php](https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/config/log-tracker.php)
 - Compare with your existing config and add new options
 
-### **🆕 New in v2.2 Config:**
+### **🆕 New in v2.1 Config:**
 - `log_files_per_page` - Configure pagination for log files listing
 - Enhanced `log_levels` with dynamic colors and icons
 - Additional pagination settings
