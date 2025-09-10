@@ -340,26 +340,49 @@
             startLiveUpdates();
         });
 
+        // Get dynamic log level colors from config
+        function getDynamicColors() {
+            const configs = {!! json_encode(config('log-tracker.log_levels')) !!};
+            return {
+                error: configs.error?.color || '#dc2626',
+                warning: configs.warning?.color || '#d97706', 
+                info: configs.info?.color || '#0284c7',
+                debug: configs.debug?.color || '#059669'
+            };
+        }
+
         // Initialize Charts
         function initializeCharts() {
-            // Log Types Data
-            let logLabels = ['Error', 'Warning', 'Info', 'Debug'];
-            let logData = {!! json_encode(array_values($logTypesCount)) !!};
+            // Get dynamic colors and configured levels
+            const colors = getDynamicColors();
+            const logLevelsConfig = {!! json_encode(config('log-tracker.log_levels')) !!};
+            const logTypesData = {!! json_encode($logTypesCount) !!};
+            
+            // Filter out levels with 0 entries and prepare data
+            let chartData = [];
+            let chartLabels = [];
+            let chartColors = [];
+            
+            Object.entries(logTypesData).forEach(([level, count]) => {
+                if (count > 0 && level !== 'total') {
+                    chartData.push(count);
+                    chartLabels.push(level.charAt(0).toUpperCase() + level.slice(1));
+                    
+                    // Get color from config or fallback
+                    const levelColor = logLevelsConfig[level]?.color || '#6c757d';
+                    chartColors.push(levelColor);
+                }
+            });
 
             // Doughnut Chart
             const typesCtx = document.getElementById('logTypesChart').getContext('2d');
             typesChart = new Chart(typesCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: logLabels,
+                    labels: chartLabels,
                     datasets: [{
-                        data: logData,
-                        backgroundColor: [
-                            '#dc2626',
-                            '#d97706',
-                            '#0284c7',
-                            '#059669'
-                        ],
+                        data: chartData,
+                        backgroundColor: chartColors,
                         borderWidth: 2,
                         borderColor: '#ffffff'
                     }]
@@ -387,11 +410,42 @@
                 }
             });
 
-            // Activity Chart Data
-            let logDates = {!! json_encode(array_keys($dates)) !!};
-            let errorData = {!! json_encode(array_column($dates, 'error')) !!};
-            let warningData = {!! json_encode(array_column($dates, 'warning')) !!};
-            let infoData = {!! json_encode(array_column($dates, 'info')) !!};
+            // Activity Chart Data - Dynamic levels
+            const datesData = {!! json_encode($dates) !!};
+            const logDates = Object.keys(datesData);
+            
+            // Create datasets for each log level that has data
+            const datasets = [];
+            const levelColors = {};
+            
+            // Get colors for each level
+            Object.keys(logLevelsConfig).forEach(level => {
+                if (level !== 'total') {
+                    levelColors[level] = logLevelsConfig[level]?.color || '#6c757d';
+                }
+            });
+            
+            // Create dataset for each level that has at least some data
+            Object.keys(logTypesData).forEach(level => {
+                if (logTypesData[level] > 0 && level !== 'total') {
+                    const levelData = logDates.map(date => datesData[date][level] || 0);
+                    const color = levelColors[level];
+                    
+                    datasets.push({
+                        label: level.charAt(0).toUpperCase() + level.slice(1),
+                        data: levelData,
+                        borderColor: color,
+                        backgroundColor: color + '1a', // Add transparency
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true,
+                        pointBackgroundColor: color,
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4
+                    });
+                }
+            });
 
             // Line Chart
             const activityCtx = document.getElementById('logActivityChart').getContext('2d');
@@ -402,47 +456,7 @@
                         const d = new Date(date);
                         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                     }),
-                    datasets: [
-                        {
-                            label: 'Errors',
-                            data: errorData,
-                            borderColor: '#dc2626',
-                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: true,
-                            pointBackgroundColor: '#dc2626',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
-                        },
-                        {
-                            label: 'Warnings',
-                            data: warningData,
-                            borderColor: '#d97706',
-                            backgroundColor: 'rgba(217, 119, 6, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: true,
-                            pointBackgroundColor: '#d97706',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
-                        },
-                        {
-                            label: 'Info',
-                            data: infoData,
-                            borderColor: '#0284c7',
-                            backgroundColor: 'rgba(2, 132, 199, 0.1)',
-                            borderWidth: 2,
-                            tension: 0.3,
-                            fill: true,
-                            pointBackgroundColor: '#0284c7',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 4
-                        }
-                    ]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,

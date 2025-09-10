@@ -808,9 +808,9 @@
             <div class="logs-header-row">
                 <div class="header-cell">File Information</div>
                 <div class="header-cell">Total</div>
+                <div class="header-cell">Critical</div>
                 <div class="header-cell">Errors</div>
-                <div class="header-cell">Warnings</div>
-                <div class="header-cell">Info</div>
+                <div class="header-cell">Others</div>
                 <div class="header-cell">Size</div>
                 <div class="header-cell">Actions</div>
             </div>
@@ -843,8 +843,26 @@
                             </div>
                             <div class="stat-label" style="color: {{ config('log-tracker.log_levels.error.color', '#dc2626') }};">File Error</div>
                         @else
-                            <div class="stat-badge" style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.total.color', '#6366f1') }} 0%, {{ config('log-tracker.log_levels.total.color', '#6366f1') }}cc 100%); color: white;">{{ $counts[$file]['total'] ?? 0 }}</div>
+                            <div class="stat-badge" 
+                                 style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.total.color', '#6366f1') }} 0%, {{ config('log-tracker.log_levels.total.color', '#6366f1') }}cc 100%); color: white;"
+                                 title="Total Logs: {{ $counts[$file]['total'] ?? 0 }}">
+                                {{ $counts[$file]['total'] ?? 0 }}
+                            </div>
                             <div class="stat-label">Total</div>
+                        @endif
+                    </div>
+
+                    <div class="log-stat">
+                        @if(isset($counts[$file]['file_error']))
+                            <div class="stat-badge" style="background: {{ config('log-tracker.log_levels.error.color', '#dc2626') }}; opacity: 0.5; color: white;">-</div>
+                            <div class="stat-label">Critical</div>
+                        @else
+                            <div class="stat-badge" 
+                                 style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.critical.color', '#b91c1c') }} 0%, {{ config('log-tracker.log_levels.critical.color', '#b91c1c') }}cc 100%); color: white;"
+                                 title="Critical Logs: {{ $counts[$file]['critical'] ?? 0 }}">
+                                {{ $counts[$file]['critical'] ?? 0 }}
+                            </div>
+                            <div class="stat-label">Critical</div>
                         @endif
                     </div>
 
@@ -853,28 +871,26 @@
                             <div class="stat-badge" style="background: {{ config('log-tracker.log_levels.error.color', '#dc2626') }}; opacity: 0.5; color: white;">-</div>
                             <div class="stat-label">Errors</div>
                         @else
-                            <div class="stat-badge" style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.error.color', '#dc2626') }} 0%, {{ config('log-tracker.log_levels.error.color', '#dc2626') }}cc 100%); color: white;">{{ $counts[$file]['error'] ?? 0 }}</div>
+                            <div class="stat-badge" 
+                                 style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.error.color', '#dc2626') }} 0%, {{ config('log-tracker.log_levels.error.color', '#dc2626') }}cc 100%); color: white;"
+                                 title="Error Logs: {{ $counts[$file]['error'] ?? 0 }}">
+                                {{ $counts[$file]['error'] ?? 0 }}
+                            </div>
                             <div class="stat-label">Errors</div>
                         @endif
                     </div>
 
                     <div class="log-stat">
                         @if(isset($counts[$file]['file_error']))
-                            <div class="stat-badge" style="background: {{ config('log-tracker.log_levels.warning.color', '#d97706') }}; opacity: 0.5; color: white;">-</div>
-                            <div class="stat-label">Warnings</div>
-                        @else
-                            <div class="stat-badge" style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.warning.color', '#d97706') }} 0%, {{ config('log-tracker.log_levels.warning.color', '#d97706') }}cc 100%); color: white;">{{ $counts[$file]['warning'] ?? 0 }}</div>
-                            <div class="stat-label">Warnings</div>
-                        @endif
-                    </div>
-
-                    <div class="log-stat">
-                        @if(isset($counts[$file]['file_error']))
                             <div class="stat-badge" style="background: {{ config('log-tracker.log_levels.info.color', '#3b82f6') }}; opacity: 0.5; color: white;">-</div>
-                            <div class="stat-label">Info</div>
+                            <div class="stat-label">Others</div>
                         @else
-                            <div class="stat-badge" style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.info.color', '#3b82f6') }} 0%, {{ config('log-tracker.log_levels.info.color', '#3b82f6') }}cc 100%); color: white;">{{ $counts[$file]['info'] ?? 0 }}</div>
-                            <div class="stat-label">Info</div>
+                            <div class="stat-badge" 
+                                 style="background: linear-gradient(135deg, {{ config('log-tracker.log_levels.info.color', '#3b82f6') }} 0%, {{ config('log-tracker.log_levels.info.color', '#3b82f6') }}cc 100%); color: white;"
+                                 title="Other Logs: {{ $counts[$file]['other'] ?? 0 }} (Emergency: {{ $counts[$file]['emergency'] ?? 0 }}, Alert: {{ $counts[$file]['alert'] ?? 0 }}, Warning: {{ $counts[$file]['warning'] ?? 0 }}, Notice: {{ $counts[$file]['notice'] ?? 0 }}, Info: {{ $counts[$file]['info'] ?? 0 }}, Debug: {{ $counts[$file]['debug'] ?? 0 }})">
+                                {{ $counts[$file]['other'] ?? 0 }}
+                            </div>
+                            <div class="stat-label">Others</div>
                         @endif
                     </div>
 

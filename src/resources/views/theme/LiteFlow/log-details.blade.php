@@ -588,7 +588,9 @@
         .stack-trace {
             background-color: var(--gray-900);
             margin: 1rem;
+            margin-top: 1.5rem;
             padding: 1.5rem;
+            padding-top: 2rem;
             border-radius: var(--border-radius);
             font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
             font-size: 0.8rem;
@@ -598,6 +600,25 @@
             word-break: break-word;
             overflow-x: auto;
             border: 1px solid var(--gray-700);
+            position: relative;
+        }
+
+        .stack-trace::before {
+            content: '📋 Stack Trace';
+            position: absolute;
+            top: 4px;
+            left: 15px;
+            background: var(--gray-900);
+            padding: 2px 12px;
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--gray-600);
+            border-radius: 6px;
+            white-space: nowrap;
+            z-index: 1;
+            min-width: auto;
+            width: auto;
         }
 
         .no-data-row {
@@ -1129,13 +1150,14 @@
         <div class="content-card">
             <div class="content-header">
                 <h5 class="content-title">Log Entries</h5>
-                <div class="content-badge" id="entriesCount">{{ number_format(count($entries ?? [])) }} entries</div>
+                <div class="content-badge" id="entriesCount">{{ number_format($totalEntries) }} entries</div>
             </div>
 
+            <!-- Top Search Bar -->
             <div class="search-bar">
                 <div style="position: relative;">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" class="search-bar-input log-search" placeholder="Search through log messages, timestamps, and more..." id="mainSearchInput">
+                    <input type="text" class="search-bar-input log-search" placeholder="Search across all log entries - full file search enabled" id="topSearchInput">
                 </div>
             </div>
 
@@ -1176,7 +1198,7 @@
                         @if (!empty($log['stack']))
                             <tr id="stacktrace-{{ $index }}" class="stack-trace-row d-none">
                                 <td colspan="4">
-                                    <pre class="stack-trace">{{ $log['stack'] }}</pre>
+                                    <div class="stack-trace" id="stack-{{ $index }}">{{ $log['stack'] }}</div>
                                 </td>
                             </tr>
                         @endif
@@ -1206,84 +1228,18 @@
                 </table>
             </div>
             
-            <!-- Pagination Controls -->
-            @if(isset($pagination) && $pagination['last_page'] > 1)
-            <div class="pagination-container">
+            <!-- Bottom Pagination Controls -->
+            <div id="bottomPagination" class="pagination-container">
                 <div class="pagination-info">
-                    <span>Showing {{ $pagination['from'] }} to {{ $pagination['to'] }} of {{ number_format($pagination['total']) }} entries</span>
+                    <span id="bottomPaginationInfo">Showing entries</span>
                 </div>
                 
                 <nav class="pagination-nav">
-                    <ul class="pagination">
-                        {{-- Previous Page Link --}}
-                        @if($pagination['current_page'] > 1)
-                            <li class="page-item">
-                                <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => $pagination['current_page'] - 1]) }}">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                        @else
-                            <li class="page-item disabled">
-                                <span class="page-link">
-                                    <i class="fas fa-chevron-left"></i>
-                                </span>
-                            </li>
-                        @endif
-
-                        {{-- Pagination Elements --}}
-                        @php
-                            $start = max(1, $pagination['current_page'] - 2);
-                            $end = min($pagination['last_page'], $pagination['current_page'] + 2);
-                        @endphp
-
-                        @if($start > 1)
-                            <li class="page-item">
-                                <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => 1]) }}">1</a>
-                            </li>
-                            @if($start > 2)
-                                <li class="page-item disabled"><span class="page-link">...</span></li>
-                            @endif
-                        @endif
-
-                        @for($i = $start; $i <= $end; $i++)
-                            @if($i == $pagination['current_page'])
-                                <li class="page-item active">
-                                    <span class="page-link">{{ $i }}</span>
-                                </li>
-                            @else
-                                <li class="page-item">
-                                    <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => $i]) }}">{{ $i }}</a>
-                                </li>
-                            @endif
-                        @endfor
-
-                        @if($end < $pagination['last_page'])
-                            @if($end < $pagination['last_page'] - 1)
-                                <li class="page-item disabled"><span class="page-link">...</span></li>
-                            @endif
-                            <li class="page-item">
-                                <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => $pagination['last_page']]) }}">{{ $pagination['last_page'] }}</a>
-                            </li>
-                        @endif
-
-                        {{-- Next Page Link --}}
-                        @if($pagination['current_page'] < $pagination['last_page'])
-                            <li class="page-item">
-                                <a class="page-link" href="{{ route('log-tracker.show', ['logName' => $logName, 'page' => $pagination['current_page'] + 1]) }}">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        @else
-                            <li class="page-item disabled">
-                                <span class="page-link">
-                                    <i class="fas fa-chevron-right"></i>
-                                </span>
-                            </li>
-                        @endif
+                    <ul class="pagination" id="bottomPaginationList">
+                        <!-- Pagination buttons will be generated by JavaScript -->
                     </ul>
                 </nav>
             </div>
-            @endif
         </div>
     </div>
 
@@ -1291,60 +1247,234 @@
 
 @push('scripts')
     <script>
-        // Simple and working filter function
-        function filterLogs() {
-            const activeLevels = Array.from(document.querySelectorAll('.level-checkbox:checked')).map(cb => cb.value);
-            const searchTerm = document.getElementById('mainSearchInput').value.toLowerCase();
-            const logRows = document.querySelectorAll('.log-row');
-            let visibleCount = 0;
+        // Pagination variables
+        let currentPage = 1;
+        let itemsPerPage = {{ $perPage ?? 50 }};
+        let filteredRows = [];
+        let allRows = [];
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Store all rows
+            allRows = Array.from(document.querySelectorAll('.log-row'));
+            filteredRows = [...allRows];
+            
+            // Initialize pagination
+            updatePagination();
+            
+            // Initialize event listeners
+            initializeEventListeners();
+        });
+        
+        function initializeEventListeners() {
+            document.querySelectorAll('.level-switch').forEach(levelSwitch => {
+                levelSwitch.addEventListener('click', function() {
+                    toggleLevel(this);
+                });
+            });
 
-            logRows.forEach(row => {
-                const level = row.getAttribute('data-level');
-                const text = row.textContent.toLowerCase();
-                let showRow = activeLevels.includes(level);
+            const topSearchInput = document.getElementById('topSearchInput');
+            
+            if (topSearchInput) {
+                topSearchInput.addEventListener('input', function() {
+                    filterLogs();
+                });
+            }
 
-                if (searchTerm && showRow) {
-                    showRow = text.includes(searchTerm);
+            document.getElementById('noDataRow').style.display = 'none';
+
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    if (topSearchInput) topSearchInput.focus();
                 }
 
-                const stackRow = document.getElementById(`stacktrace-${row.dataset.index}`);
-
-                if (showRow) {
-                    row.style.display = '';
-                    visibleCount++;
-
-                    if (stackRow) {
-                        if (!stackRow.classList.contains('d-none')) {
-                            stackRow.style.display = '';
-                        } else {
-                            stackRow.style.display = 'none';
-                        }
-                    }
-                } else {
-                    row.style.display = 'none';
-                    if (stackRow) {
-                        stackRow.style.display = 'none';
+                if (e.key === 'Escape') {
+                    if (topSearchInput) topSearchInput.value = '';
+                    filterLogs();
+                    const exportMenu = document.getElementById('exportMenu');
+                    if (exportMenu) {
+                        exportMenu.classList.remove('show');
                     }
                 }
             });
+        }
 
+        // Enhanced filter function with pagination
+        function filterLogs() {
+            const activeLevels = Array.from(document.querySelectorAll('.level-checkbox:checked')).map(cb => cb.value);
+            const topSearchInput = document.getElementById('topSearchInput');
+            const searchTerm = topSearchInput ? topSearchInput.value.toLowerCase() : '';
+            
+            filteredRows = allRows.filter(row => {
+                const level = row.getAttribute('data-level');
+                const text = row.textContent.toLowerCase();
+                
+                const levelMatch = activeLevels.includes(level);
+                const textMatch = searchTerm === '' || text.includes(searchTerm);
+                
+                return levelMatch && textMatch;
+            });
+            
+            // Reset to first page when filtering
+            currentPage = 1;
+            updatePagination();
+            updateRowsVisibility();
+        }
+        
+        function updatePagination() {
+            const totalItems = filteredRows.length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            
+            // Update pagination info
+            const start = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+            const end = Math.min(currentPage * itemsPerPage, totalItems);
+            
+            const bottomInfo = document.getElementById('bottomPaginationInfo');
+            const infoText = `Showing ${start} to ${end} of ${totalItems.toLocaleString()} entries`;
+            
+            if (bottomInfo) bottomInfo.textContent = infoText;
+            
+            // Update entries count badge
             const badge = document.getElementById('entriesCount');
-            badge.textContent = `${visibleCount.toLocaleString()} ${visibleCount === 1 ? 'entry' : 'entries'}`;
-
+            if (badge) {
+                badge.textContent = `${totalItems.toLocaleString()} ${totalItems === 1 ? 'entry' : 'entries'}`;
+            }
+            
+            // Show/hide pagination controls
+            const bottomPagination = document.getElementById('bottomPagination');
+            
+            if (totalPages > 1) {
+                if (bottomPagination) {
+                    bottomPagination.style.display = 'flex';
+                    generatePaginationButtons('bottomPaginationList', totalPages);
+                }
+            } else {
+                if (bottomPagination) bottomPagination.style.display = 'none';
+            }
+        }
+        
+        function generatePaginationButtons(containerId, totalPages) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            // Previous button
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = currentPage === 1 
+                ? '<span class="page-link"><i class="fas fa-chevron-left"></i></span>'
+                : '<a class="page-link" href="#" onclick="changePage(' + (currentPage - 1) + '); return false;"><i class="fas fa-chevron-left"></i></a>';
+            container.appendChild(prevLi);
+            
+            // Page numbers
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            // First page + ellipsis
+            if (startPage > 1) {
+                const firstLi = document.createElement('li');
+                firstLi.className = 'page-item';
+                firstLi.innerHTML = '<a class="page-link" href="#" onclick="changePage(1); return false;">1</a>';
+                container.appendChild(firstLi);
+                
+                if (startPage > 2) {
+                    const ellipsisLi = document.createElement('li');
+                    ellipsisLi.className = 'page-item disabled';
+                    ellipsisLi.innerHTML = '<span class="page-link">...</span>';
+                    container.appendChild(ellipsisLi);
+                }
+            }
+            
+            // Main page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = i === currentPage 
+                    ? `<span class="page-link">${i}</span>`
+                    : `<a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>`;
+                container.appendChild(li);
+            }
+            
+            // Last page + ellipsis
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsisLi = document.createElement('li');
+                    ellipsisLi.className = 'page-item disabled';
+                    ellipsisLi.innerHTML = '<span class="page-link">...</span>';
+                    container.appendChild(ellipsisLi);
+                }
+                
+                const lastLi = document.createElement('li');
+                lastLi.className = 'page-item';
+                lastLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${totalPages}); return false;">${totalPages}</a>`;
+                container.appendChild(lastLi);
+            }
+            
+            // Next button
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = currentPage === totalPages 
+                ? '<span class="page-link"><i class="fas fa-chevron-right"></i></span>'
+                : '<a class="page-link" href="#" onclick="changePage(' + (currentPage + 1) + '); return false;"><i class="fas fa-chevron-right"></i></a>';
+            container.appendChild(nextLi);
+        }
+        
+        function changePage(page) {
+            currentPage = page;
+            updatePagination();
+            updateRowsVisibility();
+            
+            // Scroll to top of table
+            const logContainer = document.querySelector('.log-container');
+            if (logContainer) {
+                logContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function updateRowsVisibility() {
+            // Hide all rows first
+            allRows.forEach(row => {
+                row.style.display = 'none';
+                // Also hide any associated stack trace rows
+                const stackRow = document.getElementById(`stacktrace-${row.dataset.index}`);
+                if (stackRow) {
+                    stackRow.style.display = 'none';
+                }
+            });
+            
+            // Show current page rows
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageRows = filteredRows.slice(start, end);
+            
+            pageRows.forEach(row => {
+                row.style.display = '';
+                // Show stack trace if it was previously visible
+                const stackRow = document.getElementById(`stacktrace-${row.dataset.index}`);
+                if (stackRow && !stackRow.classList.contains('d-none')) {
+                    stackRow.style.display = '';
+                }
+            });
+            
+            // Show/hide no data message
             const noDataRow = document.getElementById('noDataRow');
             const originalNoData = document.querySelector('.no-data-row:not(#noDataRow)');
-
-            // Only show no data row if we have entries to filter but none are visible
-            if (logRows.length > 0 && visibleCount === 0) {
-                noDataRow.style.display = '';
-                if (originalNoData) originalNoData.style.display = 'none';
+            
+            if (filteredRows.length === 0) {
+                if (allRows.length > 0) {
+                    // We have entries but none match the filter
+                    noDataRow.style.display = '';
+                    if (originalNoData) originalNoData.style.display = 'none';
+                } else {
+                    // No entries at all
+                    noDataRow.style.display = 'none';
+                    if (originalNoData) originalNoData.style.display = '';
+                }
             } else {
                 noDataRow.style.display = 'none';
-                if (originalNoData && logRows.length === 0) {
-                    originalNoData.style.display = '';
-                } else if (originalNoData) {
-                    originalNoData.style.display = 'none';
-                }
+                if (originalNoData) originalNoData.style.display = 'none';
             }
         }
 
@@ -1379,7 +1509,29 @@
                 stackRow.style.display = 'none';
             } else {
                 stackRow.style.display = '';
+                // Format the stack trace for better readability
+                formatStackTrace(index);
             }
+        }
+
+        function formatStackTrace(index) {
+            const stackElement = document.getElementById(`stack-${index}`);
+            if (!stackElement) return;
+
+            let stackContent = stackElement.textContent;
+            
+            // Enhanced stack trace formatting
+            stackContent = stackContent
+                // Highlight frame numbers
+                .replace(/(#\d+)/g, '<span style="color: #fbbf24; font-weight: 600;">$1</span>')
+                // Highlight file paths
+                .replace(/([A-Za-z]:\\[^:\s]+\.[a-zA-Z]+)(\(\d+\))?/g, '<span style="color: #60a5fa;">$1</span><span style="color: #f87171;">$2</span>')
+                // Highlight Unix paths
+                .replace(/(\/[^:\s]+\.[a-zA-Z]+)(\(\d+\))?/g, '<span style="color: #60a5fa;">$1</span><span style="color: #f87171;">$2</span>')
+                // Add line breaks for better readability
+                .replace(/\n/g, '<br>');
+
+            stackElement.innerHTML = stackContent;
         }
 
         function toggleFilters() {
@@ -1431,38 +1583,6 @@
             if (exportMenu && !exportDropdown.contains(event.target)) {
                 exportMenu.classList.remove('show');
             }
-        });
-
-        // Initialize when DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.level-switch').forEach(levelSwitch => {
-                levelSwitch.addEventListener('click', function() {
-                    toggleLevel(this);
-                });
-            });
-
-            const mainSearchInput = document.getElementById('mainSearchInput');
-            mainSearchInput.addEventListener('input', function() {
-                filterLogs();
-            });
-
-            document.getElementById('noDataRow').style.display = 'none';
-
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
-                    e.preventDefault();
-                    document.getElementById('mainSearchInput').focus();
-                }
-
-                if (e.key === 'Escape') {
-                    mainSearchInput.value = '';
-                    filterLogs();
-                    const exportMenu = document.getElementById('exportMenu');
-                    if (exportMenu) {
-                        exportMenu.classList.remove('show');
-                    }
-                }
-            });
         });
     </script>
 @endpush

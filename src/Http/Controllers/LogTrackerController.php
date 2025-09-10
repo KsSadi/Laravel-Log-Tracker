@@ -24,15 +24,28 @@ class LogTrackerController extends Controller
         $summary = ['total' => 0, 'error' => 0, 'warning' => 0, 'info' => 0, 'debug' => 0];
 
         $dates = [];
-        $logTypesCount = ['error' => 0, 'warning' => 0, 'info' => 0, 'debug' => 0];
+        // Initialize log types count with all configured levels
+        $configuredLevels = array_keys(config('log-tracker.log_levels', []));
+        $logTypesCount = [];
+        foreach ($configuredLevels as $level) {
+            if ($level !== 'total') { // Exclude 'total' as it's not a real log level
+                $logTypesCount[$level] = 0;
+            }
+        }
+        
         $recentLogs = []; // Store all log entries
         $errorCounts = []; // Store error types and their counts
         $peakHours = array_fill(0, 24, 0); // Track error count per hour
 
-        // Generate last 7 days' dates
+        // Generate last 7 days' dates with dynamic levels
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
-            $dates[$date] = ['error' => 0, 'warning' => 0, 'info' => 0, 'debug' => 0];
+            $dates[$date] = [];
+            foreach ($configuredLevels as $level) {
+                if ($level !== 'total') {
+                    $dates[$date][$level] = 0;
+                }
+            }
         }
 
         // Today's total log count
@@ -82,17 +95,22 @@ class LogTrackerController extends Controller
                 if (isset($entry['timestamp']) && preg_match('/(\d{4}-\d{2}-\d{2})/', $entry['timestamp'], $match)) {
                     $logDate = $match[1];
 
-                    // Count logs for last 7 days
-                    if (isset($dates[$logDate]) && isset($dates[$logDate][$entry['level']])) {
+                    // Count logs for last 7 days with dynamic level support
+                    if (isset($dates[$logDate])) {
+                        // Ensure the level exists in this date, initialize if not
+                        if (!isset($dates[$logDate][$entry['level']])) {
+                            $dates[$logDate][$entry['level']] = 0;
+                        }
                         $dates[$logDate][$entry['level']]++;
                     }
 
-                    // Count today's logs
+                    // Count today's logs with dynamic level support  
                     if ($logDate === $today) {
                         $todaysTotalLogs++;
-                        if (isset($newLogsToday[$entry['level']])) {
-                            $newLogsToday[$entry['level']]++;
+                        if (!isset($newLogsToday[$entry['level']])) {
+                            $newLogsToday[$entry['level']] = 0;
                         }
+                        $newLogsToday[$entry['level']]++;
                     }
                 }
 
@@ -140,15 +158,28 @@ class LogTrackerController extends Controller
             $summary = ['total' => 0, 'error' => 0, 'warning' => 0, 'info' => 0, 'debug' => 0];
 
             $dates = [];
-            $logTypesCount = ['error' => 0, 'warning' => 0, 'info' => 0, 'debug' => 0];
+            // Initialize log types count with all configured levels
+            $configuredLevels = array_keys(config('log-tracker.log_levels', []));
+            $logTypesCount = [];
+            foreach ($configuredLevels as $level) {
+                if ($level !== 'total') { // Exclude 'total' as it's not a real log level
+                    $logTypesCount[$level] = 0;
+                }
+            }
+            
             $recentLogs = []; // Store all log entries
             $errorCounts = []; // Store error types and their counts
             $peakHours = array_fill(0, 24, 0); // Track error count per hour
 
-            // Generate last 7 days' dates
+            // Generate last 7 days' dates with dynamic levels
             for ($i = 6; $i >= 0; $i--) {
                 $date = now()->subDays($i)->format('Y-m-d');
-                $dates[$date] = ['error' => 0, 'warning' => 0, 'info' => 0, 'debug' => 0];
+                $dates[$date] = [];
+                foreach ($configuredLevels as $level) {
+                    if ($level !== 'total') {
+                        $dates[$date][$level] = 0;
+                    }
+                }
             }
 
             // Today's total log count
@@ -189,17 +220,22 @@ class LogTrackerController extends Controller
                     if (isset($entry['timestamp']) && preg_match('/(\d{4}-\d{2}-\d{2})/', $entry['timestamp'], $match)) {
                         $logDate = $match[1];
 
-                        // Count logs for last 7 days
-                        if (isset($dates[$logDate]) && isset($dates[$logDate][$entry['level']])) {
+                        // Count logs for last 7 days with dynamic level support
+                        if (isset($dates[$logDate])) {
+                            // Ensure the level exists in this date, initialize if not
+                            if (!isset($dates[$logDate][$entry['level']])) {
+                                $dates[$logDate][$entry['level']] = 0;
+                            }
                             $dates[$logDate][$entry['level']]++;
                         }
 
-                        // Count today's logs
+                        // Count today's logs with dynamic level support
                         if ($logDate === $today) {
                             $todaysTotalLogs++;
-                            if (isset($newLogsToday[$entry['level']])) {
-                                $newLogsToday[$entry['level']]++;
+                            if (!isset($newLogsToday[$entry['level']])) {
+                                $newLogsToday[$entry['level']] = 0;
                             }
+                            $newLogsToday[$entry['level']]++;
                         }
                     }
 
@@ -298,17 +334,44 @@ class LogTrackerController extends Controller
                     'file_error' => $logData['error'],
                 ];
             } else {
-                $counts[$logFile] = [
+                // Initialize all level counts
+                $levelCounts = [
                     'total' => $logData['total'],
-                    'error' => count(array_filter($logData['entries'], function ($entry) {
-                        return $entry['level'] === 'error';
-                    })),
-                    'warning' => count(array_filter($logData['entries'], function ($entry) {
-                        return $entry['level'] === 'warning';
-                    })),
-                    'info' => count(array_filter($logData['entries'], function ($entry) {
-                        return $entry['level'] === 'info';
-                    })),
+                    'emergency' => 0,
+                    'alert' => 0,
+                    'critical' => 0,
+                    'error' => 0,
+                    'warning' => 0,
+                    'notice' => 0,
+                    'info' => 0,
+                    'debug' => 0
+                ];
+                
+                // Count each level
+                foreach ($logData['entries'] as $entry) {
+                    $level = strtolower($entry['level']);
+                    if (isset($levelCounts[$level])) {
+                        $levelCounts[$level]++;
+                    }
+                }
+                
+                // Calculate "other" levels (everything except critical and error)
+                $otherCount = $levelCounts['emergency'] + $levelCounts['alert'] + 
+                             $levelCounts['warning'] + $levelCounts['notice'] + 
+                             $levelCounts['info'] + $levelCounts['debug'];
+                
+                $counts[$logFile] = [
+                    'total' => $levelCounts['total'],
+                    'critical' => $levelCounts['critical'],
+                    'error' => $levelCounts['error'],
+                    'other' => $otherCount,
+                    // Detailed counts for hover tooltips
+                    'emergency' => $levelCounts['emergency'],
+                    'alert' => $levelCounts['alert'],
+                    'warning' => $levelCounts['warning'],
+                    'notice' => $levelCounts['notice'],
+                    'info' => $levelCounts['info'],
+                    'debug' => $levelCounts['debug']
                 ];
             }
         }
@@ -329,11 +392,9 @@ class LogTrackerController extends Controller
 
     public function show($logName, Request $request)
     {
-        $page = max(1, (int) $request->get('page', 1));
-        $perPage = config('log-tracker.log_per_page', 50);
-        
         $logFiles = LogTracker::getLogFiles();
-        $logData = LogTracker::getLogEntries($logName, $page, $perPage);
+        // Load ALL entries for client-side pagination and filtering
+        $logData = LogTracker::getAllLogEntries($logName);
         $logConfig = config('log-tracker.log_levels', []);
 
         // Check if there's an error (file too large or not found)
@@ -344,7 +405,8 @@ class LogTrackerController extends Controller
                 'entries' => [],
                 'counts' => ['total' => 0, 'error' => 0, 'warning' => 0, 'info' => 0, 'debug' => 0],
                 'logLevels' => [],
-                'pagination' => ['current_page' => 1, 'last_page' => 1, 'per_page' => $perPage, 'total' => 0, 'from' => 0, 'to' => 0],
+                'totalEntries' => 0,
+                'perPage' => config('log-tracker.log_per_page', 50),
                 'error' => $logData['error'],
                 'file_size_mb' => isset($logData['file_size_mb']) ? $logData['file_size_mb'] : null,
                 'max_size_mb' => isset($logData['max_size_mb']) ? $logData['max_size_mb'] : null,
@@ -365,43 +427,34 @@ class LogTrackerController extends Controller
             ];
         })->toArray();
 
-        // Count log levels for current page
-        $counts = [
-            'total' => $logData['total'],
-            'error' => count(array_filter($entries, function ($entry) {
-                return $entry['level'] === 'error';
-            })),
-            'warning' => count(array_filter($entries, function ($entry) {
-                return $entry['level'] === 'warning';
-            })),
-            'info' => count(array_filter($entries, function ($entry) {
-                return $entry['level'] === 'info';
-            })),
-            'debug' => count(array_filter($entries, function ($entry) {
-                return $entry['level'] === 'debug';
-            })),
-        ];
-
-        // Pass log level configurations to the view
-        $logLevels = [];
-        foreach (['error', 'warning', 'info', 'debug'] as $level) {
-            $logLevels[$level] = [
-                'color' => isset($logConfig[$level]['color']) ? $logConfig[$level]['color'] : '#6c757d',
-                'icon' => isset($logConfig[$level]['icon']) ? $logConfig[$level]['icon'] : 'fas fa-circle',
-            ];
+        // Count log levels for current page - get all configured levels
+        $counts = ['total' => $logData['total']];
+        
+        // Initialize counts for all configured log levels
+        foreach ($logConfig as $level => $config) {
+            if ($level !== 'total') { // Skip 'total' as it's not a real log level
+                $counts[$level] = count(array_filter($entries, function ($entry) use ($level) {
+                    return $entry['level'] === $level;
+                }));
+            }
         }
 
-        // Pagination data
-        $pagination = [
-            'current_page' => $logData['current_page'],
-            'last_page' => $logData['last_page'],
-            'per_page' => $logData['per_page'],
-            'total' => $logData['total'],
-            'from' => $logData['from'],
-            'to' => $logData['to'],
-        ];
+        // Pass only log level configurations that have entries (count > 0) to the view
+        $logLevels = [];
+        foreach ($logConfig as $level => $config) {
+            if ($level !== 'total' && isset($counts[$level]) && $counts[$level] > 0) {
+                $logLevels[$level] = [
+                    'color' => isset($config['color']) ? $config['color'] : '#6c757d',
+                    'icon' => isset($config['icon']) ? $config['icon'] : 'fas fa-circle',
+                ];
+            }
+        }
 
-        return $this->themedView('log-details', compact('logFiles', 'logName', 'entries', 'counts', 'logLevels', 'pagination'));
+        // Client-side pagination data
+        $totalEntries = count($entries);
+        $perPage = config('log-tracker.log_per_page', 50);
+
+        return $this->themedView('log-details', compact('logFiles', 'logName', 'entries', 'counts', 'logLevels', 'totalEntries', 'perPage'));
     }
 
     public function download($logName)

@@ -35,7 +35,7 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 # Table of Contents
 
 - [Installation](#installation)
-- [🔄 Upgrading to v2.1](#-upgrading-to-v21)
+- [🔄 Upgrading to v2.2](#-upgrading-to-v21)
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Themes](#themes)
@@ -89,7 +89,7 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 
 ---
 
-# 🔄 Upgrading to v2.1
+# 🔄 Upgrading to v2.2
 
 ## **⚠️ Important for Existing Users**
 
@@ -123,10 +123,10 @@ php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvid
 ```
 
 **Method C: Download and Compare**
-- Download the latest config: [config/log-tracker.php](https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/packages/Laravel-Log-Tracker/config/log-tracker.php)
+- Download the latest config: [config/log-tracker.php](https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/config/log-tracker.php)
 - Compare with your existing config and add new options
 
-### **🆕 New in v2.1 Config:**
+### **🆕 New in v2.2 Config:**
 - `log_files_per_page` - Configure pagination for log files listing
 - Enhanced `log_levels` with dynamic colors and icons
 - Additional pagination settings
@@ -585,26 +585,6 @@ Found a bug? Please report it with:
 - Steps to reproduce
 - Expected vs actual behavior
 - Error messages or logs
-
----
-
-## 🎉 **What's New in v2.1**
-
-### 🚀 **Performance & Reliability Improvements**
-- **Smart File Pagination**: Handles large numbers of log files efficiently
-- **Enhanced Log Pagination**: Improved navigation through log entries
-- **Max File Size Protection**: Prevents memory issues with oversized files
-- **Dynamic Laravel Log Levels**: Beautiful colors and icons for better visual feedback
-
-### 🐛 **Bug Fixes**
-- Resolved HTML syntax errors affecting UI rendering
-- Enhanced code efficiency and performance optimizations
-- Improved error handling for edge cases
-
-### 🔧 **Technical Enhancements**
-- Optimized codebase for better maintainability
-- Enhanced memory management for large files
-- Improved UI responsiveness and reliability
 
 ---
 

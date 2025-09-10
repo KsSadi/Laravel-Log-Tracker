@@ -2,6 +2,45 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.2] - 2025-09-09
+### 🎨 UI/UX Enhancement Release - Version 2.2
+#### ✨ Added
+- **Client-Side Pagination**: Implemented full client-side pagination system for instant navigation without server requests
+- **Full-File Search**: Enhanced search functionality to work across all log entries, not just current page
+- **Dynamic Pagination Configuration**: Added fully configurable pagination system through `config/log-tracker.php`
+- **Interactive Hover Tooltips**: Added detailed mouse hover effects on all log level stat badges showing exact counts and breakdowns
+- **Enhanced Log Level Display**: Improved Smart Filters to dynamically show only log levels with actual entries (count > 0)
+- **Responsive 4-Column Layout**: Optimized log list table for better mobile and tablet compatibility
+
+#### 🔧 Improved
+- **Pagination System**: Complete overhaul from server-side to client-side pagination for better performance:
+  - **Instant Navigation**: Page changes happen instantly without server round-trips
+  - **Config-Driven**: Pagination per-page values fully controlled by `log_per_page` config setting
+  - **Search Integration**: Search works across entire file, pagination adapts to filtered results
+  - **Memory Efficient**: JavaScript handles large datasets efficiently with optimized DOM manipulation
+- **Log Level Categorization**: Restructured log display into professional 4-column layout:
+  - **Total**: Overall log count with hover details
+  - **Critical**: Critical logs only with individual count
+  - **Errors**: Error logs only with individual count  
+  - **Others**: Combined Emergency, Alert, Warning, Notice, Info, Debug levels with detailed breakdown on hover
+- **Smart Filters Enhancement**: Modified controller logic to show all 9 configured log levels but display only those with entries > 0
+- **Cross-Theme Consistency**: Applied uniform improvements across both GlowStack and LiteFlow themes
+- **Mobile Responsiveness**: Fixed responsive design issues while maintaining professional log categorization
+
+#### 🐛 Fixed
+- **LiteFlow Theme Simplification**: Removed duplicate search bars and pagination controls for cleaner interface
+- **Pagination Controls**: Cleaned up dual pagination systems, optimized for single search and single pagination
+- **JavaScript Event Handling**: Fixed search input synchronization and pagination button generation
+- **Responsive Design Issues**: Resolved table layout breaking on mobile devices caused by too many columns
+- **Log Level Display Logic**: Fixed Smart Filters showing hardcoded 4 levels instead of dynamic configuration-based levels
+- **Theme Consistency**: Ensured both themes display identical functionality and layout structure
+
+#### 🚀 Performance Enhancements
+- **Zero Server Requests**: Pagination and search now work entirely client-side for instant responses
+- **Optimized Rendering**: Efficient DOM manipulation for large log files
+- **Memory Management**: Smart row visibility management to handle thousands of log entries
+- **Keyboard Shortcuts**: Added Ctrl+F for search focus and Escape for clearing search/closing menus
+
 ## [2.1] - 2025-08-20
 ### 🚀 Performance & Bug Fix Release - Version 2.1
 #### ✨ Added

@@ -70,6 +70,8 @@ class LogParserService
             if (preg_match('/\[(.*?)\]\s(\w+)\.(\w+):\s(.*)/', $line, $matches)) {
                 // Save previous entry before starting a new one
                 if ($currentEntry) {
+                    // Clean up stack trace - remove leading/trailing empty lines
+                    $currentEntry['stack'] = trim($currentEntry['stack']);
                     $entries[] = $currentEntry;
                 }
 
@@ -80,14 +82,24 @@ class LogParserService
                     'message' => $matches[4],
                     'stack' => '', // Stack trace will be collected separately
                 ];
-            } elseif ($currentEntry) {
-                // This is part of a stack trace, append it to the last entry
-                $currentEntry['stack'] .= "\n" . $line;
+            } elseif ($currentEntry && !empty(trim($line))) {
+                // Only append non-empty lines that look like stack trace content
+                $trimmedLine = trim($line);
+                
+                // Check if this looks like a stack trace line
+                if ($this->isStackTraceLine($trimmedLine)) {
+                    if (!empty($currentEntry['stack'])) {
+                        $currentEntry['stack'] .= "\n";
+                    }
+                    $currentEntry['stack'] .= $line;
+                }
             }
         }
 
         // Save the last log entry
         if ($currentEntry) {
+            // Clean up final stack trace
+            $currentEntry['stack'] = trim($currentEntry['stack']);
             $entries[] = $currentEntry;
         }
 
@@ -155,6 +167,8 @@ class LogParserService
             if (preg_match('/\[(.*?)\]\s(\w+)\.(\w+):\s(.*)/', $line, $matches)) {
                 // Save previous entry before starting a new one
                 if ($currentEntry) {
+                    // Clean up stack trace - remove leading/trailing empty lines
+                    $currentEntry['stack'] = trim($currentEntry['stack']);
                     $entries[] = $currentEntry;
                 }
 
@@ -165,14 +179,24 @@ class LogParserService
                     'message' => $matches[4],
                     'stack' => '', // Stack trace will be collected separately
                 ];
-            } elseif ($currentEntry) {
-                // This is part of a stack trace, append it to the last entry
-                $currentEntry['stack'] .= "\n" . $line;
+            } elseif ($currentEntry && !empty(trim($line))) {
+                // Only append non-empty lines that look like stack trace content
+                $trimmedLine = trim($line);
+                
+                // Check if this looks like a stack trace line
+                if ($this->isStackTraceLine($trimmedLine)) {
+                    if (!empty($currentEntry['stack'])) {
+                        $currentEntry['stack'] .= "\n";
+                    }
+                    $currentEntry['stack'] .= $line;
+                }
             }
         }
 
         // Save the last log entry
         if ($currentEntry) {
+            // Clean up final stack trace
+            $currentEntry['stack'] = trim($currentEntry['stack']);
             $entries[] = $currentEntry;
         }
 
@@ -180,6 +204,62 @@ class LogParserService
             'entries' => $entries,
             'total' => count($entries),
         ];
+    }
+
+    /**
+     * Check if a line looks like part of a stack trace
+     */
+    private function isStackTraceLine($line)
+    {
+        // Skip completely empty lines
+        if (empty(trim($line))) {
+            return false;
+        }
+
+        // Common stack trace patterns - ordered by specificity
+        $patterns = [
+            '/^#\d+\s/',                        // #0, #1, #2, etc. (most common)
+            '/^Stack trace:/',                  // Stack trace header
+            '/^[a-zA-Z]:\\\\.*\.php\(\d+\)/',  // Windows file paths with line numbers
+            '/^\/.*\.php\(\d+\)/',             // Unix file paths with line numbers
+            '/\s+at\s.*\(/',                   // Java-style stack traces
+            '/\s+in\s.*\.php:\d+/',            // PHP error traces
+            '/thrown in\s.*\.php\son\sline\s\d+/', // Exception thrown messages
+            '/^\s+Object\(.*\)/',              // Object references in traces
+            '/^\s+Closure\(.*\)/',             // Closure references
+            '/Illuminate\\\\.*::/',            // Laravel framework references
+            '/^\s*\}\s*$/',                    // Closing braces (end of objects)
+            '/^Previous exception:/',          // Previous exception headers
+        ];
+
+        // Quick rejection for obvious non-stack lines
+        $rejectPatterns = [
+            '/^[a-zA-Z][a-zA-Z0-9\s]*:/',     // Simple key-value pairs
+            '/^\d{4}-\d{2}-\d{2}/',           // Date formats
+            '/^(GET|POST|PUT|DELETE|PATCH)\s/', // HTTP methods
+            '/^(INFO|DEBUG|ERROR|WARNING)/',   // Log level indicators
+        ];
+
+        // First check if it should be rejected
+        foreach ($rejectPatterns as $pattern) {
+            if (preg_match($pattern, $line)) {
+                return false;
+            }
+        }
+
+        // Then check if it matches stack trace patterns
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $line)) {
+                return true;
+            }
+        }
+
+        // Additional heuristic: if line contains file paths and parentheses, likely stack trace
+        if (preg_match('/[\\\\\/].*\.[a-z]+\(\d+\)/', $line)) {
+            return true;
+        }
+
+        return false;
     }
 
 

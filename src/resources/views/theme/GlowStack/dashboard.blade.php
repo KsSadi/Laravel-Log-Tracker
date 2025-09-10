@@ -1123,24 +1123,35 @@
 
         // Initialize Charts
         function initializeCharts() {
-            // Log Types Data
-            let logLabels = ['Error', 'Warning', 'Info', 'Debug'];
-            let logData = {!! json_encode(array_values($logTypesCount)) !!};
+            // Dynamic Log Types Data
+            const logLevelsConfig = {!! json_encode(config('log-tracker.log_levels')) !!};
+            const logTypesData = {!! json_encode($logTypesCount) !!};
+            
+            // Filter out levels with 0 entries and prepare data
+            let chartData = [];
+            let chartLabels = [];
+            let chartColors = [];
+            
+            Object.entries(logTypesData).forEach(([level, count]) => {
+                if (count > 0 && level !== 'total') {
+                    chartData.push(count);
+                    chartLabels.push(level.charAt(0).toUpperCase() + level.slice(1));
+                    
+                    // Get color from config or fallback
+                    const levelColor = logLevelsConfig[level]?.color || '#6c757d';
+                    chartColors.push(levelColor);
+                }
+            });
 
             // Enhanced Doughnut Chart
             const typesCtx = document.getElementById('logTypesChart').getContext('2d');
             typesChart = new Chart(typesCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: logLabels,
+                    labels: chartLabels,
                     datasets: [{
-                        data: logData,
-                        backgroundColor: [
-                            '#ff6b9d',
-                            '#f6a192',
-                            '#74b9ff',
-                            '#00cec9'
-                        ],
+                        data: chartData,
+                        backgroundColor: chartColors,
                         borderWidth: 0,
                         hoverOffset: 15
                     }]
@@ -1176,11 +1187,43 @@
                 }
             });
 
-            // Activity Chart Data
-            let logDates = {!! json_encode(array_keys($dates)) !!};
-            let errorData = {!! json_encode(array_column($dates, 'error')) !!};
-            let warningData = {!! json_encode(array_column($dates, 'warning')) !!};
-            let infoData = {!! json_encode(array_column($dates, 'info')) !!};
+            // Activity Chart Data - Dynamic levels
+            const datesData = {!! json_encode($dates) !!};
+            const logDates = Object.keys(datesData);
+            
+            // Create datasets for each log level that has data
+            const datasets = [];
+            const levelColors = {};
+            
+            // Get colors for each level
+            Object.keys(logLevelsConfig).forEach(level => {
+                if (level !== 'total') {
+                    levelColors[level] = logLevelsConfig[level]?.color || '#6c757d';
+                }
+            });
+            
+            // Create dataset for each level that has at least some data
+            Object.keys(logTypesData).forEach(level => {
+                if (logTypesData[level] > 0 && level !== 'total') {
+                    const levelData = logDates.map(date => datesData[date][level] || 0);
+                    const color = levelColors[level];
+                    
+                    datasets.push({
+                        label: level.charAt(0).toUpperCase() + level.slice(1),
+                        data: levelData,
+                        borderColor: color,
+                        backgroundColor: color + '1a', // Add transparency
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: color,
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    });
+                }
+            });
 
             // Enhanced Line Chart
             const activityCtx = document.getElementById('logActivityChart').getContext('2d');
@@ -1191,50 +1234,7 @@
                         const d = new Date(date);
                         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                     }),
-                    datasets: [
-                        {
-                            label: 'Errors',
-                            data: errorData,
-                            borderColor: '#ff6b9d',
-                            backgroundColor: 'rgba(255, 107, 157, 0.1)',
-                            borderWidth: 3,
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#ff6b9d',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 6,
-                            pointHoverRadius: 8
-                        },
-                        {
-                            label: 'Warnings',
-                            data: warningData,
-                            borderColor: '#f6a192',
-                            backgroundColor: 'rgba(246, 161, 146, 0.1)',
-                            borderWidth: 3,
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#f6a192',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 6,
-                            pointHoverRadius: 8
-                        },
-                        {
-                            label: 'Info',
-                            data: infoData,
-                            borderColor: '#74b9ff',
-                            backgroundColor: 'rgba(116, 185, 255, 0.1)',
-                            borderWidth: 3,
-                            tension: 0.4,
-                            fill: true,
-                            pointBackgroundColor: '#74b9ff',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 6,
-                            pointHoverRadius: 8
-                        }
-                    ]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
@@ -1439,28 +1439,38 @@
             activityCard.classList.add('updating');
             typesCard.classList.add('updating');
 
-            // Update Activity Chart
-            if (activityChart && dates) {
-                const errorData = Object.values(dates).map(date => date.error || 0);
-                const warningData = Object.values(dates).map(date => date.warning || 0);
-                const infoData = Object.values(dates).map(date => date.info || 0);
-
-                activityChart.data.datasets[0].data = errorData;
-                activityChart.data.datasets[1].data = warningData;
-                activityChart.data.datasets[2].data = infoData;
+            // Update Activity Chart with dynamic levels
+            if (activityChart && dates && Object.keys(dates).length > 0) {
+                const firstDate = Object.values(dates)[0];
+                const availableLevels = Object.keys(firstDate);
+                
+                // Update each dataset
+                activityChart.data.datasets.forEach((dataset, index) => {
+                    if (availableLevels[index]) {
+                        const level = availableLevels[index];
+                        const levelData = Object.values(dates).map(date => date[level] || 0);
+                        dataset.data = levelData;
+                    }
+                });
+                
                 activityChart.update('active');
             }
 
-            // Update Types Chart
+            // Update Types Chart with dynamic levels
             if (typesChart && logTypesCount) {
-                const newData = [
-                    logTypesCount.error || 0,
-                    logTypesCount.warning || 0,
-                    logTypesCount.info || 0,
-                    logTypesCount.debug || 0
-                ];
+                // Filter out levels with 0 entries
+                const filteredData = [];
+                const filteredLabels = [];
+                
+                Object.entries(logTypesCount).forEach(([level, count]) => {
+                    if (count > 0 && level !== 'total') {
+                        filteredData.push(count);
+                        filteredLabels.push(level.charAt(0).toUpperCase() + level.slice(1));
+                    }
+                });
 
-                typesChart.data.datasets[0].data = newData;
+                typesChart.data.datasets[0].data = filteredData;
+                typesChart.data.labels = filteredLabels;
                 typesChart.update('active');
             }
 
@@ -1638,13 +1648,19 @@
         }
 
         function getLogLevelConfig(level) {
-            const configs = {
-                error: { color: '#ef4444', icon: 'fas fa-exclamation-circle' },
-                warning: { color: '#f59e0b', icon: 'fas fa-exclamation-triangle' },
-                info: { color: '#3b82f6', icon: 'fas fa-info-circle' },
-                debug: { color: '#6b7280', icon: 'fas fa-bug' }
-            };
-            return configs[level.toLowerCase()] || { color: '#6c757d', icon: 'fas fa-circle' };
+            // Dynamic config from Laravel config file
+            const configs = {!! json_encode(config('log-tracker.log_levels')) !!};
+            const levelKey = level.toLowerCase();
+            
+            if (configs[levelKey]) {
+                return {
+                    color: configs[levelKey].color,
+                    icon: configs[levelKey].icon
+                };
+            }
+            
+            // Fallback for unknown levels
+            return { color: '#6c757d', icon: 'fas fa-circle' };
         }
 
         // Status Management
