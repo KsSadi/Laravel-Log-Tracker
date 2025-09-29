@@ -929,6 +929,64 @@
                 font-size: 0.75rem;
             }
         }
+
+        /* Clear All Logs Button - Matching Entries Badge Shape */
+        .clear-logs-btn {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+            margin-left: 0.75rem;
+            text-decoration: none;
+            line-height: 1;
+            min-height: 36px;
+            white-space: nowrap;
+        }
+
+        .clear-logs-btn:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+            color: white;
+            text-decoration: none;
+        }
+
+        .clear-logs-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+
+        .clear-logs-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .clear-logs-btn i {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            transition: transform 0.2s ease;
+        }
+
+        .clear-logs-btn:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Content header alignment fix */
+        .content-header > div:last-child {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
     </style>
 @endpush
 
@@ -943,6 +1001,31 @@
             </ol>
         </nav>
     </div>
+
+    {{-- Flash Messages --}}
+    @if(session('success'))
+        <div class="alert alert-success mb-4" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border: 1px solid #10b981; border-radius: 12px; padding: 1.5rem;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle me-3" style="font-size: 1.5rem; color: #059669;"></i>
+                <div>
+                    <h5 class="mb-1" style="color: #065f46; font-weight: 600;">Success</h5>
+                    <p class="mb-0" style="color: #047857;">{{ session('success') }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger mb-4" style="background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); border: 1px solid #f87171; border-radius: 12px; padding: 1.5rem;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle me-3" style="font-size: 1.5rem; color: #dc2626;"></i>
+                <div>
+                    <h5 class="mb-1" style="color: #991b1b; font-weight: 600;">Error</h5>
+                    <p class="mb-0" style="color: #7f1d1d;">{{ session('error') }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
 
     {{-- File Size Error Alert --}}
     @if(isset($error))
@@ -1082,7 +1165,15 @@
         <div class="content-card">
             <div class="content-header">
                 <h5 class="content-title">Log Entries</h5>
-                <div class="content-badge" id="entriesCount">{{ number_format(count($entries)) }} total entries</div>
+                <div style="display: flex; align-items: center;">
+                    <div class="content-badge" id="entriesCount">{{ number_format(count($entries)) }} total entries</div>
+                    @if(config('log-tracker.allow_delete', false) && count($entries) > 0)
+                        <button type="button" class="clear-logs-btn" onclick="confirmClearLogs('{{ $logName }}')">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Clear All Logs</span>
+                        </button>
+                    @endif
+                </div>
             </div>
 
             <div class="search-bar">
@@ -1533,6 +1624,36 @@
                 exportMenu.classList.remove('show');
             }
         });
+
+        // Clear logs functionality
+        function confirmClearLogs(logName) {
+            if (confirm('Are you sure you want to clear all log entries from this file? This action cannot be undone.')) {
+                clearLogs(logName);
+            }
+        }
+
+        function clearLogs(logName) {
+            // Show loading state
+            const clearBtn = document.querySelector('.clear-logs-btn');
+            const originalContent = clearBtn.innerHTML;
+            clearBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Clearing...</span>';
+            clearBtn.disabled = true;
+
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `{{ url(config('log-tracker.route_prefix', 'log-tracker')) }}/clear/${logName}`;
+            
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}';
+            form.appendChild(csrfInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
     </script>
 @endpush
 

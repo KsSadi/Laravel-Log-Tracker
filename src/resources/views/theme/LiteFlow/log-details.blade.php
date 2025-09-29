@@ -643,26 +643,6 @@
             margin: 0;
         }
 
-        /* Footer */
-        .footer {
-            background-color: white;
-            border-top: 1px solid var(--gray-200);
-            margin-top: 3rem;
-            padding: 1.5rem 0;
-        }
-
-        .footer-content {
-            text-align: center;
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        .footer-brand {
-            color: var(--primary-color);
-            font-weight: 600;
-            text-decoration: none;
-        }
-
         /* Responsive Design */
         @media (max-width: 1024px) {
             .header-actions {
@@ -918,6 +898,65 @@
                 font-size: 0.75rem;
             }
         }
+
+        /* Clear All Logs Button - Matching Entries Badge Shape */
+        .clear-logs-btn {
+            background: #ef4444;
+            color: white;
+            border: 1px solid #dc2626;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+            margin-left: 0.75rem;
+            text-decoration: none;
+            line-height: 1;
+            min-height: 36px;
+            white-space: nowrap;
+        }
+
+        .clear-logs-btn:hover {
+            background: #dc2626;
+            border-color: #b91c1c;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+            color: white;
+            text-decoration: none;
+        }
+
+        .clear-logs-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .clear-logs-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .clear-logs-btn i {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            transition: transform 0.2s ease;
+        }
+
+        .clear-logs-btn:hover i {
+            transform: scale(1.1);
+        }
+
+        /* Content header alignment fix */
+        .content-header > div:last-child {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
     </style>
 @endpush
 
@@ -942,6 +981,31 @@
                 </ol>
             </nav>
         </div>
+
+        {{-- Flash Messages --}}
+        @if(session('success'))
+            <div class="alert alert-success mb-4" style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 1.5rem;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle me-3" style="font-size: 1.5rem; color: #059669;"></i>
+                    <div>
+                        <h5 class="mb-1" style="color: #065f46; font-weight: 600;">Success</h5>
+                        <p class="mb-0" style="color: #047857;">{{ session('success') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger mb-4" style="background-color: #fef2f2; border: 1px solid #fecaca; border-radius: 12px; padding: 1.5rem;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle me-3" style="font-size: 1.5rem; color: var(--danger-color);"></i>
+                    <div>
+                        <h5 class="mb-1" style="color: #991b1b; font-weight: 600;">Error</h5>
+                        <p class="mb-0" style="color: #7f1d1d;">{{ session('error') }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         {{-- File Size Error Alert --}}
         @if(isset($error))
@@ -1150,7 +1214,15 @@
         <div class="content-card">
             <div class="content-header">
                 <h5 class="content-title">Log Entries</h5>
-                <div class="content-badge" id="entriesCount">{{ number_format($totalEntries) }} entries</div>
+                <div style="display: flex; align-items: center;">
+                    <div class="content-badge" id="entriesCount">{{ number_format($totalEntries) }} entries</div>
+                    @if(config('log-tracker.allow_delete', false) && $totalEntries > 0)
+                        <button type="button" class="clear-logs-btn" onclick="confirmClearLogs('{{ $logName }}')">
+                            <i class="fas fa-trash-alt"></i>
+                            <span>Clear All Logs</span>
+                        </button>
+                    @endif
+                </div>
             </div>
 
             <!-- Top Search Bar -->
@@ -1584,5 +1656,35 @@
                 exportMenu.classList.remove('show');
             }
         });
+
+        // Clear logs functionality
+        function confirmClearLogs(logName) {
+            if (confirm('Are you sure you want to clear all log entries from this file? This action cannot be undone.')) {
+                clearLogs(logName);
+            }
+        }
+
+        function clearLogs(logName) {
+            // Show loading state
+            const clearBtn = document.querySelector('.clear-logs-btn');
+            const originalContent = clearBtn.innerHTML;
+            clearBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Clearing...</span>';
+            clearBtn.disabled = true;
+
+            // Create form and submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `{{ url(config('log-tracker.route_prefix', 'log-tracker')) }}/clear/${logName}`;
+            
+            // Add CSRF token
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = '_token';
+            csrfInput.value = '{{ csrf_token() }}';
+            form.appendChild(csrfInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
     </script>
 @endpush

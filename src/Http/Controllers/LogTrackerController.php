@@ -490,6 +490,45 @@ class LogTrackerController extends Controller
     }
 
     /**
+     * Clear log file content without deleting the file
+     */
+    public function clear($logName)
+    {
+        // Check if clearing is enabled in configuration
+        if (!config('log-tracker.allow_delete', false)) {
+            return redirect()
+                ->back()
+                ->with('error', 'Log clearing is disabled. Enable it in log-tracker.allow_delete configuration.');
+        }
+
+        // Sanitize log name to prevent directory traversal
+        $logName = basename($logName);
+        
+        // Ensure the log file exists in the storage/logs directory
+        $logFilePath = storage_path("logs/{$logName}");
+        if (!File::exists($logFilePath)) {
+            return redirect()
+                ->back()
+                ->with('error', 'Log file not found.');
+        }
+
+        try {
+            // Clear file content efficiently while preserving file permissions
+            if (file_put_contents($logFilePath, '') !== false) {
+                return redirect()
+                    ->back()
+                    ->with('success', "Log file '{$logName}' has been cleared successfully.");
+            } else {
+                throw new \Exception('Failed to clear log file.');
+            }
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Failed to clear log file: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Show export form
      */
     public function exportForm()

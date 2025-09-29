@@ -14,6 +14,7 @@ Route::group([
     Route::get('/log-file', [LogTrackerController::class, 'index'])->name('index');
     Route::get('/download/{logName}', [LogTrackerController::class, 'download'])->name('download');
     Route::post('/delete/{logName}', [LogTrackerController::class, 'delete'])->name('delete');
+    Route::post('/clear/{logName}', [LogTrackerController::class, 'clear'])->name('clear');
 
     //  EXPORT ROUTES
     Route::get('/export', [LogTrackerController::class, 'exportForm'])->name('export.form');
