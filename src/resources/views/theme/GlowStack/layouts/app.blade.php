@@ -26,6 +26,7 @@
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            overflow-x: hidden;
         }
 
         /* Modern Navigation */
@@ -382,6 +383,33 @@
             margin: 0;
         }
 
+        .coffee-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            margin-top: 0.75rem;
+        }
+
+        .coffee-button:hover {
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .coffee-button i {
+            font-size: 1rem;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .modern-navbar {
@@ -440,18 +468,22 @@
             width: 8px;
         }
 
+        ::-webkit-scrollbar:horizontal {
+            display: none;
+        }
+
         ::-webkit-scrollbar-track {
             background: rgba(0,0,0,0.05);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--primary-gradient);
+            background: rgba(102, 126, 234, 0.3);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--success-gradient);
+            background: rgba(102, 126, 234, 0.5);
         }
     </style>
     @stack('styles')
@@ -508,7 +540,7 @@
     <div class="container">
         <div class="footer-content">
             <div class="footer-brand">
-                <i class="fa-brands fa-searchengin"></i> LogTracker v2.0
+                <i class="fa-brands fa-searchengin"></i> LogTracker <v2 class="3">v2.3</v2>
             </div>
             <p class="footer-text">
                 © <span id="year"></span>
@@ -517,6 +549,10 @@
                 </a>
                 Efficient logging, effortless insights.
             </p>
+            <a href="https://www.buymeacoffee.com/kssadi" class="coffee-button" target="_blank">
+                <i class="fas fa-coffee"></i>
+                <span>Buy me a coffee</span>
+            </a>
         </div>
     </div>
 </footer>

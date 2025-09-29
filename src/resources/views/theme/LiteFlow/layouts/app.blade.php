@@ -37,6 +37,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
             color: var(--gray-900);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         /* Clean Navigation */
@@ -874,24 +875,47 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Footer */
+        /* Footer - Matching GlowStack Design */
         .footer {
-            background-color: white;
-            border-top: 1px solid var(--gray-200);
-            margin-top: 3rem;
-            padding: 1.5rem 0;
+            background: #2d3748;
+            color: white;
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
         .footer-content {
+            padding: 1.5rem 0;
             text-align: center;
-            color: var(--gray-600);
-            font-size: 0.875rem;
         }
 
         .footer-brand {
-            color: var(--primary-color);
-            font-weight: 600;
+            color: #4facfe;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-link {
+            color: #4facfe;
             text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: #00f2fe;
+            text-decoration: none;
+        }
+
+        .footer-text {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .footer-tagline {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            margin: 0;
         }
 
         /* Responsive Design */
@@ -950,6 +974,10 @@
             width: 6px;
         }
 
+        ::-webkit-scrollbar:horizontal {
+            display: none;
+        }
+
         ::-webkit-scrollbar-track {
             background: var(--gray-100);
         }
@@ -961,6 +989,33 @@
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--gray-400);
+        }
+
+        .coffee-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+            margin-top: 0.75rem;
+        }
+
+        .coffee-button:hover {
+            color: white;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        .coffee-button i {
+            font-size: 1rem;
         }
     </style>
     @stack('styles')
@@ -1016,7 +1071,7 @@
     <div class="container">
         <div class="footer-content">
             <div class="footer-brand">
-                <i class="fa-brands fa-searchengin"></i> LogTracker v2.0
+                <i class="fa-brands fa-searchengin"></i> LogTracker <v2 class="3">v2.3</v2>
             </div>
             <p class="footer-text">
                 © <span id="year"></span>
@@ -1025,6 +1080,10 @@
                 </a>
                 Efficient logging, effortless insights.
             </p>
+            <a href="https://www.buymeacoffee.com/kssadi" class="coffee-button" target="_blank">
+                <i class="fas fa-coffee"></i>
+                <span>Buy me a coffee</span>
+            </a>
         </div>
     </div>
 </footer>

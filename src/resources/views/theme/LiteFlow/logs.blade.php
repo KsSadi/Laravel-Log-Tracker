@@ -636,26 +636,6 @@
             cursor: pointer;
         }
 
-        /* Footer */
-        .footer {
-            background-color: white;
-            border-top: 1px solid var(--gray-200);
-            margin-top: 3rem;
-            padding: 1.5rem 0;
-        }
-
-        .footer-content {
-            text-align: center;
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        .footer-brand {
-            color: var(--primary-color);
-            font-weight: 600;
-            text-decoration: none;
-        }
-
         /* Responsive Design */
         @media (max-width: 1024px) {
             .filter-controls {
