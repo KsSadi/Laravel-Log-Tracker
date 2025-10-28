@@ -14,7 +14,18 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 ![GitHub top language](https://img.shields.io/github/languages/top/KsSadi/Laravel-Log-Tracker.svg)
 ![Packagist Version](https://img.shields.io/packagist/v/kssadi/log-tracker.svg)
 
+---
 
+<div align="center">
+
+### 🏢 Proudly Supported by Business Automation Ltd
+
+*This open-source package is maintained by **[Sadi](https://github.com/KsSadi)** and supported by **[Business Automation Ltd](https://ba-systems.com)***  
+*Building enterprise-grade e-governance and automation solutions across Bangladesh*
+
+</div>
+
+---
 
 ## 🚀 **Key Features**
 ✅ **Interactive Dashboard** – Comprehensive log analytics with charts and real-time insights  
@@ -23,24 +34,22 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 ✅ **Error Pattern Analysis** – Identify top error types and peak error hours  
 ✅ **Advanced Filtering** – Filter logs by level, date range, or custom keywords  
 ✅ **Log File Management** – View, download, delete, and manage log files effortlessly  
-✅ **Smart File Pagination** – Efficiently handle large numbers of log files with pagination *(New in v2.1)*  
-✅ **Dynamic Log Levels** – Laravel log levels with dynamic colors and icons *(New in v2.1)*  
-✅ **Max File Size Protection** – Intelligent file size checking to prevent memory issues *(New in v2.1)*  
+✅ **Smart File Pagination** – Efficiently handle large numbers of log files with pagination   
+✅ **Dynamic Log Levels** – Laravel log levels with dynamic colors and icons  
+✅ **Max File Size Protection** – Intelligent file size checking to prevent memory issues  
 ✅ **Real-time Statistics** – Live log counts and performance metrics  
 ✅ **Stack Trace Viewer** – Detailed error stack traces with syntax highlighting  
 ✅ **Responsive Design** – Works perfectly on desktop, tablet, and mobile devices  
 ✅ **Customizable Configuration** – Tailor log levels, colors, icons, and behavior to your needs  
-✅ **Performance Optimized** – Handles large log files efficiently with enhanced pagination *(Improved in v2.1)*  
+✅ **Performance Optimized** – Handles large log files efficiently with enhanced pagination 
 ✅ **Secure Access** – Built-in authentication and authorization middleware
 # Table of Contents
 
 - [Installation](#installation)
-- [🔄 Upgrading to v2.2](#-upgrading-to-v22)
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [Themes](#themes)
 - [Author](#author)
-- [Contributing](#contributing)
 
 
 ## 🖥️ **System Requirements**
@@ -86,60 +95,6 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
    php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="config"
    ```
    This will publish the `log-tracker.php` configuration file to your `config` directory.
-
----
-
-# 🔄 Upgrading to v2.2
-
-## **⚠️ Important for Existing Users**
-
-If you're upgrading from a previous version (v2.0 or earlier), you **MUST** update your configuration file to get the new features and settings.
-
-### **📋 Quick Upgrade Steps:**
-
-#### **1. Update the Package**
-```bash
-composer update kssadi/log-tracker
-```
-
-#### **2. Update Configuration File** 
-**⚠️ IMPORTANT:** Choose one of these methods:
-
-**Method A: Force Re-publish (Overwrites your config)**
-```bash
-php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="config" --force
-```
-> ⚠️ **Warning:** This will overwrite your existing config. Backup your custom settings first!
-
-**Method B: Manual Merge (Recommended)**
-```bash
-# Backup your current config
-cp config/log-tracker.php config/log-tracker-backup.php
-
-# Publish new config to compare
-php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="config" --force
-
-# Manually merge your custom settings from backup
-```
-
-**Method C: Download and Compare**
-- Download the latest config: [config/log-tracker.php](https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/config/log-tracker.php)
-- Compare with your existing config and add new options
-
-### **🆕 New in v2.1 Config:**
-- `log_files_per_page` - Configure pagination for log files listing
-- Enhanced `log_levels` with dynamic colors and icons
-- Additional pagination settings
-- Improved export configurations
-
-### **✅ Verify Your Upgrade:**
-```bash
-# Check if new config options are available
-php artisan log-tracker:theme list
-
-# Test the new pagination feature
-# Visit: /log-tracker/log-file
-```
 
 ---
 
@@ -540,54 +495,6 @@ Default middleware can be customized in configuration:
 
 ---
 
-# Contributing
-
-We welcome contributions! Follow these steps to get started:
-
-### 1️⃣ Fork the Repository
-Click the **Fork** button on the top-right of this repository to create your copy.
-
-### 2️⃣ Clone Your Fork
-Run the following command to clone the repository to your local machine:
-
-```sh
-git clone https://github.com/your-username/Laravel-Log-Tracker.git
-cd Laravel-Log-Tracker
-```
-
-### 3️⃣ Create a New Branch
-Before making changes, create a new branch:
-
-```sh
-git checkout -b my-new-feature
-```
-
-### 4️⃣ Make Your Changes & Commit
-After making your modifications, commit your changes:
-
-```sh
-git add .
-git commit -m "Added feature: real-time log monitoring"
-```
-
-### 5️⃣  Push to GitHub & Create a Pull Request
-Push your changes to GitHub:
-
-```sh
-git push origin my-new-feature
-```
-
-Now, go to your forked repository on GitHub and click "New Pull Request" to submit your changes for review.
-
-### **🐛 Bug Reports**
-Found a bug? Please report it with:
-- Laravel and PHP versions
-- Steps to reproduce
-- Expected vs actual behavior
-- Error messages or logs
-
----
-
 # 📝 Changelog
 
 Check out the [CHANGELOG](CHANGELOG.md) for the latest updates and features.
@@ -612,6 +519,21 @@ If Laravel Log Tracker helps your project:
 - 📝 **Write a review** or blog post
 
 [![Buy Me a Coffee](https://img.shields.io/badge/-Buy%20Me%20a%20Coffee-orange?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white)](https://www.buymeacoffee.com/kssadi)
+
+---
+
+## ❤️ Supported by Business Automation Ltd
+
+<div align="center">
+
+This package is maintained by [Sadi](https://github.com/KsSadi) and supported by  
+**[Business Automation Ltd](https://ba-systems.com)** — building large-scale e-gov & enterprise solutions in Bangladesh.
+
+<a href="https://ba-systems.com">
+  <img src="https://ba-systems.com/png/BA.png" alt="Business Automation Ltd" width="180">
+</a>
+
+</div>
 
 ---
 
