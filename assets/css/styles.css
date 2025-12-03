@@ -2309,6 +2309,17 @@ section {
     transform: translateX(0);
 }
 
+ /* Override highlight.js styles for all code blocks */
+.doc-code-block code.hljs,
+.doc-code-block .hljs,
+pre.code-window code.hljs,
+pre.code-window .hljs,
+code.hljs,
+.hljs {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
 /* Footer Responsive */
 @media (max-width: 968px) {
     .footer-content {
