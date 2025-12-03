@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Laravel Log Tracker Documentation - Complete Installation & Configuration Guide</title>
+    <meta name="title" content="Laravel Log Tracker Documentation - Complete Installation & Configuration Guide">
+    <meta name="description" content="Complete step-by-step documentation for Laravel Log Tracker installation, configuration, usage, and customization. Learn how to install, configure themes (LiteFlow & GlowStack), export logs (CSV, Excel, PDF, JSON), filter logs, analyze errors, and customize settings. Supports Laravel 5.5-12.x.">
+    <meta name="keywords" content="Laravel Log Tracker Documentation, Log Tracker, Log Viewer, Log Viewer by Sadi, Laravel Log Viewer, Laravel Log Tracker Install, Laravel Log Setup, Laravel Log Configuration, How to Install Laravel Log Tracker, How to Install Log Viewer, Laravel Log Tracker Guide, Laravel Log Tracker Tutorial, Laravel Logging Documentation, Laravel Error Tracking Setup, Laravel Log Dashboard Setup, Configure Laravel Logs, Laravel Log Levels, Laravel Log Export Setup, Laravel Theme Configuration, GlowStack Setup, LiteFlow Setup, Laravel Log Filter Guide, Laravel Error Pattern Analysis, Laravel Log Management Guide, Composer Install Laravel Logs, Laravel Artisan Commands Logs, Laravel Log Tracker API, Laravel Real-time Logs Setup, Sadi Log Tracker, Sadi Log Viewer, KsSadi Log Tracker Documentation, Log Viewer Setup, Best Log Viewer for Laravel, Free Laravel Log Viewer, Log Viewer Installation Guide, Laravel Error Viewer Setup">
+    <meta name="author" content="Khaled Saifullah Sadi">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <link rel="canonical" href="https://kssadi.github.io/Laravel-Log-Tracker/doc.html">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://kssadi.github.io/Laravel-Log-Tracker/doc.html">
+    <meta property="og:title" content="Laravel Log Tracker Documentation - Complete Installation Guide">
+    <meta property="og:description" content="Step-by-step guide to install and configure Laravel Log Tracker. Learn installation, theme setup, export configuration, filtering, and customization.">
+    <meta property="og:image" content="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_dashboard.png">
+    <meta property="og:site_name" content="Laravel Log Tracker Documentation">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://kssadi.github.io/Laravel-Log-Tracker/doc.html">
+    <meta property="twitter:title" content="Laravel Log Tracker Documentation - Installation Guide">
+    <meta property="twitter:description" content="Complete documentation for installing and configuring Laravel Log Tracker with step-by-step instructions.">
+    <meta property="twitter:image" content="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_dashboard.png">
+    
+    <!-- Structured Data / Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "Laravel Log Tracker Documentation - Complete Installation & Configuration Guide",
+      "description": "Complete step-by-step documentation for installing, configuring, and using Laravel Log Tracker for managing Laravel application logs.",
+      "author": {
+        "@type": "Person",
+        "name": "Khaled Saifullah Sadi"
+      },
+      "datePublished": "2024-12-03",
+      "dateModified": "2025-12-03",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Laravel Log Tracker"
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://kssadi.github.io/Laravel-Log-Tracker/doc.html"
+      },
+      "articleSection": "Documentation",
+      "keywords": "Laravel, Log Management, Documentation, Installation Guide, Configuration"
+    }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23059669'/%3E%3Cpath d='M35 25h15v10h10v40h-40v-50h15z' fill='white' stroke='white' stroke-width='3' stroke-linejoin='round'/%3E%3Cline x1='45' y1='45' x2='65' y2='45' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cline x1='45' y1='55' x2='65' y2='55' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cline x1='45' y1='65' x2='55' y2='65' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <style>
+        .doc-layout {
+            min-height: 100vh;
+            background: var(--color-bg);
+        }
+
+        .doc-sidebar {
+            position: fixed;
+            top: 72px;
+            left: 0;
+            width: 280px;
+            height: calc(100vh - 72px);
+            background: var(--color-bg-secondary);
+            border-right: 1px solid var(--color-border);
+            overflow-y: auto;
+            padding: var(--spacing-lg);
+            z-index: 100;
+        }
+
+        .doc-nav {
+            list-style: none;
+        }
+
+        .doc-nav-section {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .doc-nav-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .doc-nav-list {
+            list-style: none;
+        }
+
+        .doc-nav-link {
+            display: block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+            font-size: 0.9375rem;
+            margin-bottom: 2px;
+        }
+
+        .doc-nav-link:hover {
+            background: var(--color-bg);
+            color: var(--color-primary);
+        }
+
+        .doc-nav-link.active {
+            background: var(--color-primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .doc-content {
+            margin-left: 280px;
+            padding: var(--spacing-xl);
+            max-width: 900px;
+        }
+
+        .doc-section {
+            margin-bottom: var(--spacing-2xl);
+            scroll-margin-top: 100px;
+        }
+
+        .doc-section h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: var(--spacing-lg);
+            color: var(--color-text);
+        }
+
+        .doc-section h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text);
+        }
+
+        .doc-section h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text);
+        }
+
+        .doc-section p {
+            margin-bottom: var(--spacing-md);
+            line-height: 1.7;
+            color: var(--color-text-secondary);
+        }
+
+        .doc-section ul,
+        .doc-section ol {
+            margin-bottom: var(--spacing-lg);
+            padding-left: var(--spacing-lg);
+            line-height: 1.7;
+            color: var(--color-text-secondary);
+        }
+
+        .doc-section li {
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .doc-alert {
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            border-left: 4px solid;
+        }
+
+        .doc-alert.info {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+        }
+
+        .doc-alert.warning {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: #fbbf24;
+        }
+
+        .doc-alert.success {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
+        }
+
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .doc-table th,
+        .doc-table td {
+            padding: var(--spacing-sm) var(--spacing-md);
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .doc-table th {
+            font-weight: 600;
+            color: var(--color-text);
+            background: var(--color-bg-secondary);
+        }
+
+        .doc-table td {
+            color: var(--color-text-secondary);
+        }
+
+        .doc-sidebar-toggle {
+            position: fixed;
+            bottom: var(--spacing-lg);
+            right: var(--spacing-lg);
+            z-index: 999;
+            display: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: none;
+            background: var(--color-primary);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            transition: all var(--transition-base);
+        }
+
+        .doc-sidebar-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+        }
+
+        .doc-sidebar-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .doc-sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        .doc-sidebar-overlay.active {
+            opacity: 1;
+        }
+
+        @media (max-width: 968px) {
+            .doc-sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .doc-sidebar-overlay.active {
+                display: block;
+            }
+
+            .doc-sidebar {
+                transform: translateX(-100%);
+                transition: transform var(--transition-base);
+                z-index: 101;
+            }
+
+            .doc-sidebar.active {
+                transform: translateX(0);
+            }
+
+            .doc-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Terminal-style Code Blocks */
+        .doc-code-block {
+            background: #1e293b;
+            border-radius: var(--radius-md);
+            margin: var(--spacing-lg) 0;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        .doc-code-header {
+            background: #0f172a;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .doc-code-title {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            font-family: "SF Mono", "Monaco", "Consolas", monospace;
+        }
+
+        .doc-code-copy {
+            background: transparent;
+            border: 1px solid #475569;
+            color: #94a3b8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .doc-code-copy:hover {
+            background: #334155;
+            color: white;
+        }
+
+        .doc-code-block pre {
+            padding: var(--spacing-lg);
+            overflow-x: auto;
+            margin: 0;
+        }
+
+        .doc-code-block code {
+            font-family: "SF Mono", "Monaco", "Consolas", monospace;
+            font-size: 0.9375rem;
+            line-height: 1.7;
+            color: #e2e8f0;
+            display: block;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* Override highlight.js background */
+        .doc-code-block code.hljs,
+        .doc-code-block .hljs {
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        .doc-inline-code {
+            background: var(--color-bg-secondary);
+            color: var(--color-primary);
+            padding: 0.2em 0.5em;
+            border-radius: 4px;
+            font-family: "SF Mono", "Monaco", "Consolas", monospace;
+            font-size: 0.9em;
+            border: 1px solid var(--color-border);
+        }
+
+        /* Fallback for simple code blocks */
+        .code-block {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--color-text);
+        }
+
+        pre.code-window {
+            background: #282c34;
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            overflow-x: auto;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        pre.code-window code {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        /* Override highlight.js styles for all code blocks */
+        .doc-code-block code.hljs,
+        .doc-code-block .hljs,
+        pre.code-window code.hljs,
+        pre.code-window .hljs,
+        code.hljs,
+        .hljs {
+            background: transparent !important;
+            padding: 0 !important;
+        }
+    </style>
+</head>
+
+<body class="doc-layout">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="index.html" class="navbar-logo">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="logo-content">
+                        <span class="logo-title">Laravel Log Tracker</span>
+                        <span class="logo-subtitle">Powerful Log Management</span>
+                    </div>
+                </div>
+            </a>
+            <div class="navbar-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="index.html#features" class="nav-link">Features</a>
+                <a href="index.html#screenshots" class="nav-link">Screenshots</a>
+                <a href="index.html#themes" class="nav-link">Themes</a>
+                <a href="index.html#exports" class="nav-link">Exports</a>
+                <a href="doc.html" class="nav-link active">Docs</a>
+                <a href="https://github.com/KsSadi/Laravel-Log-Tracker" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <!-- Sidebar Toggle for Mobile -->
+    <button class="doc-sidebar-toggle" id="docSidebarToggle" aria-label="Toggle sidebar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="doc-sidebar-overlay" id="docSidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <aside class="doc-sidebar" id="docSidebar">
+        <nav class="doc-nav">
+            <div class="doc-nav-section">
+                <div class="doc-nav-title">Getting Started</div>
+                <ul class="doc-nav-list">
+                    <li><a href="#introduction" class="doc-nav-link">Introduction</a></li>
+                    <li><a href="#requirements" class="doc-nav-link">Requirements</a></li>
+                    <li><a href="#installation" class="doc-nav-link">Installation</a></li>
+                    <li><a href="#quick-start" class="doc-nav-link">Quick Start</a></li>
+                </ul>
+            </div>
+
+            <div class="doc-nav-section">
+                <div class="doc-nav-title">Configuration</div>
+                <ul class="doc-nav-list">
+                    <li><a href="#configuration" class="doc-nav-link">Overview</a></li>
+                    <li><a href="#log-levels" class="doc-nav-link">Log Levels</a></li>
+                    <li><a href="#pagination" class="doc-nav-link">Pagination</a></li>
+                    <li><a href="#file-limits" class="doc-nav-link">File Limits</a></li>
+                </ul>
+            </div>
+
+            <div class="doc-nav-section">
+                <div class="doc-nav-title">Usage</div>
+                <ul class="doc-nav-list">
+                    <li><a href="#dashboard" class="doc-nav-link">Dashboard Access</a></li>
+                    <li><a href="#filtering" class="doc-nav-link">Filtering Logs</a></li>
+                    <li><a href="#file-management" class="doc-nav-link">File Management</a></li>
+                    <li><a href="#searching" class="doc-nav-link">Searching</a></li>
+                </ul>
+            </div>
+
+            <div class="doc-nav-section">
+                <div class="doc-nav-title">Themes</div>
+                <ul class="doc-nav-list">
+                    <li><a href="#themes-overview" class="doc-nav-link">Overview</a></li>
+                    <li><a href="#glowstack" class="doc-nav-link">GlowStack</a></li>
+                    <li><a href="#liteflow" class="doc-nav-link">LiteFlow</a></li>
+                    <li><a href="#switching-themes" class="doc-nav-link">Switching Themes</a></li>
+                </ul>
+            </div>
+
+            <div class="doc-nav-section">
+                <div class="doc-nav-title">Export Features</div>
+                <ul class="doc-nav-list">
+                    <li><a href="#exports" class="doc-nav-link">Overview</a></li>
+                    <li><a href="#csv-export" class="doc-nav-link">CSV Export</a></li>
+                    <li><a href="#excel-export" class="doc-nav-link">Excel Export</a></li>
+                    <li><a href="#pdf-export" class="doc-nav-link">PDF Export</a></li>
+                    <li><a href="#json-export" class="doc-nav-link">JSON Export</a></li>
+                </ul>
+            </div>
+
+            <div class="doc-nav-section">
+                <div class="doc-nav-title">Advanced</div>
+                <ul class="doc-nav-list">
+                    <li><a href="#customization" class="doc-nav-link">Customization</a></li>
+                    <li><a href="#middleware" class="doc-nav-link">Middleware</a></li>
+                    <li><a href="#troubleshooting" class="doc-nav-link">Troubleshooting</a></li>
+                    <li><a href="#faq" class="doc-nav-link">FAQ</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="doc-content">
+        <!-- Introduction -->
+        <section id="introduction" class="doc-section">
+            <h2>Introduction</h2>
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; padding: 0.5rem 1.25rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%); border: 2px solid var(--color-primary); border-radius: 50px; font-size: 0.9375rem; font-weight: 700; color: var(--color-primary); box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span id="version-text" class="version-display">Loading...</span>
+            </div>
+            <p>
+                Laravel Log Tracker is a powerful package for tracking, analyzing, and managing your Laravel application logs effortlessly. 
+                It provides an interactive dashboard with advanced filtering, dual themes (LiteFlow & GlowStack), zero-dependency exports 
+                (CSV, Excel, PDF, JSON), and real-time insights.
+            </p>
+
+            <div class="doc-alert info">
+                <strong>✨ Key Features:</strong> Interactive Dashboard • Dual Themes • Zero-Dependency Exports • Error Pattern Analysis • Advanced Filtering • Real-time Statistics
+            </div>
+
+            <h3>Why Use Laravel Log Tracker?</h3>
+            <ul>
+                <li><strong>Beautiful Interface:</strong> Modern, responsive dashboard with two stunning themes</li>
+                <li><strong>Zero Dependencies:</strong> Export logs in 4 formats without any external libraries</li>
+                <li><strong>Powerful Analytics:</strong> Error pattern analysis, peak hour visualization, real-time stats</li>
+                <li><strong>Production Ready:</strong> Max file size protection, smart pagination, performance optimized</li>
+                <li><strong>Highly Customizable:</strong> Extensive configuration options for every aspect</li>
+                <li><strong>Wide Support:</strong> Laravel 5.5-12.x, PHP 7.0-8.4</li>
+            </ul>
+        </section>
+
+        <!-- Requirements -->
+        <section id="requirements" class="doc-section">
+            <h2>System Requirements</h2>
+            
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Laravel Version</th>
+                        <th>PHP Version</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>12.x</td>
+                        <td>8.1, 8.2, 8.3, 8.4</td>
+                        <td>✅ Fully Tested</td>
+                    </tr>
+                    <tr>
+                        <td>11.x</td>
+                        <td>8.1, 8.2, 8.3</td>
+                        <td>✅ Fully Tested</td>
+                    </tr>
+                    <tr>
+                        <td>10.x</td>
+                        <td>8.0, 8.1, 8.2</td>
+                        <td>✅ Fully Tested</td>
+                    </tr>
+                    <tr>
+                        <td>5.5 - 9.x</td>
+                        <td>7.0 - 8.1</td>
+                        <td>✅ Supported</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Server Requirements</h3>
+            <ul>
+                <li>PHP extensions: JSON, MBString</li>
+                <li>Laravel storage directory with write permissions</li>
+                <li>Minimum 128MB PHP memory limit recommended</li>
+            </ul>
+        </section>
+
+        <!-- Installation -->
+        <section id="installation" class="doc-section">
+            <h2>Installation</h2>
+
+            <h3>Step 1: Install via Composer</h3>
+            <div class="doc-code-block">
+                <div class="doc-code-header">
+                    <span class="doc-code-title">Terminal</span>
+                    <button class="doc-code-copy">Copy</button>
+                </div>
+                <pre><code class="language-bash">composer require kssadi/log-tracker</code></pre>
+            </div>
+
+            <h3>Step 2: Publish Configuration (Optional)</h3>
+            <div class="doc-code-block">
+                <div class="doc-code-header">
+                    <span class="doc-code-title">Terminal</span>
+                    <button class="doc-code-copy">Copy</button>
+                </div>
+                <pre><code class="language-bash">php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="config"</code></pre>
+            </div>
+            
+            <p>This publishes the configuration file to <code>config/log-tracker.php</code></p>
+
+            <div class="doc-alert success">
+                <strong>✅ Installation Complete!</strong> You can now access the dashboard at <code>/log-tracker</code>
+            </div>
+        </section>
+
+        <!-- Quick Start -->
+        <section id="quick-start" class="doc-section">
+            <h2>Quick Start</h2>
+
+            <h3>Access the Dashboard</h3>
+            <p>Navigate to your application's log tracker dashboard:</p>
+            <div class="doc-code-block">
+                <div class="doc-code-header">
+                    <span class="doc-code-title">URL</span>
+                    <button class="doc-code-copy">Copy</button>
+                </div>
+                <pre><code>https://your-domain.com/log-tracker</code></pre>
+            </div>
+
+            <div class="doc-alert warning">
+                <strong>⚠️ Authentication Required:</strong> By default, the dashboard is protected by <code>web</code> and <code>auth</code> middleware. 
+                Users must be logged in to access it.
+            </div>
+
+            <h3>Basic Usage Flow</h3>
+            <ol>
+                <li><strong>Dashboard Overview:</strong> View log statistics, error patterns, and peak error hours</li>
+                <li><strong>Browse Log Files:</strong> Click on any log file to view its contents</li>
+                <li><strong>Filter Logs:</strong> Use filters to narrow down by level, date, or keywords</li>
+                <li><strong>Export Data:</strong> Export filtered logs in CSV, Excel, PDF, or JSON format</li>
+                <li><strong>Manage Files:</strong> Download or delete log files as needed</li>
+            </ol>
+        </section>
+
+        <!-- Configuration -->
+        <section id="configuration" class="doc-section">
+            <h2>Configuration</h2>
+            
+            <p>The configuration file is located at <code>config/log-tracker.php</code>. Here's the complete structure:</p>
+
+            <div class="doc-code-block">
+                <div class="doc-code-header">
+                    <span class="doc-code-title">config/log-tracker.php</span>
+                    <button class="doc-code-copy">Copy</button>
+                </div>
+                <pre><code class="language-php">&lt;?php
+
+return [
+    // Route configuration
+    'route' => [
+        'enabled' => true,
+        'prefix' => 'log-tracker',
+        'middleware' => ['web', 'auth'],
+    ],
+
+    // Theme selection: 'GlowStack' or 'LiteFlow'
+    'theme' => env('LOG_TRACKER_THEME', 'GlowStack'),
+
+    // Log levels with colors and icons
+    'levels' => [
+        'emergency' => ['color' => '#dc2626', 'icon' => '🔴'],
+        'alert' => ['color' => '#ea580c', 'icon' => '🟠'],
+        'critical' => ['color' => '#f59e0b', 'icon' => '🟡'],
+        'error' => ['color' => '#ef4444', 'icon' => '❌'],
+        'warning' => ['color' => '#eab308', 'icon' => '⚠️'],
+        'notice' => ['color' => '#3b82f6', 'icon' => 'ℹ️'],
+        'info' => ['color' => '#06b6d4', 'icon' => '📘'],
+        'debug' => ['color' => '#8b5cf6', 'icon' => '🐛'],
+    ],
+
+    // Pagination settings
+    'pagination' => [
+        'per_page' => 50,
+        'max_per_page' => 200,
+        'file_list_per_page' => 20,
+    ],
+
+    // File handling
+    'files' => [
+        'max_file_size_mb' => 10,
+        'allowed_extensions' => ['log'],
+        'exclude_patterns' => [],
+    ],
+
+    // Export configuration
+    'export' => [
+        'enabled' => true,
+        'formats' => [
+            'csv' => ['enabled' => true],
+            'json' => ['enabled' => true],
+            'excel' => ['enabled' => true],
+            'pdf' => ['enabled' => true],
+        ],
+        'limits' => [
+            'max_entries' => 50000,
+            'max_file_size_mb' => 50,
+            'timeout_seconds' => 300,
+        ],
+        'storage' => [
+            'cleanup_after_days' => 7,
+        ],
+    ],
+
+    // Cache settings
+    'cache' => [
+        'enabled' => true,
+        'ttl' => 300, // 5 minutes
+    ],
+];</code></pre>
+            </div>
+        </section>
+
+        <!-- Log Levels -->
+        <section id="log-levels" class="doc-section">
+            <h2>Log Levels Configuration</h2>
+            
+            <p>Customize the appearance of different log levels:</p>
+
+            <table class="doc-table">
+                <thead>
+                    <tr>
+                        <th>Level</th>
+                        <th>Default Color</th>
+                        <th>Default Icon</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>emergency</td>
+                        <td>#dc2626</td>
+                        <td>🔴</td>
+                        <td>System is unusable</td>
+                    </tr>
+                    <tr>
+                        <td>alert</td>
+                        <td>#ea580c</td>
+                        <td>🟠</td>
+                        <td>Action must be taken immediately</td>
+                    </tr>
+                    <tr>
+                        <td>critical</td>
+                        <td>#f59e0b</td>
+                        <td>🟡</td>
+                        <td>Critical conditions</td>
+                    </tr>
+                    <tr>
+                        <td>error</td>
+                        <td>#ef4444</td>
+                        <td>❌</td>
+                        <td>Runtime errors</td>
+                    </tr>
+                    <tr>
+                        <td>warning</td>
+                        <td>#eab308</td>
+                        <td>⚠️</td>
+                        <td>Warning messages</td>
+                    </tr>
+                    <tr>
+                        <td>notice</td>
+                        <td>#3b82f6</td>
+                        <td>ℹ️</td>
+                        <td>Normal but significant</td>
+                    </tr>
+                    <tr>
+                        <td>info</td>
+                        <td>#06b6d4</td>
+                        <td>📘</td>
+                        <td>Informational messages</td>
+                    </tr>
+                    <tr>
+                        <td>debug</td>
+                        <td>#8b5cf6</td>
+                        <td>🐛</td>
+                        <td>Debug information</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Pagination -->
+        <section id="pagination" class="doc-section">
+            <h2>Pagination Settings</h2>
+
+            <pre class="code-window"><code class="language-php">'pagination' => [
+    'per_page' => 50,           // Entries per page
+    'max_per_page' => 200,      // Maximum allowed per page
+    'file_list_per_page' => 20, // Files per page in file list
+],</code></pre>
+
+            <p>Adjust these values based on your server's performance and user preferences.</p>
+        </section>
+
+        <!-- File Limits -->
+        <section id="file-limits" class="doc-section">
+            <h2>File Size Limits</h2>
+
+            <pre class="code-window"><code class="language-php">'files' => [
+    'max_file_size_mb' => 10,      // Max file size to process
+    'allowed_extensions' => ['log'], // Allowed file extensions
+    'exclude_patterns' => [],       // Files to exclude (regex)
+],</code></pre>
+
+            <div class="doc-alert warning">
+                <strong>⚠️ Performance Note:</strong> Large log files (>10MB) may cause memory issues. The package will skip files exceeding the limit.
+            </div>
+        </section>
+
+        <!-- Dashboard -->
+        <section id="dashboard" class="doc-section">
+            <h2>Dashboard Access</h2>
+
+            <h3>Default Route</h3>
+            <p>Access the dashboard at:</p>
+            <pre class="code-window"><code>https://your-domain.com/log-tracker</code></pre>
+
+            <h3>Custom Route Prefix</h3>
+            <p>Change the route prefix in your configuration:</p>
+            <pre class="code-window"><code class="language-php">'route' => [
+    'prefix' => 'admin/logs', // Custom prefix
+    'middleware' => ['web', 'auth'],
+],</code></pre>
+
+            <p>Dashboard will now be accessible at: <code>/admin/logs</code></p>
+
+            <h3>Dashboard Features</h3>
+            <ul>
+                <li><strong>Log Statistics:</strong> Total logs, errors, warnings by level</li>
+                <li><strong>Error Patterns:</strong> Top error types visualization</li>
+                <li><strong>Peak Hours:</strong> When errors occur most frequently</li>
+                <li><strong>Recent Logs:</strong> Quick view of latest entries</li>
+                <li><strong>File Browser:</strong> Navigate through all log files</li>
+            </ul>
+        </section>
+
+        <!-- Filtering -->
+        <section id="filtering" class="doc-section">
+            <h2>Filtering Logs</h2>
+
+            <h3>Filter by Log Level</h3>
+            <p>Use the level dropdown to show only specific log levels:</p>
+            <ul>
+                <li>Emergency</li>
+                <li>Alert</li>
+                <li>Critical</li>
+                <li>Error</li>
+                <li>Warning</li>
+                <li>Notice</li>
+                <li>Info</li>
+                <li>Debug</li>
+            </ul>
+
+            <h3>Filter by Date Range</h3>
+            <p>Select start and end dates to view logs from specific time periods.</p>
+
+            <h3>Search by Keyword</h3>
+            <p>Use the search box to find logs containing specific text, error messages, or stack traces.</p>
+
+            <div class="doc-alert info">
+                <strong>💡 Pro Tip:</strong> Combine multiple filters for precise log analysis. For example, filter by "error" level + specific date range + keyword search.
+            </div>
+        </section>
+
+        <!-- File Management -->
+        <section id="file-management" class="doc-section">
+            <h2>Log File Management</h2>
+
+            <h3>Viewing Log Files</h3>
+            <ol>
+                <li>Navigate to the log files list page</li>
+                <li>Click on any log file name to view its contents</li>
+                <li>Use pagination to browse through entries</li>
+            </ol>
+
+            <h3>Downloading Log Files</h3>
+            <p>Click the download button next to any log file to download it to your local system.</p>
+
+            <h3>Deleting Log Files</h3>
+            <p>Click the delete button to remove log files. A confirmation dialog will appear.</p>
+
+            <div class="doc-alert warning">
+                <strong>⚠️ Warning:</strong> Deleting log files is permanent and cannot be undone. Make sure to backup important logs before deletion.
+            </div>
+        </section>
+
+        <!-- Searching -->
+        <section id="searching" class="doc-section">
+            <h2>Searching Logs</h2>
+
+            <h3>Full-Text Search</h3>
+            <p>The search feature looks for matches in:</p>
+            <ul>
+                <li>Log messages</li>
+                <li>Stack traces</li>
+                <li>Error context</li>
+                <li>File paths</li>
+            </ul>
+
+            <h3>Search Tips</h3>
+            <ul>
+                <li>Search is case-insensitive</li>
+                <li>Use specific error codes or exception names</li>
+                <li>Search for file paths or class names</li>
+                <li>Combine with filters for better results</li>
+            </ul>
+        </section>
+
+        <!-- Themes Overview -->
+        <section id="themes-overview" class="doc-section">
+            <h2>Themes Overview</h2>
+
+            <p>Laravel Log Tracker comes with two beautiful themes designed for different preferences and use cases.</p>
+
+            <div class="doc-alert info">
+                <strong>✨ Dual Theme System:</strong> Switch between GlowStack (modern & colorful) and LiteFlow (minimal & clean) instantly.
+            </div>
+        </section>
+
+        <!-- GlowStack -->
+        <section id="glowstack" class="doc-section">
+            <h2>GlowStack Theme</h2>
+
+            <p>Modern, colorful, enhanced visual log view with rich colors and advanced styling.</p>
+
+            <h3>Features</h3>
+            <ul>
+                <li>Vibrant color scheme</li>
+                <li>Enhanced visual hierarchy</li>
+                <li>Rich animations and transitions</li>
+                <li>Advanced styling elements</li>
+                <li>Perfect for detailed log analysis</li>
+            </ul>
+
+            <h3>Best For</h3>
+            <ul>
+                <li>Detailed log analysis sessions</li>
+                <li>Visual engagement and pattern recognition</li>
+                <li>Presentations and demonstrations</li>
+                <li>Users who prefer modern interfaces</li>
+            </ul>
+        </section>
+
+        <!-- LiteFlow -->
+        <section id="liteflow" class="doc-section">
+            <h2>LiteFlow Theme</h2>
+
+            <p>Minimal, clean log view with streamlined interface and excellent readability.</p>
+
+            <h3>Features</h3>
+            <ul>
+                <li>Minimalist design philosophy</li>
+                <li>Faster page loads</li>
+                <li>Clean, distraction-free interface</li>
+                <li>Optimized for performance</li>
+                <li>Perfect for high-frequency monitoring</li>
+            </ul>
+
+            <h3>Best For</h3>
+            <ul>
+                <li>High-frequency log monitoring</li>
+                <li>Users who prefer minimal interfaces</li>
+                <li>Lower-end hardware or slow connections</li>
+                <li>Long monitoring sessions</li>
+            </ul>
+        </section>
+
+        <!-- Switching Themes -->
+        <section id="switching-themes" class="doc-section">
+            <h2>Switching Themes</h2>
+
+            <h3>Via Artisan Command</h3>
+            <pre class="code-window"><code class="language-bash"># Switch to GlowStack theme
+php artisan log-tracker:theme set GlowStack
+
+# Switch to LiteFlow theme
+php artisan log-tracker:theme set LiteFlow
+
+# Check current theme
+php artisan log-tracker:theme current</code></pre>
+
+            <h3>Via Configuration File</h3>
+            <p>Edit <code>config/log-tracker.php</code>:</p>
+            <pre class="code-window"><code class="language-php">'theme' => env('LOG_TRACKER_THEME', 'GlowStack'), // or 'LiteFlow'</code></pre>
+
+            <h3>Via Environment Variable</h3>
+            <p>Add to your <code>.env</code> file:</p>
+            <pre class="code-window"><code class="language-bash">LOG_TRACKER_THEME=GlowStack
+# or
+LOG_TRACKER_THEME=LiteFlow</code></pre>
+
+            <div class="doc-alert success">
+                <strong>✅ No Cache Clear Required:</strong> Theme changes take effect immediately without clearing cache.
+            </div>
+        </section>
+
+        <!-- Exports Overview -->
+        <section id="exports" class="doc-section">
+            <h2>Export Features</h2>
+
+            <p>Export your logs in multiple formats with absolutely zero external dependencies.</p>
+
+            <h3>Supported Formats</h3>
+            <ul>
+                <li><strong>CSV:</strong> Excel-compatible CSV format</li>
+                <li><strong>Excel:</strong> Native Excel XML format (.xls)</li>
+                <li><strong>PDF:</strong> Print-ready HTML report</li>
+                <li><strong>JSON:</strong> Structured JSON with metadata</li>
+            </ul>
+
+            <h3>Export Limits</h3>
+            <pre class="code-window"><code class="language-php">'export' => [
+    'limits' => [
+        'max_entries' => 50000,      // Max log entries per export
+        'max_file_size_mb' => 50,    // Max export file size
+        'timeout_seconds' => 300,     // Export timeout
+    ],
+];</code></pre>
+
+            <h3>Automatic Cleanup</h3>
+            <p>Exported files are automatically deleted after 7 days to save storage space:</p>
+            <pre class="code-window"><code class="language-php">'storage' => [
+    'cleanup_after_days' => 7,
+],</code></pre>
+        </section>
+
+        <!-- CSV Export -->
+        <section id="csv-export" class="doc-section">
+            <h2>CSV Export</h2>
+
+            <p>Export logs as comma-separated values, compatible with Excel, Google Sheets, and other spreadsheet applications.</p>
+
+            <h3>CSV Structure</h3>
+            <pre class="code-window"><code class="language-csv">Timestamp,Level,Message,Context,Extra
+2025-01-15 10:30:45,error,"Database connection failed","{\"host\":\"localhost\"}",""
+2025-01-15 10:31:22,warning,"Slow query detected","{\"duration\":\"2.5s\"}",""</code></pre>
+
+            <h3>Enable/Disable</h3>
+            <pre class="code-window"><code class="language-php">'formats' => [
+    'csv' => [
+        'enabled' => true,
+        'description' => 'Excel-compatible CSV format'
+    ],
+],</code></pre>
+        </section>
+
+        <!-- Excel Export -->
+        <section id="excel-export" class="doc-section">
+            <h2>Excel Export</h2>
+
+            <p>Native Excel XML format with formatted tables and styling.</p>
+
+            <h3>Features</h3>
+            <ul>
+                <li>Formatted headers and data</li>
+                <li>Color-coded log levels</li>
+                <li>Auto-width columns</li>
+                <li>Filterable columns</li>
+            </ul>
+
+            <h3>Configuration</h3>
+            <pre class="code-window"><code class="language-php">'formats' => [
+    'excel' => [
+        'enabled' => true,
+        'description' => 'Native Excel XML format'
+    ],
+],</code></pre>
+        </section>
+
+        <!-- PDF Export -->
+        <section id="pdf-export" class="doc-section">
+            <h2>PDF Export</h2>
+
+            <p>Print-ready HTML report converted to PDF format.</p>
+
+            <h3>Features</h3>
+            <ul>
+                <li>Professional formatting</li>
+                <li>Color-coded log levels</li>
+                <li>Headers and footers</li>
+                <li>Page numbers</li>
+                <li>Timestamp metadata</li>
+            </ul>
+
+            <h3>Configuration</h3>
+            <pre class="code-window"><code class="language-php">'formats' => [
+    'pdf' => [
+        'enabled' => true,
+        'description' => 'Print-ready HTML report'
+    ],
+],</code></pre>
+        </section>
+
+        <!-- JSON Export -->
+        <section id="json-export" class="doc-section">
+            <h2>JSON Export</h2>
+
+            <p>Structured JSON format with complete metadata and context.</p>
+
+            <h3>JSON Structure</h3>
+            <pre class="code-window"><code class="language-json">{
+  "metadata": {
+    "exported_at": "2025-01-15T10:30:00Z",
+    "total_entries": 1523,
+    "filters": {
+      "level": "error",
+      "date_from": "2025-01-01",
+      "date_to": "2025-01-15"
+    }
+  },
+  "logs": [
+    {
+      "timestamp": "2025-01-15 10:30:45",
+      "level": "error",
+      "message": "Database connection failed",
+      "context": {
+        "host": "localhost",
+        "port": 3306
+      },
+      "extra": {}
+    }
+  ]
+}</code></pre>
+
+            <h3>Configuration</h3>
+            <pre class="code-window"><code class="language-php">'formats' => [
+    'json' => [
+        'enabled' => true,
+        'description' => 'Structured JSON with metadata'
+    ],
+],</code></pre>
+        </section>
+
+        <!-- Customization -->
+        <section id="customization" class="doc-section">
+            <h2>Customization</h2>
+
+            <h3>Custom Log Levels</h3>
+            <p>Add or modify log levels in your configuration:</p>
+            <pre class="code-window"><code class="language-php">'levels' => [
+    'custom' => [
+        'color' => '#10b981',
+        'icon' => '🎯'
+    ],
+    // ... other levels
+],</code></pre>
+
+            <h3>Custom Middleware</h3>
+            <p>Add your own middleware for additional security:</p>
+            <pre class="code-window"><code class="language-php">'route' => [
+    'middleware' => ['web', 'auth', 'can:view-logs'],
+],</code></pre>
+
+            <h3>Custom Route Prefix</h3>
+            <pre class="code-window"><code class="language-php">'route' => [
+    'prefix' => 'admin/system/logs',
+],</code></pre>
+
+            <h3>Publish and Modify Views</h3>
+            <pre class="code-window"><code class="language-bash">php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="views"</code></pre>
+            <p>Views will be published to <code>resources/views/vendor/log-tracker/</code></p>
+        </section>
+
+        <!-- Middleware -->
+        <section id="middleware" class="doc-section">
+            <h2>Middleware Configuration</h2>
+
+            <h3>Default Middleware</h3>
+            <p>By default, the dashboard is protected by:</p>
+            <ul>
+                <li><code>web</code> - Web routes middleware group</li>
+                <li><code>auth</code> - Requires authentication</li>
+            </ul>
+
+            <h3>Add Role-Based Access</h3>
+            <pre class="code-window"><code class="language-php">// config/log-tracker.php
+'route' => [
+    'middleware' => ['web', 'auth', 'role:admin'],
+],</code></pre>
+
+            <h3>Add IP Whitelist</h3>
+            <pre class="code-window"><code class="language-php">// config/log-tracker.php
+'route' => [
+    'middleware' => ['web', 'auth', 'ip.whitelist'],
+],</code></pre>
+
+            <h3>Custom Middleware</h3>
+            <p>Create your own middleware for advanced access control:</p>
+            <pre class="code-window"><code class="language-bash">php artisan make:middleware LogTrackerAccess</code></pre>
+
+            <pre class="code-window"><code class="language-php">// app/Http/Middleware/LogTrackerAccess.php
+public function handle($request, Closure $next)
+{
+    if (!auth()->user()->can('access-log-tracker')) {
+        abort(403, 'Unauthorized access to Log Tracker');
+    }
+    
+    return $next($request);
+}</code></pre>
+
+            <pre class="code-window"><code class="language-php">// config/log-tracker.php
+'route' => [
+    'middleware' => ['web', 'auth', LogTrackerAccess::class],
+],</code></pre>
+        </section>
+
+        <!-- Troubleshooting -->
+        <section id="troubleshooting" class="doc-section">
+            <h2>Troubleshooting</h2>
+
+            <h3>Dashboard Shows 404 Error</h3>
+            <p><strong>Solution:</strong> Clear route cache and recheck configuration:</p>
+            <pre class="code-window"><code class="language-bash">php artisan route:clear
+php artisan config:clear</code></pre>
+
+            <h3>Large Files Not Loading</h3>
+            <p><strong>Solution:</strong> Adjust the max file size limit:</p>
+            <pre class="code-window"><code class="language-php">'files' => [
+    'max_file_size_mb' => 20, // Increase limit
+],</code></pre>
+
+            <h3>Memory Limit Errors</h3>
+            <p><strong>Solution:</strong> Increase PHP memory limit in <code>php.ini</code>:</p>
+            <pre class="code-window"><code class="language-ini">memory_limit = 256M</code></pre>
+
+            <h3>Export Timeout</h3>
+            <p><strong>Solution:</strong> Increase export timeout:</p>
+            <pre class="code-window"><code class="language-php">'export' => [
+    'limits' => [
+        'timeout_seconds' => 600, // 10 minutes
+    ],
+],</code></pre>
+
+            <h3>Theme Not Changing</h3>
+            <p><strong>Solution:</strong> Clear config cache:</p>
+            <pre class="code-window"><code class="language-bash">php artisan config:clear
+php artisan cache:clear</code></pre>
+
+            <h3>Permission Denied Errors</h3>
+            <p><strong>Solution:</strong> Ensure storage directory has write permissions:</p>
+            <pre class="code-window"><code class="language-bash">chmod -R 775 storage/logs
+chown -R www-data:www-data storage/logs</code></pre>
+        </section>
+
+        <!-- FAQ -->
+        <section id="faq" class="doc-section">
+            <h2>Frequently Asked Questions</h2>
+
+            <h3>Is Laravel Log Tracker free?</h3>
+            <p>Yes! Laravel Log Tracker is completely free and open-source under the MIT license.</p>
+
+            <h3>Does it work with custom log channels?</h3>
+            <p>Yes, it works with all Laravel log channels including custom channels.</p>
+
+            <h3>Can I use it in production?</h3>
+            <p>Absolutely! The package includes security features, middleware protection, and performance optimizations for production use.</p>
+
+            <h3>Does it require external dependencies for exports?</h3>
+            <p>No! All 4 export formats (CSV, Excel, PDF, JSON) work with zero external dependencies.</p>
+
+            <h3>Can I customize the interface?</h3>
+            <p>Yes, you can publish views and modify them to match your design:</p>
+            <pre class="code-window"><code class="language-bash">php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="views"</code></pre>
+
+            <h3>How do I update to the latest version?</h3>
+            <pre class="code-window"><code class="language-bash">composer update kssadi/log-tracker</code></pre>
+
+            <h3>Where can I report bugs or request features?</h3>
+            <p>Visit the <a href="https://github.com/KsSadi/Laravel-Log-Tracker/issues" target="_blank">GitHub Issues page</a>.</p>
+
+            <h3>How can I support the project?</h3>
+            <div style="background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--spacing-xl); margin-top: var(--spacing-lg);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+                    <a href="https://github.com/KsSadi/Laravel-Log-Tracker" target="_blank" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateX(0)';">
+                        <div style="font-size: 1.75rem; flex-shrink: 0;">⭐</div>
+                        <div style="flex: 1;">
+                            <h4 style="color: var(--color-text); font-size: 0.9375rem; font-weight: 600; margin: 0 0 0.25rem 0;">Star on GitHub</h4>
+                            <p style="color: var(--color-text-tertiary); font-size: 0.8125rem; margin: 0; line-height: 1.4;">Show your support</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-text-tertiary); flex-shrink: 0;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+
+                    <a href="https://www.buymeacoffee.com/kssadi" target="_blank" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateX(0)';">
+                        <div style="font-size: 1.75rem; flex-shrink: 0;">☕</div>
+                        <div style="flex: 1;">
+                            <h4 style="color: var(--color-text); font-size: 0.9375rem; font-weight: 600; margin: 0 0 0.25rem 0;">Buy Me a Coffee</h4>
+                            <p style="color: var(--color-text-tertiary); font-size: 0.8125rem; margin: 0; line-height: 1.4;">Support development</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-text-tertiary); flex-shrink: 0;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+
+                    <a href="https://twitter.com/intent/tweet?text=Check%20out%20Laravel%20Log%20Tracker%20-%20Powerful%20log%20management!&url=https://github.com/KsSadi/Laravel-Log-Tracker" target="_blank" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateX(0)';">
+                        <div style="font-size: 1.75rem; flex-shrink: 0;">📣</div>
+                        <div style="flex: 1;">
+                            <h4 style="color: var(--color-text); font-size: 0.9375rem; font-weight: 600; margin: 0 0 0.25rem 0;">Share the Project</h4>
+                            <p style="color: var(--color-text-tertiary); font-size: 0.8125rem; margin: 0; line-height: 1.4;">Spread the word</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-text-tertiary); flex-shrink: 0;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+
+                    <a href="https://github.com/KsSadi/Laravel-Log-Tracker/issues" target="_blank" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateX(0)';">
+                        <div style="font-size: 1.75rem; flex-shrink: 0;">🐛</div>
+                        <div style="flex: 1;">
+                            <h4 style="color: var(--color-text); font-size: 0.9375rem; font-weight: 600; margin: 0 0 0.25rem 0;">Contribute</h4>
+                            <p style="color: var(--color-text-tertiary); font-size: 0.8125rem; margin: 0; line-height: 1.4;">Report issues & ideas</p>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--color-text-tertiary); flex-shrink: 0;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        // Documentation sidebar toggle for mobile
+        const docSidebarToggle = document.getElementById('docSidebarToggle');
+        const docSidebar = document.getElementById('docSidebar');
+        const docSidebarOverlay = document.getElementById('docSidebarOverlay');
+        
+        if (docSidebarToggle && docSidebar && docSidebarOverlay) {
+            docSidebarToggle.addEventListener('click', () => {
+                docSidebar.classList.toggle('active');
+                docSidebarOverlay.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking overlay
+            docSidebarOverlay.addEventListener('click', () => {
+                docSidebar.classList.remove('active');
+                docSidebarOverlay.classList.remove('active');
+            });
+            
+            // Close sidebar when clicking on a link (mobile only)
+            const docNavLinks = docSidebar.querySelectorAll('.doc-nav-link');
+            docNavLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth <= 968) {
+                        docSidebar.classList.remove('active');
+                        docSidebarOverlay.classList.remove('active');
+                    }
+                });
+            });
+        }
+        
+        // Fetch version from Packagist API
+        async function fetchVersion() {
+            try {
+                const response = await fetch('https://packagist.org/packages/kssadi/log-tracker/stats.json');
+                const data = await response.json();
+                
+                console.log('API Response:', data);
+                
+                // Get the latest version from versions array
+                if (data.versions && Array.isArray(data.versions) && data.versions.length > 1) {
+                    // The API returns versions as strings in an array, skip dev-main and get stable version
+                    const latestVersion = data.versions[1].replace(/^v/, '');
+                    
+                    console.log('Latest version:', latestVersion);
+                    
+                    // Update all version displays
+                    const versionElements = document.querySelectorAll('#version-text, .version-display');
+                    versionElements.forEach(el => {
+                        el.textContent = 'Version ' + latestVersion;
+                    });
+                } else {
+                    console.error('No versions found in API response');
+                }
+            } catch (error) {
+                console.error('Error fetching version:', error);
+                // Fallback to default version if API fails
+                const versionElements = document.querySelectorAll('#version-text, .version-display');
+                versionElements.forEach(el => {
+                    el.textContent = 'Version 2.3';
+                });
+            }
+        }
+        
+        // Fetch version on page load
+        fetchVersion();
+    </script>
+    <script>
+        // Activate current navigation link based on scroll position
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.doc-section');
+            const navLinks = document.querySelectorAll('.doc-nav-link');
+
+            function activateNavLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (pageYOffset >= sectionTop - 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', activateNavLink);
+            activateNavLink();
+
+            // Smooth scrolling for anchor links
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

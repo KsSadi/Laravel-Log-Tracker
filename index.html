@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Laravel Log Tracker - Powerful Log Management & Analytics for Laravel 5.5-12.x</title>
+    <meta name="title" content="Laravel Log Tracker - Powerful Log Management & Analytics for Laravel 5.5-12.x">
+    <meta name="description" content="Free open-source Laravel package for tracking, analyzing, and managing application logs. Interactive dashboard, dual themes (LiteFlow & GlowStack), zero-dependency exports (CSV, Excel, PDF, JSON), real-time insights, error pattern analysis. Supports Laravel 5.5-12.x & PHP 7.0-8.4.">
+    <meta name="keywords" content="Laravel Log Tracker, Log Tracker, Log Viewer, Log Viewer by Sadi, Laravel Log Viewer, Laravel Logs, Log Management Laravel, Laravel Log Analyzer, Laravel Error Tracking, Laravel Log Viewer, Laravel Debug Tool, Laravel Logging Package, Laravel Log Dashboard, Log Analytics Laravel, Laravel Monitoring, Laravel Application Logs, Laravel 12 Logs, Laravel 11 Logs, Laravel 10 Logs, Free Laravel Package, Open Source Laravel, Laravel Error Management, Laravel Log Export, Laravel CSV Export, Laravel PDF Export, Laravel Excel Export, Laravel JSON Export, LiteFlow Theme, GlowStack Theme, Laravel Real-time Logs, Laravel Log Filter, Laravel Error Pattern, Peak Error Hours, Laravel Stack Trace, Laravel Log Levels, Sadi Log Tracker, Sadi Log Viewer, KsSadi Log Tracker, Log Tracker Package, Best Laravel Log Viewer, Free Log Viewer Laravel, PHP Log Viewer, Laravel Error Viewer, Laravel Debug Viewer">
+    <meta name="author" content="Khaled Saifullah Sadi">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <link rel="canonical" href="https://kssadi.github.io/Laravel-Log-Tracker/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kssadi.github.io/Laravel-Log-Tracker/">
+    <meta property="og:title" content="Laravel Log Tracker - Powerful Log Management & Analytics for Laravel">
+    <meta property="og:description" content="Free open-source Laravel package for managing application logs with interactive dashboard, dual themes, zero-dependency exports, and real-time insights. Supports Laravel 5.5-12.x.">
+    <meta property="og:image" content="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_dashboard.png">
+    <meta property="og:site_name" content="Laravel Log Tracker">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://kssadi.github.io/Laravel-Log-Tracker/">
+    <meta property="twitter:title" content="Laravel Log Tracker - Powerful Log Management & Analytics">
+    <meta property="twitter:description" content="Free open-source Laravel package for managing logs with interactive dashboard, dual themes, zero-dependency exports. Supports Laravel 5.5-12.x.">
+    <meta property="twitter:image" content="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_dashboard.png">
+    
+    <!-- Structured Data / Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Laravel Log Tracker",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Cross-platform",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "description": "Free open-source Laravel package for tracking, analyzing, and managing application logs with interactive dashboard, dual themes, and zero-dependency exports.",
+      "softwareVersion": "2.3",
+      "programmingLanguage": "PHP",
+      "author": {
+        "@type": "Person",
+        "name": "Khaled Saifullah Sadi"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "ratingCount": "100"
+      },
+      "downloadUrl": "https://packagist.org/packages/kssadi/log-tracker",
+      "softwareHelp": "https://kssadi.github.io/Laravel-Log-Tracker/doc.html",
+      "screenshot": "https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_dashboard.png"
+    }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23059669'/%3E%3Cpath d='M35 25h15v10h10v40h-40v-50h15z' fill='white' stroke='white' stroke-width='3' stroke-linejoin='round'/%3E%3Cline x1='45' y1='45' x2='65' y2='45' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cline x1='45' y1='55' x2='65' y2='55' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3Cline x1='45' y1='65' x2='55' y2='65' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="index.html" class="navbar-logo">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="logo-content">
+                        <span class="logo-title">Laravel Log Tracker</span>
+                        <span class="logo-subtitle">Powerful Log Management</span>
+                    </div>
+                </div>
+            </a>
+            <div class="navbar-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#screenshots" class="nav-link">Screenshots</a>
+                <a href="#themes" class="nav-link">Themes</a>
+                <a href="#exports" class="nav-link">Exports</a>
+                <a href="#installation" class="nav-link">Install</a>
+                <a href="doc.html" class="nav-link">Docs</a>
+                <a href="https://github.com/KsSadi/Laravel-Log-Tracker" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                    </svg>
+                    GitHub
+                </a>
+            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    Laravel 5.5 - 12.x &nbsp; • &nbsp; Zero Dependencies &nbsp; • &nbsp; Dual Themes &nbsp; • &nbsp; Real-time Analytics
+                </div>
+
+                <h1 class="hero-title">
+                    Powerful<br>
+                    <span class="gradient-text">Log Management</span><br>
+                    for Laravel
+                </h1>
+
+                <div style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; padding: 0.5rem 1.25rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%); border: 2px solid var(--color-primary); border-radius: 50px; font-size: 0.9375rem; font-weight: 700; color: var(--color-primary); box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span id="version-text">Loading...</span>
+                </div>
+
+                <p class="hero-description">
+                    Track, analyze, and manage your Laravel application logs effortlessly with an interactive dashboard, advanced filtering, dual themes (LiteFlow & GlowStack), zero-dependency exports (CSV, Excel, PDF, JSON), and real-time insights.
+                </p>
+
+                <div class="hero-cta">
+                    <div class="install-command">
+                        <code id="installCommand">composer require kssadi/log-tracker</code>
+                        <button class="copy-btn" id="copyBtn" aria-label="Copy command">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="cta-buttons">
+                        <a href="#features" class="btn btn-primary">Explore Features</a>
+                        <a href="https://github.com/KsSadi/Laravel-Log-Tracker" class="btn btn-secondary" target="_blank" rel="noopener">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                            </svg>
+                            View on GitHub
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-value">2</div>
+                        <div class="stat-label">Beautiful Themes</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Export Formats</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">0</div>
+                        <div class="stat-label">Dependencies</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="social-proof-stats">
+        <div class="container">
+            <div class="social-proof-content">
+                <h3 class="social-proof-title">Trusted by Developers Worldwide</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-number">1,837+</div>
+                        <div class="stat-label">Total Downloads</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-number">723</div>
+                        <div class="stat-label">Monthly Downloads</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⚡</div>
+                        <div class="stat-number">13</div>
+                        <div class="stat-label">Daily Downloads</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔖</div>
+                        <div class="stat-number">9</div>
+                        <div class="stat-label">Versions Released</div>
+                    </div>
+                </div>
+                <div class="package-badges">
+                    <a href="https://packagist.org/packages/kssadi/log-tracker" target="_blank" rel="noopener">
+                        <img src="https://img.shields.io/packagist/dt/kssadi/log-tracker?style=flat-square&color=059669" alt="Total Downloads">
+                    </a>
+                    <a href="https://packagist.org/packages/kssadi/log-tracker" target="_blank" rel="noopener">
+                        <img src="https://img.shields.io/packagist/v/kssadi/log-tracker?style=flat-square&color=059669" alt="Latest Version">
+                    </a>
+                    <a href="https://packagist.org/packages/kssadi/log-tracker" target="_blank" rel="noopener">
+                        <img src="https://img.shields.io/packagist/l/kssadi/log-tracker?style=flat-square&color=059669" alt="License">
+                    </a>
+                    <a href="https://packagist.org/packages/kssadi/log-tracker" target="_blank" rel="noopener">
+                        <img src="https://img.shields.io/packagist/php-v/kssadi/log-tracker?style=flat-square&color=059669" alt="PHP Version">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Why Choose Laravel Log Tracker</h2>
+                <p class="section-description">Everything you need for comprehensive log management and analytics</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Interactive Dashboard</h3>
+                    <p class="feature-description">Comprehensive log analytics with charts and real-time insights. View statistics, error patterns, and peak error hours visualization.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Dual Theme System</h3>
+                    <p class="feature-description">Choose between LiteFlow (minimal & clean) and GlowStack (modern & colorful) themes. Switch instantly with Artisan commands.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Zero-Dependency Exports</h3>
+                    <p class="feature-description">Export logs in CSV, Excel, PDF, and JSON formats without any external libraries. Handle up to 50,000 entries per export.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Error Pattern Analysis</h3>
+                    <p class="feature-description">Identify top error types and peak error hours with visual charts. Smart analytics help you spot trends quickly.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Advanced Filtering</h3>
+                    <p class="feature-description">Filter logs by level (Emergency, Alert, Critical, Error, Warning, Notice, Info, Debug), date range, or custom keywords.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Log File Management</h3>
+                    <p class="feature-description">View, download, delete, and manage log files effortlessly. Smart file pagination for efficient handling of large numbers.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Dynamic Log Levels</h3>
+                    <p class="feature-description">Laravel log levels with dynamic colors and icons. Visual differentiation makes log analysis faster and easier.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Max File Size Protection</h3>
+                    <p class="feature-description">Intelligent file size checking to prevent memory issues. Configurable limits keep your application safe.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Real-time Statistics</h3>
+                    <p class="feature-description">Live log counts and performance metrics. Monitor your application's health at a glance with beautiful visualizations.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Stack Trace Viewer</h3>
+                    <p class="feature-description">Detailed error stack traces with syntax highlighting. Debug faster with clear, formatted error information.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Responsive Design</h3>
+                    <p class="feature-description">Works perfectly on desktop, tablet, and mobile devices. Beautiful UI adapts to any screen size seamlessly.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9"></path>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="feature-title">Highly Customizable</h3>
+                    <p class="feature-description">Tailor log levels, colors, icons, pagination, file limits, and behavior to your needs via configuration file.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section id="screenshots" class="screenshots-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">See It in Action</h2>
+                <p class="section-description">Beautiful, professional log management interface for every scenario</p>
+            </div>
+
+            <div class="screenshots-slider">
+                <button class="slider-btn slider-prev" aria-label="Previous screenshot">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+
+                <div class="screenshots-track-wrapper">
+                    <div class="screenshots-track">
+                        <div class="screenshot-slide">
+                            <div class="screenshot-card">
+                                <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_dashboard.png" alt="Log Tracker Dashboard" loading="lazy">
+                                <div class="screenshot-label">Interactive Dashboard</div>
+                            </div>
+                        </div>
+                        <div class="screenshot-slide">
+                            <div class="screenshot-card">
+                                <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_log_file.png" alt="Log Files Management" loading="lazy">
+                                <div class="screenshot-label">Log Files Management</div>
+                            </div>
+                        </div>
+                        <div class="screenshot-slide">
+                            <div class="screenshot-card">
+                                <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_log_file_view.png" alt="Log File View" loading="lazy">
+                                <div class="screenshot-label">Log File View</div>
+                            </div>
+                        </div>
+                        <div class="screenshot-slide">
+                            <div class="screenshot-card">
+                                <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_banner.png" alt="GlowStack Theme" loading="lazy">
+                                <div class="screenshot-label">GlowStack Theme</div>
+                            </div>
+                        </div>
+                        <div class="screenshot-slide">
+                            <div class="screenshot-card">
+                                <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_log_theme.png" alt="LiteFlow Theme" loading="lazy">
+                                <div class="screenshot-label">LiteFlow Theme</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="slider-btn slider-next" aria-label="Next screenshot">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="screenshots-dots"></div>
+        </div>
+    </section>
+
+    <!-- Themes Section -->
+    <section id="themes" class="layouts-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Dual Theme System</h2>
+                <p class="section-description">Choose the perfect theme for your workflow and preferences</p>
+            </div>
+
+            <div class="layouts-showcase">
+                <div class="layout-tabs">
+                    <button class="layout-tab active" data-layout="glowstack">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        GlowStack
+                    </button>
+                    <button class="layout-tab" data-layout="liteflow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+                            <line x1="6" y1="1" x2="6" y2="4"></line>
+                            <line x1="10" y1="1" x2="10" y2="4"></line>
+                            <line x1="14" y1="1" x2="14" y2="4"></line>
+                        </svg>
+                        LiteFlow
+                    </button>
+                </div>
+
+                <div class="layout-preview-container">
+                    <div class="layout-preview active" id="layout-glowstack">
+                        <div class="layout-info">
+                            <h3>✨ GlowStack Theme</h3>
+                            <p>Modern, colorful, enhanced visual log view with rich colors, advanced styling, and enhanced user experience. Perfect for detailed log analysis and visual engagement.</p>
+                            
+                            <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; font-weight: 600;">Features:</h4>
+                            <ul class="feature-list">
+                                <li>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Modern, vibrant color scheme
+                                </li>
+                                <li>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Enhanced visual hierarchy
+                                </li>
+                                <li>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Rich animations and transitions
+                                </li>
+                                <li>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Advanced styling elements
+                                </li>
+                            </ul>
+                            
+                            <div class="code-block" style="margin-top: 1.5rem;">
+                                <code>php artisan log-tracker:theme set GlowStack</code>
+                            </div>
+                        </div>
+                        <div class="layout-preview-image">
+                            <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_log_theme.png" alt="GlowStack Theme Preview" loading="lazy" style="width: 100%; border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        </div>
+                    </div>
+
+                    <div class="layout-preview" id="layout-liteflow">
+                        <div class="layout-info">
+                            <h3>🌊 LiteFlow Theme</h3>
+                            <p>Minimal, clean log view with streamlined interface. Clean design, fast loading, and excellent readability. Optimized for performance and high-frequency log monitoring.</p>
+                            
+                            <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; font-weight: 600;">Features:</h4>
+                            <ul class="feature-list">
+                                <li>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Minimalist design philosophy
+                                </li>
+                                <li>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Faster page loads
+                                </li>
+                                <li>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Clean, distraction-free interface
+                                </li>
+                                <li>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"></polyline>
+                                    </svg>
+                                    Optimized for performance
+                                </li>
+                            </ul>
+                            
+                            <div class="code-block" style="margin-top: 1.5rem;">
+                                <code>php artisan log-tracker:theme set LiteFlow</code>
+                            </div>
+                        </div>
+                        <div class="layout-preview-image">
+                            <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_log_file_view.png" alt="LiteFlow Theme Preview" loading="lazy" style="width: 100%; border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Export Features Section -->
+    <section id="exports" class="code-example">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Zero-Dependency Exports</h2>
+                <p class="section-description">Export your logs in multiple formats without any external libraries</p>
+            </div>
+
+            <div class="code-showcase" style="margin-top: 2rem;">
+                <div class="code-showcase-content">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: var(--color-text);">4 Export Formats Available</h3>
+                    <p class="section-description" style="text-align: left; margin-bottom: 1.5rem;">
+                        Export your logs in CSV, Excel, PDF, and JSON formats for external analysis and reporting with absolutely zero external dependencies.
+                    </p>
+
+                    <ul class="feature-list">
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <strong>CSV Export</strong> - Excel-compatible CSV format
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <strong>Excel Export</strong> - Native Excel XML format
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <strong>PDF Export</strong> - Print-ready HTML report
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <strong>JSON Export</strong> - Structured JSON with metadata
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Handle up to 50,000 log entries per export
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Automatic cleanup after 7 days
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="code-showcase-code">
+                    <div class="code-window">
+                        <div class="code-window-header">
+                            <div class="code-window-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="code-window-title">config/log-tracker.php</div>
+                        </div>
+                        <pre><code class="language-php">'export' => [
+    'enabled' => true,
+    'formats' => [
+        'csv' => [
+            'enabled' => true,
+            'description' => 'Excel-compatible CSV format'
+        ],
+        'json' => [
+            'enabled' => true,
+            'description' => 'Structured JSON with metadata'
+        ],
+        'excel' => [
+            'enabled' => true,
+            'description' => 'Native Excel XML format'
+        ],
+        'pdf' => [
+            'enabled' => true,
+            'description' => 'Print-ready HTML report'
+        ],
+    ],
+    'limits' => [
+        'max_entries' => 50000,
+        'max_file_size_mb' => 50,
+        'timeout_seconds' => 300,
+    ],
+    'storage' => [
+        'cleanup_after_days' => 7,
+    ],
+];</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section id="installation" class="quick-start">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Get Started in 2 Steps</h2>
+                <p class="section-description">From installation to comprehensive log management in under a minute</p>
+            </div>
+
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Install the Package</h3>
+                        <div class="code-block">
+                            <code>composer require kssadi/log-tracker</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Access Dashboard</h3>
+                        <div class="code-block">
+                            <code>https://your-domain.com/log-tracker</code>
+                        </div>
+                        <p class="step-note">Protected by 'web' and 'auth' middleware by default</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-start-cta">
+                <p>That's it! Visit <code>/log-tracker</code> to see your beautiful log management dashboard.</p>
+                <a href="doc.html" class="btn btn-primary">Read Full Documentation</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Requirements -->
+    <section class="code-example">
+        <div class="container">
+            <div class="code-showcase">
+                <div class="code-showcase-content">
+                    <h2 class="section-title">System Requirements</h2>
+                    <p class="section-description">Supports Laravel 5.5 through 12.x with PHP 7.0 - 8.4</p>
+
+                    <ul class="feature-list">
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Laravel 12.x (PHP 8.1 - 8.4) ✅ Tested
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Laravel 11.x (PHP 8.1 - 8.3) ✅ Tested
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Laravel 10.x (PHP 8.0 - 8.2) ✅ Tested
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Laravel 5.5 - 9.x (PHP 7.0 - 8.1) Supported
+                        </li>
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            Works with any database supported by Laravel
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="code-showcase-code">
+                    <div class="code-window">
+                        <div class="code-window-header">
+                            <div class="code-window-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <div class="code-window-title">.env</div>
+                        </div>
+                        <pre><code class="language-bash"># Recommended log configuration
+LOG_CHANNEL=daily
+LOG_LEVEL=debug
+
+# Log retention
+LOG_DAYS=30
+
+# Log Tracker route prefix
+LOG_TRACKER_ROUTE_PREFIX=log-tracker
+
+# Theme selection
+LOG_TRACKER_THEME=GlowStack</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social CTA Section -->
+    <section class="social-cta">
+        <div class="container">
+            <div class="social-cta-content">
+                <div class="social-cta-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </div>
+                <h2 class="social-cta-title">Love Laravel Log Tracker?</h2>
+                <p class="social-cta-description">If this package is helping your project, support us by starring the repo and sharing with the Laravel community!</p>
+
+                <div class="social-cta-buttons">
+                    <a href="https://github.com/KsSadi/Laravel-Log-Tracker" class="social-btn star-btn" target="_blank" rel="noopener">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        Star on GitHub
+                    </a>
+                    <a href="https://www.buymeacoffee.com/kssadi" class="social-btn share-btn" target="_blank" rel="noopener">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
+                        Buy Me a Coffee
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="logo-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>Laravel Log Tracker</h3>
+                            <p>Powerful log management for Laravel applications</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="doc.html">Documentation</a></li>
+                            <li><a href="https://github.com/KsSadi/Laravel-Log-Tracker" target="_blank" rel="noopener">GitHub</a></li>
+                            <li><a href="https://github.com/KsSadi/Laravel-Log-Tracker/issues" target="_blank" rel="noopener">Issues</a></li>
+                            <li><a href="https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/CHANGELOG.md" target="_blank" rel="noopener">Changelog</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h4>Connect</h4>
+                        <ul>
+                            <li><a href="https://www.linkedin.com/in/kssadi/" target="_blank" rel="noopener">LinkedIn</a></li>
+                            <li><a href="https://github.com/KsSadi" target="_blank" rel="noopener">GitHub</a></li>
+                            <li><a href="mailto:mdsadi4@gmail.com">Email</a></li>
+                            <li><a href="https://www.buymeacoffee.com/kssadi" target="_blank" rel="noopener">Support</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-bottom">
+                <div class="footer-bottom-left">
+                    <p>Open-sourced under the <a href="https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a></p>
+                </div>
+                <div class="footer-bottom-right">
+                    <p>Built with ❤️ by <a href="https://www.linkedin.com/in/kssadi/" target="_blank" rel="noopener">Khaled Saifullah Sadi</a></p>
+                    <p style="margin-left: 1.5rem; color: var(--color-text-tertiary);">© 2025 All rights reserved</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" aria-label="Close lightbox">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <div class="lightbox-content">
+            <img src="" alt="" class="lightbox-image" id="lightboxImage">
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+        </div>
+        <button class="lightbox-nav lightbox-prev" aria-label="Previous image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <button class="lightbox-nav lightbox-next" aria-label="Next image">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+        // Fetch version from Packagist API
+        async function fetchVersion() {
+            try {
+                const response = await fetch('https://packagist.org/packages/kssadi/log-tracker/stats.json');
+                const data = await response.json();
+                
+                console.log('API Response:', data);
+                
+                // Get the latest version from versions array
+                if (data.versions && Array.isArray(data.versions) && data.versions.length > 1) {
+                    // The API returns versions as strings in an array, skip dev-main and get stable version
+                    const latestVersion = data.versions[1].replace(/^v/, '');
+                    
+                    console.log('Latest version:', latestVersion);
+                    
+                    // Update all version displays
+                    const versionElements = document.querySelectorAll('#version-text, .version-display');
+                    versionElements.forEach(el => {
+                        el.textContent = 'Version ' + latestVersion;
+                    });
+                } else {
+                    console.error('No versions found in API response');
+                }
+            } catch (error) {
+                console.error('Error fetching version:', error);
+                // Fallback to default version if API fails
+                const versionElements = document.querySelectorAll('#version-text, .version-display');
+                versionElements.forEach(el => {
+                    el.textContent = 'Version 2.3';
+                });
+            }
+        }
+        
+        // Fetch version on page load
+        fetchVersion();
+    </script>
+</body>
+
+</html>
