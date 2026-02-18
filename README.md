@@ -14,6 +14,14 @@ Laravel Log Tracker is a powerful, user-friendly package for tracking, analyzing
 ![GitHub top language](https://img.shields.io/github/languages/top/KsSadi/Laravel-Log-Tracker.svg)
 ![Packagist Version](https://img.shields.io/packagist/v/kssadi/log-tracker.svg)
 
+<div align="center">
+
+### 🌐 [Official Website & Documentation](https://kssadi.github.io/Laravel-Log-Tracker/)
+
+*Explore features, screenshots, themes, export formats, and full documentation on the official site.*
+
+</div>
+
 ---
 
 <div align="center">
