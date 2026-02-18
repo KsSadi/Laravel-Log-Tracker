@@ -153,7 +153,7 @@
                     for Laravel
                 </h1>
 
-                <div style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; padding: 0.5rem 1.25rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%); border: 2px solid var(--color-primary); border-radius: 50px; font-size: 0.9375rem; font-weight: 700; color: var(--color-primary); box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15);">
+                <div class="version-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; padding: 0.5rem 1.25rem; background: linear-gradient(135deg, rgba(5, 150, 105, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%); border: 2px solid var(--color-primary); border-radius: 50px; font-size: 0.9375rem; font-weight: 700; color: var(--color-primary); box-shadow: 0 2px 8px rgba(5, 150, 105, 0.15); flex-wrap: wrap; justify-content: center;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <circle cx="12" cy="12" r="10"></circle>
                         <polyline points="12 6 12 12 16 14"></polyline>
@@ -245,6 +245,20 @@
                     <a href="https://packagist.org/packages/kssadi/log-tracker" target="_blank" rel="noopener">
                         <img src="https://img.shields.io/packagist/php-v/kssadi/log-tracker?style=flat-square&color=059669" alt="PHP Version">
                     </a>
+                </div>
+
+                <!-- Supported By -->
+                <div class="supported-by">
+                    <p class="supported-by-label">Supported By</p>
+                    <div class="supported-by-logos">
+                        <a href="https://ba-systems.com" target="_blank" rel="noopener" class="supporter-logo-link" title="BA Systems">
+                            <img src="https://ba-systems.com/png/BA.webp" alt="BA Systems" class="supporter-logo">
+                        </a>
+                        <div class="supporter-separator"></div>
+                        <a href="https://prathomik.com" target="_blank" rel="noopener" class="supporter-logo-link" title="Prathomik">
+                            <img src="https://prathomik.com/assets/img/prathomik.png" alt="Prathomik" class="supporter-logo">
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -444,13 +458,13 @@
                         </div>
                         <div class="screenshot-slide">
                             <div class="screenshot-card">
-                                <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_banner.png" alt="GlowStack Theme" loading="lazy">
+                                <img src="assets/images/glow_stack.png" alt="GlowStack Theme" loading="lazy">
                                 <div class="screenshot-label">GlowStack Theme</div>
                             </div>
                         </div>
                         <div class="screenshot-slide">
                             <div class="screenshot-card">
-                                <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_log_theme.png" alt="LiteFlow Theme" loading="lazy">
+                                <img src="assets/images/lite_flow.png" alt="LiteFlow Theme" loading="lazy">
                                 <div class="screenshot-label">LiteFlow Theme</div>
                             </div>
                         </div>
@@ -499,85 +513,91 @@
                 <div class="layout-preview-container">
                     <div class="layout-preview active" id="layout-glowstack">
                         <div class="layout-info">
-                            <h3>✨ GlowStack Theme</h3>
+                            <div class="theme-info-header">
+                                <div class="theme-badge glowstack">GlowStack</div>
+                                <span class="theme-tag">Modern & Colorful</span>
+                            </div>
+                            <h3 style="margin: 0.75rem 0 0.5rem;">✨ GlowStack Theme</h3>
                             <p>Modern, colorful, enhanced visual log view with rich colors, advanced styling, and enhanced user experience. Perfect for detailed log analysis and visual engagement.</p>
                             
-                            <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; font-weight: 600;">Features:</h4>
-                            <ul class="feature-list">
-                                <li>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Modern, vibrant color scheme
-                                </li>
-                                <li>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Enhanced visual hierarchy
-                                </li>
-                                <li>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Rich animations and transitions
-                                </li>
-                                <li>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Advanced styling elements
-                                </li>
-                            </ul>
-                            
-                            <div class="code-block" style="margin-top: 1.5rem;">
+                            <div class="theme-feature-grid">
+                                <div class="theme-feature-item">
+                                    <div class="theme-feature-icon" style="background:rgba(168,85,247,0.1);color:#a855f7;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                                    </div>
+                                    <span>Vibrant color scheme</span>
+                                </div>
+                                <div class="theme-feature-item">
+                                    <div class="theme-feature-icon" style="background:rgba(236,72,153,0.1);color:#ec4899;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                    </div>
+                                    <span>Enhanced visual hierarchy</span>
+                                </div>
+                                <div class="theme-feature-item">
+                                    <div class="theme-feature-icon" style="background:rgba(245,158,11,0.1);color:#f59e0b;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                                    </div>
+                                    <span>Rich animations</span>
+                                </div>
+                                <div class="theme-feature-item">
+                                    <div class="theme-feature-icon" style="background:rgba(59,130,246,0.1);color:#3b82f6;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
+                                    </div>
+                                    <span>Advanced styling elements</span>
+                                </div>
+                            </div>
+
+                            <div class="code-block" style="margin-top: 1.25rem;">
                                 <code>php artisan log-tracker:theme set GlowStack</code>
                             </div>
                         </div>
                         <div class="layout-preview-image">
-                            <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_log_theme.png" alt="GlowStack Theme Preview" loading="lazy" style="width: 100%; border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                            <img src="assets/images/glow_stack.png" alt="GlowStack Theme Preview" loading="lazy" style="width: 100%; border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
                         </div>
                     </div>
 
                     <div class="layout-preview" id="layout-liteflow">
                         <div class="layout-info">
-                            <h3>🌊 LiteFlow Theme</h3>
+                            <div class="theme-info-header">
+                                <div class="theme-badge liteflow">LiteFlow</div>
+                                <span class="theme-tag">Minimal & Fast</span>
+                            </div>
+                            <h3 style="margin: 0.75rem 0 0.5rem;">🌊 LiteFlow Theme</h3>
                             <p>Minimal, clean log view with streamlined interface. Clean design, fast loading, and excellent readability. Optimized for performance and high-frequency log monitoring.</p>
-                            
-                            <h4 style="margin-top: 1.5rem; margin-bottom: 0.75rem; font-weight: 600;">Features:</h4>
-                            <ul class="feature-list">
-                                <li>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Minimalist design philosophy
-                                </li>
-                                <li>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Faster page loads
-                                </li>
-                                <li>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Clean, distraction-free interface
-                                </li>
-                                <li>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"></polyline>
-                                    </svg>
-                                    Optimized for performance
-                                </li>
-                            </ul>
-                            
-                            <div class="code-block" style="margin-top: 1.5rem;">
+
+                            <div class="theme-feature-grid">
+                                <div class="theme-feature-item">
+                                    <div class="theme-feature-icon" style="background:rgba(5,150,105,0.1);color:#059669;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                                    </div>
+                                    <span>Minimalist design</span>
+                                </div>
+                                <div class="theme-feature-item">
+                                    <div class="theme-feature-icon" style="background:rgba(5,150,105,0.1);color:#059669;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                                    </div>
+                                    <span>Faster page loads</span>
+                                </div>
+                                <div class="theme-feature-item">
+                                    <div class="theme-feature-icon" style="background:rgba(5,150,105,0.1);color:#059669;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                                    </div>
+                                    <span>Distraction-free UI</span>
+                                </div>
+                                <div class="theme-feature-item">
+                                    <div class="theme-feature-icon" style="background:rgba(5,150,105,0.1);color:#059669;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                                    </div>
+                                    <span>Optimized performance</span>
+                                </div>
+                            </div>
+
+                            <div class="code-block" style="margin-top: 1.25rem;">
                                 <code>php artisan log-tracker:theme set LiteFlow</code>
                             </div>
                         </div>
                         <div class="layout-preview-image">
-                            <img src="https://github.com/KsSadi/Laravel-Log-Tracker/raw/main/image/log_tracker_log_file_view.png" alt="LiteFlow Theme Preview" loading="lazy" style="width: 100%; border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                            <img src="assets/images/lite_flow.png" alt="LiteFlow Theme Preview" loading="lazy" style="width: 100%; border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
                         </div>
                     </div>
                 </div>
@@ -600,44 +620,46 @@
                         Export your logs in CSV, Excel, PDF, and JSON formats for external analysis and reporting with absolutely zero external dependencies.
                     </p>
 
-                    <ul class="feature-list">
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            <strong>CSV Export</strong> - Excel-compatible CSV format
-                        </li>
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            <strong>Excel Export</strong> - Native Excel XML format
-                        </li>
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            <strong>PDF Export</strong> - Print-ready HTML report
-                        </li>
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            <strong>JSON Export</strong> - Structured JSON with metadata
-                        </li>
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Handle up to 50,000 log entries per export
-                        </li>
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Automatic cleanup after 7 days
-                        </li>
-                    </ul>
+                    <div class="export-format-grid">
+                        <div class="export-format-card">
+                            <div class="export-format-icon csv">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg>
+                            </div>
+                            <div class="export-format-label">CSV</div>
+                            <div class="export-format-desc">Excel-compatible CSV format</div>
+                        </div>
+                        <div class="export-format-card">
+                            <div class="export-format-icon excel">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18"></path><path d="M3 15h18"></path><path d="M9 3v18"></path><path d="M15 3v18"></path></svg>
+                            </div>
+                            <div class="export-format-label">Excel</div>
+                            <div class="export-format-desc">Native Excel XML format</div>
+                        </div>
+                        <div class="export-format-card">
+                            <div class="export-format-icon pdf">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="12" y2="17"></line></svg>
+                            </div>
+                            <div class="export-format-label">PDF</div>
+                            <div class="export-format-desc">Print-ready HTML report</div>
+                        </div>
+                        <div class="export-format-card">
+                            <div class="export-format-icon json">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                            </div>
+                            <div class="export-format-label">JSON</div>
+                            <div class="export-format-desc">Structured with metadata</div>
+                        </div>
+                    </div>
+                    <div class="export-stats-row">
+                        <div class="export-stat">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                            Up to <strong>50,000</strong> log entries per export
+                        </div>
+                        <div class="export-stat">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            Auto cleanup after <strong>7 days</strong>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="code-showcase-code">
@@ -731,38 +753,40 @@
                     <h2 class="section-title">System Requirements</h2>
                     <p class="section-description">Supports Laravel 5.5 through 12.x with PHP 7.0 - 8.4</p>
 
-                    <ul class="feature-list">
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Laravel 12.x (PHP 8.1 - 8.4) ✅ Tested
-                        </li>
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Laravel 11.x (PHP 8.1 - 8.3) ✅ Tested
-                        </li>
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Laravel 10.x (PHP 8.0 - 8.2) ✅ Tested
-                        </li>
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Laravel 5.5 - 9.x (PHP 7.0 - 8.1) Supported
-                        </li>
-                        <li>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            Works with any database supported by Laravel
-                        </li>
-                    </ul>
+                    <div class="version-compat-grid">
+                        <div class="version-card">
+                            <div class="version-card-top">
+                                <span class="version-laravel">Laravel 12.x</span>
+                                <span class="version-badge tested">✔ Tested</span>
+                            </div>
+                            <div class="version-php">PHP 8.1 – 8.4</div>
+                        </div>
+                        <div class="version-card">
+                            <div class="version-card-top">
+                                <span class="version-laravel">Laravel 11.x</span>
+                                <span class="version-badge tested">✔ Tested</span>
+                            </div>
+                            <div class="version-php">PHP 8.1 – 8.3</div>
+                        </div>
+                        <div class="version-card">
+                            <div class="version-card-top">
+                                <span class="version-laravel">Laravel 10.x</span>
+                                <span class="version-badge tested">✔ Tested</span>
+                            </div>
+                            <div class="version-php">PHP 8.0 – 8.2</div>
+                        </div>
+                        <div class="version-card">
+                            <div class="version-card-top">
+                                <span class="version-laravel">Laravel 5.5 – 9.x</span>
+                                <span class="version-badge supported">✔ Supported</span>
+                            </div>
+                            <div class="version-php">PHP 7.0 – 8.1</div>
+                        </div>
+                    </div>
+                    <p class="version-db-note">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                        Works with any database supported by Laravel
+                    </p>
                 </div>
 
                 <div class="code-showcase-code">
@@ -876,7 +900,7 @@ LOG_TRACKER_THEME=GlowStack</code></pre>
                 </div>
                 <div class="footer-bottom-right">
                     <p>Built with ❤️ by <a href="https://www.linkedin.com/in/kssadi/" target="_blank" rel="noopener">Khaled Saifullah Sadi</a></p>
-                    <p class="footer-copyright">© 2025 All rights reserved</p>
+                    <p class="footer-copyright">© <span id="current-year"></span> All rights reserved</p>
                 </div>
             </div>
         </div>
@@ -944,6 +968,9 @@ LOG_TRACKER_THEME=GlowStack</code></pre>
         
         // Fetch version on page load
         fetchVersion();
+
+        // Set dynamic year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
     </script>
 </body>
 

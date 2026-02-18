@@ -63,11 +63,89 @@
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <style>
+        /* ===========================
+           Reading Progress Bar
+           =========================== */
+        #readingProgress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: linear-gradient(90deg, #059669, #10b981, #34d399);
+            z-index: 9999;
+            transition: width 0.1s linear;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* ===========================
+           Layout
+           =========================== */
         .doc-layout {
             min-height: 100vh;
             background: var(--color-bg);
         }
 
+        /* ===========================
+           Doc Page Hero
+           =========================== */
+        .doc-page-hero {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.06) 0%, rgba(16, 185, 129, 0.03) 50%, var(--color-bg-secondary) 100%);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--spacing-xl) 0 var(--spacing-lg);
+            margin-left: 280px;
+            margin-top: 72px;
+        }
+
+        .doc-page-hero .container {
+            max-width: 900px;
+        }
+
+        .doc-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .doc-breadcrumb a {
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: opacity var(--transition-fast);
+        }
+
+        .doc-breadcrumb a:hover {
+            opacity: 0.8;
+        }
+
+        .doc-breadcrumb svg {
+            width: 14px;
+            height: 14px;
+            opacity: 0.5;
+        }
+
+        .doc-hero-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--color-text);
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-hero-subtitle {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+            margin: 0;
+        }
+
+        /* ===========================
+           Sidebar
+           =========================== */
         .doc-sidebar {
             position: fixed;
             top: 72px;
@@ -77,8 +155,61 @@
             background: var(--color-bg-secondary);
             border-right: 1px solid var(--color-border);
             overflow-y: auto;
-            padding: var(--spacing-lg);
             z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doc-sidebar-header {
+            padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+            border-bottom: 1px solid var(--color-border);
+            background: var(--color-bg-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .doc-sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            text-decoration: none;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .doc-sidebar-brand-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: white;
+        }
+
+        .doc-sidebar-brand-text {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        .doc-sidebar-version {
+            display: inline-flex;
+            align-items: center;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            color: var(--color-primary);
+            background: rgba(5, 150, 105, 0.1);
+            border: 1px solid rgba(5, 150, 105, 0.2);
+            border-radius: 100px;
+            padding: 0.15rem 0.6rem;
+        }
+
+        .doc-sidebar-body {
+            padding: var(--spacing-md) var(--spacing-lg);
+            flex: 1;
         }
 
         .doc-nav {
@@ -86,16 +217,28 @@
         }
 
         .doc-nav-section {
-            margin-bottom: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
         }
 
         .doc-nav-title {
-            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.6875rem;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.08em;
             color: var(--color-text-tertiary);
             margin-bottom: var(--spacing-sm);
+            padding: 0 var(--spacing-sm);
+        }
+
+        .doc-nav-title::before {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 1px;
+            background: var(--color-border);
         }
 
         .doc-nav-list {
@@ -103,55 +246,126 @@
         }
 
         .doc-nav-link {
-            display: block;
-            padding: var(--spacing-xs) var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem var(--spacing-sm);
             color: var(--color-text-secondary);
             text-decoration: none;
             border-radius: var(--radius-sm);
             transition: all var(--transition-fast);
-            font-size: 0.9375rem;
-            margin-bottom: 2px;
+            font-size: 0.875rem;
+            margin-bottom: 1px;
+            border-left: 2px solid transparent;
+            position: relative;
+        }
+
+        .doc-nav-link::before {
+            content: '';
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--color-border);
+            flex-shrink: 0;
+            transition: all var(--transition-fast);
         }
 
         .doc-nav-link:hover {
-            background: var(--color-bg);
+            background: rgba(5, 150, 105, 0.06);
             color: var(--color-primary);
+            padding-left: calc(var(--spacing-sm) + 4px);
+        }
+
+        .doc-nav-link:hover::before {
+            background: var(--color-primary);
         }
 
         .doc-nav-link.active {
-            background: var(--color-primary);
-            color: white;
+            background: rgba(5, 150, 105, 0.1);
+            color: var(--color-primary);
             font-weight: 600;
+            border-left-color: var(--color-primary);
         }
 
+        .doc-nav-link.active::before {
+            background: var(--color-primary);
+        }
+
+        /* ===========================
+           Doc Content
+           =========================== */
         .doc-content {
             margin-left: 280px;
-            padding: var(--spacing-xl);
-            max-width: 900px;
+            padding: var(--spacing-2xl) var(--spacing-xl);
+            max-width: calc(900px + 280px);
         }
 
+        .doc-content-inner {
+            max-width: 820px;
+        }
+
+        /* ===========================
+           Doc Sections
+           =========================== */
         .doc-section {
-            margin-bottom: var(--spacing-2xl);
+            margin-bottom: var(--spacing-xl);
             scroll-margin-top: 100px;
         }
 
         .doc-section h2 {
-            font-size: 2rem;
+            font-size: 1.875rem;
             font-weight: 800;
-            margin-bottom: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
             color: var(--color-text);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--color-border);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .doc-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+        }
+
+        .doc-section-anchor {
+            font-size: 1rem;
+            opacity: 0;
+            color: var(--color-text-tertiary);
+            text-decoration: none;
+            transition: opacity var(--transition-fast);
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .doc-section h2:hover .doc-section-anchor {
+            opacity: 1;
         }
 
         .doc-section h3 {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            margin-top: var(--spacing-xl);
-            margin-bottom: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
             color: var(--color-text);
+            padding-left: var(--spacing-md);
+            border-left: 3px solid var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
         }
 
         .doc-section h4 {
-            font-size: 1.25rem;
+            font-size: 1.0625rem;
             font-weight: 600;
             margin-top: var(--spacing-lg);
             margin-bottom: var(--spacing-sm);
@@ -160,67 +374,183 @@
 
         .doc-section p {
             margin-bottom: var(--spacing-md);
-            line-height: 1.7;
+            line-height: 1.8;
             color: var(--color-text-secondary);
+        }
+
+        /* Requirement Cards */
+        .req-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        .req-card {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-md);
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .req-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.08);
+        }
+
+        .req-icon {
+            flex-shrink: 0;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.12), rgba(16, 185, 129, 0.06));
+            border-radius: var(--radius-sm);
+            color: var(--color-primary);
+        }
+
+        .req-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text);
+            margin-bottom: 0.2rem;
+        }
+
+        .req-desc {
+            font-size: 0.8125rem;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
         }
 
         .doc-section ul,
         .doc-section ol {
             margin-bottom: var(--spacing-lg);
             padding-left: var(--spacing-lg);
-            line-height: 1.7;
+            line-height: 1.8;
             color: var(--color-text-secondary);
         }
 
         .doc-section li {
-            margin-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-xs);
         }
 
+        /* ===========================
+           Alert Boxes
+           =========================== */
         .doc-alert {
-            padding: var(--spacing-md);
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
             border-radius: var(--radius-md);
             margin-bottom: var(--spacing-lg);
             border-left: 4px solid;
+            align-items: flex-start;
+        }
+
+        .doc-alert-icon {
+            font-size: 1.2rem;
+            line-height: 1.4;
+            flex-shrink: 0;
+        }
+
+        .doc-alert-body {
+            flex: 1;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            color: var(--color-text-secondary);
         }
 
         .doc-alert.info {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(59, 130, 246, 0.07);
             border-color: #3b82f6;
         }
 
         .doc-alert.warning {
-            background: rgba(251, 191, 36, 0.1);
+            background: rgba(251, 191, 36, 0.07);
             border-color: #fbbf24;
         }
 
         .doc-alert.success {
-            background: rgba(34, 197, 94, 0.1);
+            background: rgba(34, 197, 94, 0.07);
             border-color: #22c55e;
+        }
+
+        .doc-alert.danger {
+            background: rgba(239, 68, 68, 0.07);
+            border-color: #ef4444;
+        }
+
+        /* ===========================
+           Tables
+           =========================== */
+        .doc-table-wrapper {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            margin-bottom: var(--spacing-lg);
         }
 
         .doc-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: var(--spacing-lg);
         }
 
-        .doc-table th,
+        .doc-table th {
+            padding: var(--spacing-sm) var(--spacing-md);
+            text-align: left;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--color-text-secondary);
+            background: var(--color-bg-secondary);
+            border-bottom: 2px solid var(--color-border);
+        }
+
         .doc-table td {
             padding: var(--spacing-sm) var(--spacing-md);
             text-align: left;
             border-bottom: 1px solid var(--color-border);
-        }
-
-        .doc-table th {
-            font-weight: 600;
-            color: var(--color-text);
-            background: var(--color-bg-secondary);
-        }
-
-        .doc-table td {
             color: var(--color-text-secondary);
+            font-size: 0.9375rem;
         }
 
+        .doc-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .doc-table tbody tr:nth-child(even) td {
+            background: rgba(0, 0, 0, 0.015);
+        }
+
+        [data-theme="dark"] .doc-table tbody tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .doc-table tbody tr:hover td {
+            background: rgba(5, 150, 105, 0.04);
+        }
+
+        .doc-table .badge-success {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: #16a34a;
+            background: rgba(34, 197, 94, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+        }
+
+        /* ===========================
+           Sidebar Toggle
+           =========================== */
         .doc-sidebar-toggle {
             position: fixed;
             bottom: var(--spacing-lg);
@@ -234,13 +564,15 @@
             background: var(--color-primary);
             color: white;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+            box-shadow: 0 4px 20px rgba(5, 150, 105, 0.4);
             transition: all var(--transition-base);
+            align-items: center;
+            justify-content: center;
         }
 
         .doc-sidebar-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+            transform: scale(1.08);
+            box-shadow: 0 6px 24px rgba(5, 150, 105, 0.5);
         }
 
         .doc-sidebar-toggle svg {
@@ -259,17 +591,295 @@
             z-index: 99;
             opacity: 0;
             transition: opacity var(--transition-base);
+            backdrop-filter: blur(2px);
         }
 
         .doc-sidebar-overlay.active {
             opacity: 1;
         }
 
+        /* ===========================
+           Back to Top
+           =========================== */
+        #backToTop {
+            position: fixed;
+            bottom: 7rem;
+            right: var(--spacing-lg);
+            z-index: 998;
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            color: var(--color-text-secondary);
+            cursor: pointer;
+            box-shadow: 0 2px 8px var(--color-shadow);
+            transition: all var(--transition-base);
+            align-items: center;
+            justify-content: center;
+        }
+
+        #backToTop.visible {
+            display: flex;
+        }
+
+        #backToTop:hover {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+
+        /* ===========================
+           Code Blocks
+           =========================== */
+        .doc-code-block {
+            background: #0f172a;
+            border-radius: var(--radius-md);
+            margin: var(--spacing-lg) 0;
+            overflow: hidden;
+            border: 1px solid #1e293b;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .doc-code-block pre {
+            background: transparent;
+            margin: 0;
+            padding: var(--spacing-lg);
+            overflow-x: auto;
+        }
+
+        .doc-code-block pre code {
+            font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.75;
+            color: #e2e8f0;
+        }
+
+        .doc-code-header {
+            background: #1e293b;
+            padding: 0.55rem var(--spacing-lg);
+            border-bottom: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-md);
+        }
+
+        .doc-code-header-left {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .doc-code-dots {
+            display: flex;
+            gap: 5px;
+        }
+
+        .doc-code-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .doc-code-dots span:nth-child(1) { background: #ef4444; }
+        .doc-code-dots span:nth-child(2) { background: #fbbf24; }
+        .doc-code-dots span:nth-child(3) { background: #22c55e; }
+
+        .doc-code-title {
+            font-size: 0.8125rem;
+            color: #64748b;
+            font-family: "SF Mono", "Monaco", "Consolas", monospace;
+        }
+
+        .doc-code-copy {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #64748b;
+            padding: 0.2rem 0.65rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .doc-code-copy:hover {
+            background: #334155;
+            color: #e2e8f0;
+            border-color: #475569;
+        }
+
+        .doc-code-block pre {
+            padding: var(--spacing-lg);
+            overflow-x: auto;
+            margin: 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .doc-code-block code {
+            font-family: "SF Mono", "Monaco", "Consolas", monospace;
+            font-size: 0.9rem;
+            line-height: 1.75;
+            color: #e2e8f0;
+            display: block;
+            white-space: pre;
+            word-break: normal;
+        }
+
+        /* ===========================
+           Inline Code & Simple Blocks
+           =========================== */
+        .doc-inline-code {
+            background: rgba(5, 150, 105, 0.08);
+            color: var(--color-primary);
+            padding: 0.15em 0.45em;
+            border-radius: 4px;
+            font-family: "SF Mono", "Monaco", "Consolas", monospace;
+            font-size: 0.875em;
+            border: 1px solid rgba(5, 150, 105, 0.15);
+        }
+
+        .code-block {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: var(--spacing-md) var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--color-text);
+        }
+
+        pre.code-window {
+            background: #0f172a;
+            border: 1px solid #1e293b;
+            border-radius: var(--radius-md);
+            padding: var(--spacing-lg);
+            overflow-x: auto;
+            margin-bottom: var(--spacing-lg);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        pre.code-window code {
+            font-family: 'SF Mono', 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.75;
+            color: #e2e8f0;
+        }
+
+        /* Override highlight.js background */
+        .doc-code-block code.hljs,
+        .doc-code-block .hljs,
+        pre.code-window code.hljs,
+        pre.code-window .hljs,
+        code.hljs,
+        .hljs {
+            background: transparent !important;
+            padding: 0 !important;
+        }
+
+        /* ===========================
+           Doc Content Footer
+           =========================== */
+        .doc-page-footer {
+            margin-top: calc(var(--spacing-2xl) * 2);
+            padding-top: var(--spacing-2xl);
+            border-top: 1px solid var(--color-border);
+        }
+
+        .doc-page-footer-inner {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .doc-page-footer-text h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-text);
+            margin: 0 0 0.25rem 0;
+        }
+
+        .doc-page-footer-text p {
+            font-size: 0.875rem;
+            color: var(--color-text-tertiary);
+            margin: 0;
+        }
+
+        .doc-page-footer-actions {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .doc-footer-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .doc-footer-btn.primary {
+            background: var(--color-primary);
+            color: white;
+        }
+
+        .doc-footer-btn.primary:hover {
+            background: var(--color-primary-dark, #047857);
+            transform: translateY(-1px);
+        }
+
+        .doc-footer-btn.secondary {
+            background: var(--color-bg);
+            color: var(--color-text-secondary);
+            border: 1px solid var(--color-border);
+        }
+
+        .doc-footer-btn.secondary:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .doc-page-footer-copy {
+            text-align: center;
+            font-size: 0.8125rem;
+            color: var(--color-text-tertiary);
+            padding-bottom: var(--spacing-lg);
+        }
+
+        .doc-page-footer-copy a {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        /* ===========================
+           Responsive
+           =========================== */
         @media (max-width: 968px) {
             .doc-sidebar-toggle {
                 display: flex;
-                align-items: center;
-                justify-content: center;
             }
 
             .doc-sidebar-overlay.active {
@@ -288,127 +898,201 @@
 
             .doc-content {
                 margin-left: 0;
+                padding: var(--spacing-xl) var(--spacing-lg);
+            }
+
+            .doc-page-hero {
+                margin-left: 0;
+                padding: var(--spacing-lg) 0;
+            }
+
+            .doc-hero-title {
+                font-size: 1.75rem;
+            }
+
+            .doc-section h2 {
+                font-size: 1.625rem;
+            }
+
+            .doc-section h3 {
+                font-size: 1.125rem;
+            }
+
+            .doc-section h4 {
+                font-size: 1rem;
             }
         }
 
-        /* Terminal-style Code Blocks */
-        .doc-code-block {
-            background: #1e293b;
-            border-radius: var(--radius-md);
-            margin: var(--spacing-lg) 0;
-            overflow: hidden;
-            border: 1px solid #334155;
+        @media (max-width: 640px) {
+            .doc-content {
+                padding: var(--spacing-md);
+            }
+
+            .doc-page-hero {
+                padding: var(--spacing-md) 0;
+            }
+
+            .doc-hero-title {
+                font-size: 1.5rem;
+            }
+
+            .doc-sidebar {
+                width: 280px;
+            }
+
+            .doc-sidebar-toggle {
+                width: 52px;
+                height: 52px;
+                bottom: var(--spacing-md);
+                right: var(--spacing-md);
+            }
+
+            .doc-sidebar-toggle svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            .doc-section {
+                margin-bottom: var(--spacing-xl);
+                scroll-margin-top: 80px;
+            }
+
+            .doc-section h2 {
+                font-size: 1.375rem;
+                margin-bottom: var(--spacing-md);
+            }
+
+            .doc-section h3 {
+                font-size: 1rem;
+                margin-top: var(--spacing-lg);
+            }
+
+            .doc-section h4 {
+                font-size: 0.9375rem;
+            }
+
+            .doc-section p {
+                font-size: 0.9375rem;
+            }
+
+            .doc-table th,
+            .doc-table td {
+                padding: var(--spacing-xs) var(--spacing-sm);
+                font-size: 0.875rem;
+            }
+
+            .doc-page-footer-inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
 
-        .doc-code-header {
-            background: #0f172a;
-            padding: var(--spacing-sm) var(--spacing-lg);
-            border-bottom: 1px solid #334155;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        @media (max-width: 480px) {
+            .doc-content {
+                padding: var(--spacing-sm);
+            }
+
+            .doc-sidebar {
+                width: 260px;
+            }
+
+            .doc-sidebar-toggle {
+                width: 48px;
+                height: 48px;
+                bottom: 1rem;
+                right: 1rem;
+            }
+
+            .doc-sidebar-toggle svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .doc-nav-link {
+                font-size: 0.8125rem;
+            }
+
+            .doc-section h2 {
+                font-size: 1.25rem;
+            }
+
+            .doc-section h3 {
+                font-size: 0.9375rem;
+            }
+
+            .doc-section h4 {
+                font-size: 0.875rem;
+            }
+
+            .doc-section p,
+            .doc-section li {
+                font-size: 0.875rem;
+            }
+
+            .doc-alert {
+                padding: var(--spacing-sm) var(--spacing-md);
+                font-size: 0.875rem;
+            }
         }
 
-        .doc-code-title {
-            font-size: 0.875rem;
-            color: #94a3b8;
-            font-family: "SF Mono", "Monaco", "Consolas", monospace;
+        /* Code block responsive */
+        @media (max-width: 768px) {
+            .doc-code-block pre {
+                padding: var(--spacing-md);
+            }
+
+            .doc-code-block code {
+                font-size: 0.8125rem;
+                line-height: 1.6;
+            }
+
+            .doc-code-header {
+                padding: 0.4rem var(--spacing-md);
+            }
+
+            .doc-code-title {
+                font-size: 0.75rem;
+            }
         }
 
-        .doc-code-copy {
-            background: transparent;
-            border: 1px solid #475569;
-            color: #94a3b8;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all var(--transition-fast);
-        }
+        @media (max-width: 480px) {
+            .doc-code-block {
+                border-radius: var(--radius-sm);
+                margin: var(--spacing-md) 0;
+            }
 
-        .doc-code-copy:hover {
-            background: #334155;
-            color: white;
-        }
+            .doc-code-block pre {
+                padding: var(--spacing-sm);
+            }
 
-        .doc-code-block pre {
-            padding: var(--spacing-lg);
-            overflow-x: auto;
-            margin: 0;
-        }
+            .doc-code-block code {
+                font-size: 0.75rem;
+                line-height: 1.5;
+            }
 
-        .doc-code-block code {
-            font-family: "SF Mono", "Monaco", "Consolas", monospace;
-            font-size: 0.9375rem;
-            line-height: 1.7;
-            color: #e2e8f0;
-            display: block;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
+            .doc-code-header {
+                padding: 0.3rem var(--spacing-sm);
+            }
 
-        /* Override highlight.js background */
-        .doc-code-block code.hljs,
-        .doc-code-block .hljs {
-            background: transparent !important;
-            padding: 0 !important;
-        }
-
-        .doc-inline-code {
-            background: var(--color-bg-secondary);
-            color: var(--color-primary);
-            padding: 0.2em 0.5em;
-            border-radius: 4px;
-            font-family: "SF Mono", "Monaco", "Consolas", monospace;
-            font-size: 0.9em;
-            border: 1px solid var(--color-border);
-        }
-
-        /* Fallback for simple code blocks */
-        .code-block {
-            background: var(--color-bg-secondary);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            padding: var(--spacing-md);
-            margin-bottom: var(--spacing-lg);
-            overflow-x: auto;
-        }
-
-        .code-block code {
-            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-            font-size: 0.875rem;
-            line-height: 1.6;
-            color: var(--color-text);
-        }
-
-        pre.code-window {
-            background: #282c34;
-            border-radius: var(--radius-md);
-            padding: var(--spacing-lg);
-            overflow-x: auto;
-            margin-bottom: var(--spacing-lg);
-        }
-
-        pre.code-window code {
-            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-            font-size: 0.875rem;
-            line-height: 1.6;
-        }
-
-        /* Override highlight.js styles for all code blocks */
-        .doc-code-block code.hljs,
-        .doc-code-block .hljs,
-        pre.code-window code.hljs,
-        pre.code-window .hljs,
-        code.hljs,
-        .hljs {
-            background: transparent !important;
-            padding: 0 !important;
+            .doc-code-copy {
+                padding: 0.2rem 0.5rem;
+                font-size: 0.6875rem;
+            }
         }
     </style>
 </head>
 
 <body class="doc-layout">
+    <!-- Reading Progress Bar -->
+    <div id="readingProgress"></div>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" aria-label="Back to top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container navbar-content">
@@ -483,8 +1167,36 @@
     <!-- Sidebar Overlay for Mobile -->
     <div class="doc-sidebar-overlay" id="docSidebarOverlay"></div>
 
+    <!-- Doc Page Hero -->
+    <div class="doc-page-hero">
+        <div class="container">
+            <nav class="doc-breadcrumb" aria-label="Breadcrumb">
+                <a href="index.html">Home</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <span>Documentation</span>
+            </nav>
+            <h1 class="doc-hero-title">Documentation</h1>
+            <p class="doc-hero-subtitle">Complete guide to installing, configuring, and using Laravel Log Tracker</p>
+        </div>
+    </div>
+
     <!-- Sidebar -->
     <aside class="doc-sidebar" id="docSidebar">
+        <div class="doc-sidebar-header">
+            <a href="index.html" class="doc-sidebar-brand">
+                <div class="doc-sidebar-brand-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                </div>
+                <span class="doc-sidebar-brand-text">Log Tracker Docs</span>
+            </a>
+            <div><span class="doc-sidebar-version" id="sidebar-version">v2.3</span></div>
+        </div>
+        <div class="doc-sidebar-body">
         <nav class="doc-nav">
             <div class="doc-nav-section">
                 <div class="doc-nav-title">Getting Started</div>
@@ -547,6 +1259,7 @@
                 </ul>
             </div>
         </nav>
+        </div>
     </aside>
 
     <!-- Main Content -->
@@ -586,6 +1299,7 @@
         <section id="requirements" class="doc-section">
             <h2>System Requirements</h2>
             
+            <div class="doc-table-wrapper">
             <table class="doc-table">
                 <thead>
                     <tr>
@@ -617,13 +1331,38 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
 
             <h3>Server Requirements</h3>
-            <ul>
-                <li>PHP extensions: JSON, MBString</li>
-                <li>Laravel storage directory with write permissions</li>
-                <li>Minimum 128MB PHP memory limit recommended</li>
-            </ul>
+            <div class="req-grid">
+                <div class="req-card">
+                    <div class="req-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                    </div>
+                    <div class="req-body">
+                        <div class="req-title">PHP Extensions</div>
+                        <div class="req-desc">JSON &amp; MBString extensions must be enabled</div>
+                    </div>
+                </div>
+                <div class="req-card">
+                    <div class="req-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                    </div>
+                    <div class="req-body">
+                        <div class="req-title">Storage Permissions</div>
+                        <div class="req-desc">Laravel <code>storage/</code> directory must be writable</div>
+                    </div>
+                </div>
+                <div class="req-card">
+                    <div class="req-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    </div>
+                    <div class="req-body">
+                        <div class="req-title">Memory Limit</div>
+                        <div class="req-desc">Minimum <code>128MB</code> PHP memory limit recommended</div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Installation -->
@@ -633,7 +1372,7 @@
             <h3>Step 1: Install via Composer</h3>
             <div class="doc-code-block">
                 <div class="doc-code-header">
-                    <span class="doc-code-title">Terminal</span>
+                    <div class="doc-code-header-left"><div class="doc-code-dots"><span></span><span></span><span></span></div><span class="doc-code-title">Terminal</span></div>
                     <button class="doc-code-copy">Copy</button>
                 </div>
                 <pre><code class="language-bash">composer require kssadi/log-tracker</code></pre>
@@ -642,7 +1381,7 @@
             <h3>Step 2: Publish Configuration (Optional)</h3>
             <div class="doc-code-block">
                 <div class="doc-code-header">
-                    <span class="doc-code-title">Terminal</span>
+                    <div class="doc-code-header-left"><div class="doc-code-dots"><span></span><span></span><span></span></div><span class="doc-code-title">Terminal</span></div>
                     <button class="doc-code-copy">Copy</button>
                 </div>
                 <pre><code class="language-bash">php artisan vendor:publish --provider="Kssadi\LogTracker\LogTrackerServiceProvider" --tag="config"</code></pre>
@@ -663,7 +1402,7 @@
             <p>Navigate to your application's log tracker dashboard:</p>
             <div class="doc-code-block">
                 <div class="doc-code-header">
-                    <span class="doc-code-title">URL</span>
+                    <div class="doc-code-header-left"><div class="doc-code-dots"><span></span><span></span><span></span></div><span class="doc-code-title">URL</span></div>
                     <button class="doc-code-copy">Copy</button>
                 </div>
                 <pre><code>https://your-domain.com/log-tracker</code></pre>
@@ -692,7 +1431,7 @@
 
             <div class="doc-code-block">
                 <div class="doc-code-header">
-                    <span class="doc-code-title">config/log-tracker.php</span>
+                    <div class="doc-code-header-left"><div class="doc-code-dots"><span></span><span></span><span></span></div><span class="doc-code-title">config/log-tracker.php</span></div>
                     <button class="doc-code-copy">Copy</button>
                 </div>
                 <pre><code class="language-php">&lt;?php
@@ -768,6 +1507,7 @@ return [
             
             <p>Customize the appearance of different log levels:</p>
 
+            <div class="doc-table-wrapper">
             <table class="doc-table">
                 <thead>
                     <tr>
@@ -828,6 +1568,7 @@ return [
                     </tr>
                 </tbody>
             </table>
+            </div>
         </section>
 
         <!-- Pagination -->
@@ -1369,10 +2110,35 @@ chown -R www-data:www-data storage/logs</code></pre>
             </div>
         </section>
 
+        <!-- Doc Content Footer -->
+        <div class="doc-page-footer">
+            <div class="doc-page-footer-inner">
+                <div class="doc-page-footer-text">
+                    <h4>Found this helpful?</h4>
+                    <p>Star the repo or support the project to keep it growing.</p>
+                </div>
+                <div class="doc-page-footer-actions">
+                    <a href="https://github.com/KsSadi/Laravel-Log-Tracker" target="_blank" rel="noopener" class="doc-footer-btn primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        Star on GitHub
+                    </a>
+                    <a href="https://www.buymeacoffee.com/kssadi" target="_blank" rel="noopener" class="doc-footer-btn secondary">
+                        ☕ Buy Me a Coffee
+                    </a>
+                    <a href="https://github.com/KsSadi/Laravel-Log-Tracker/issues" target="_blank" rel="noopener" class="doc-footer-btn secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        Report an Issue
+                    </a>
+                </div>
+            </div>
+            <p class="doc-page-footer-copy">
+                Laravel Log Tracker is open-source under the <a href="https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> &mdash; Built with ❤️ by <a href="https://www.linkedin.com/in/kssadi/" target="_blank" rel="noopener">Khaled Saifullah Sadi</a>
+            </p>
+        </div>
+
     </main>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script src="assets/js/main.js"></script>
     <script>
         // Documentation sidebar toggle for mobile
         const docSidebarToggle = document.getElementById('docSidebarToggle');
@@ -1423,6 +2189,9 @@ chown -R www-data:www-data storage/logs</code></pre>
                     versionElements.forEach(el => {
                         el.textContent = 'Version ' + latestVersion;
                     });
+                    // Update sidebar version badge
+                    const sidebarVer = document.getElementById('sidebar-version');
+                    if (sidebarVer) sidebarVer.textContent = 'v' + latestVersion;
                 } else {
                     console.error('No versions found in API response');
                 }
@@ -1440,21 +2209,40 @@ chown -R www-data:www-data storage/logs</code></pre>
         fetchVersion();
     </script>
     <script>
-        // Activate current navigation link based on scroll position
         document.addEventListener('DOMContentLoaded', function() {
             const sections = document.querySelectorAll('.doc-section');
             const navLinks = document.querySelectorAll('.doc-nav-link');
+            const readingProgress = document.getElementById('readingProgress');
+            const backToTop = document.getElementById('backToTop');
 
+            // Reading progress bar + back-to-top visibility
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                if (readingProgress) readingProgress.style.width = progress + '%';
+                if (backToTop) {
+                    if (scrollTop > 400) backToTop.classList.add('visible');
+                    else backToTop.classList.remove('visible');
+                }
+                activateNavLink();
+            });
+
+            // Back to top click
+            if (backToTop) {
+                backToTop.addEventListener('click', () => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // Activate nav link based on scroll
             function activateNavLink() {
                 let current = '';
                 sections.forEach(section => {
-                    const sectionTop = section.offsetTop;
-                    const sectionHeight = section.clientHeight;
-                    if (pageYOffset >= sectionTop - 150) {
+                    if (window.pageYOffset >= section.offsetTop - 150) {
                         current = section.getAttribute('id');
                     }
                 });
-
                 navLinks.forEach(link => {
                     link.classList.remove('active');
                     if (link.getAttribute('href') === '#' + current) {
@@ -1463,20 +2251,30 @@ chown -R www-data:www-data storage/logs</code></pre>
                 });
             }
 
-            window.addEventListener('scroll', activateNavLink);
             activateNavLink();
 
-            // Smooth scrolling for anchor links
+            // Smooth scrolling for sidebar links
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const targetId = this.getAttribute('href').substring(1);
                     const targetSection = document.getElementById(targetId);
                     if (targetSection) {
-                        window.scrollTo({
-                            top: targetSection.offsetTop - 100,
-                            behavior: 'smooth'
-                        });
+                        window.scrollTo({ top: targetSection.offsetTop - 100, behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Copy button for code blocks
+            document.querySelectorAll('.doc-code-copy').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const pre = this.closest('.doc-code-block').querySelector('pre');
+                    if (pre) {
+                        navigator.clipboard.writeText(pre.textContent.trim()).then(() => {
+                            const original = this.textContent;
+                            this.textContent = 'Copied!';
+                            setTimeout(() => { this.textContent = original; }, 2000);
+                        }).catch(() => {});
                     }
                 });
             });
