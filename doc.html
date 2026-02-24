@@ -150,8 +150,8 @@
             position: fixed;
             top: 72px;
             left: 0;
+            bottom: 0;
             width: 280px;
-            height: calc(100vh - 72px);
             background: var(--color-bg-secondary);
             border-right: 1px solid var(--color-border);
             overflow-y: auto;
@@ -161,7 +161,7 @@
         }
 
         .doc-sidebar-header {
-            padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
             border-bottom: 1px solid var(--color-border);
             background: var(--color-bg-secondary);
             position: sticky;
@@ -174,7 +174,6 @@
             align-items: center;
             gap: var(--spacing-sm);
             text-decoration: none;
-            margin-bottom: var(--spacing-sm);
         }
 
         .doc-sidebar-brand-icon {
@@ -443,13 +442,14 @@
            Alert Boxes
            =========================== */
         .doc-alert {
-            display: flex;
-            gap: var(--spacing-md);
+            display: block;
             padding: var(--spacing-md) var(--spacing-lg);
             border-radius: var(--radius-md);
             margin-bottom: var(--spacing-lg);
             border-left: 4px solid;
-            align-items: flex-start;
+            line-height: 1.7;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
 
         .doc-alert-icon {
@@ -879,7 +879,7 @@
            =========================== */
         @media (max-width: 968px) {
             .doc-sidebar-toggle {
-                display: flex;
+                display: none; /* hamburger in navbar handles this on mobile */
             }
 
             .doc-sidebar-overlay.active {
@@ -890,6 +890,9 @@
                 transform: translateX(-100%);
                 transition: transform var(--transition-base);
                 z-index: 101;
+                top: 72px;
+                bottom: 0;
+                overflow-y: auto;
             }
 
             .doc-sidebar.active {
@@ -1192,9 +1195,9 @@
                         <line x1="16" y1="17" x2="8" y2="17"></line>
                     </svg>
                 </div>
-                <span class="doc-sidebar-brand-text">Log Tracker Docs</span>
+                <span class="doc-sidebar-brand-text"> Docs</span>
+                <span class="doc-sidebar-version" id="sidebar-version">v3.0</span>
             </a>
-            <div><span class="doc-sidebar-version" id="sidebar-version">v2.3</span></div>
         </div>
         <div class="doc-sidebar-body">
         <nav class="doc-nav">
@@ -1225,6 +1228,18 @@
                     <li><a href="#filtering" class="doc-nav-link">Filtering Logs</a></li>
                     <li><a href="#file-management" class="doc-nav-link">File Management</a></li>
                     <li><a href="#searching" class="doc-nav-link">Searching</a></li>
+                </ul>
+            </div>
+
+            <div class="doc-nav-section">
+                <div class="doc-nav-title">Features</div>
+                <ul class="doc-nav-list">
+                    <li><a href="#global-search" class="doc-nav-link">Global Search</a></li>
+                    <li><a href="#log-comparison" class="doc-nav-link">Log Comparison</a></li>
+                    <li><a href="#alerts" class="doc-nav-link">Alerts &amp; Notifications</a></li>
+                    <li><a href="#clipboard-bookmark" class="doc-nav-link">Clipboard &amp; Bookmarks</a></li>
+                    <li><a href="#frequent-entries" class="doc-nav-link">Frequent Entries</a></li>
+                    <li><a href="#artisan-commands" class="doc-nav-link">Artisan Commands</a></li>
                 </ul>
             </div>
 
@@ -1275,23 +1290,29 @@
                 <span id="version-text" class="version-display">Loading...</span>
             </div>
             <p>
-                Laravel Log Tracker is a powerful package for tracking, analyzing, and managing your Laravel application logs effortlessly. 
-                It provides an interactive dashboard with advanced filtering, dual themes (LiteFlow & GlowStack), zero-dependency exports 
-                (CSV, Excel, PDF, JSON), and real-time insights.
+                Laravel Log Tracker is a powerful package for tracking, analyzing, and managing your Laravel application logs effortlessly.
+                It includes <strong>global multi-file search</strong>, <strong>side-by-side log comparison</strong>, <strong>smart alerts</strong> (Mail, Slack, Discord, Webhook),
+                <strong>row bookmarks</strong>, <strong>frequent entries panel</strong>, <strong>copy to clipboard</strong>, and major performance improvements &mdash;
+                all with zero external dependencies.
             </p>
 
             <div class="doc-alert info">
-                <strong>✨ Key Features:</strong> Interactive Dashboard • Dual Themes • Zero-Dependency Exports • Error Pattern Analysis • Advanced Filtering • Real-time Statistics
+                <strong>&#x2714; Key Features:</strong> Interactive Dashboard &bull; Global Multi-File Search &bull; Log Comparison &bull; Smart Alerts (4 channels) &bull;
+                Dual Themes &bull; Zero-Dependency Exports &bull; Row Bookmarks &bull; Frequent Entries Panel &bull; Copy to Clipboard &bull; Error Pattern Analysis &bull; Real-time Statistics
             </div>
 
             <h3>Why Use Laravel Log Tracker?</h3>
             <ul>
-                <li><strong>Beautiful Interface:</strong> Modern, responsive dashboard with two stunning themes</li>
+                <li><strong>Beautiful Interface:</strong> Modern, responsive dashboard with two stunning themes (LiteFlow &amp; GlowStack)</li>
+                <li><strong>Global Search:</strong> Search across all log files simultaneously with level, keyword, and date filters</li>
+                <li><strong>Log Comparison:</strong> Side-by-side diff between any two log files to track regressions</li>
+                <li><strong>Smart Alerts:</strong> Real-time notifications via Mail, Slack, Discord, or Webhook with cooldown management</li>
                 <li><strong>Zero Dependencies:</strong> Export logs in 4 formats without any external libraries</li>
-                <li><strong>Powerful Analytics:</strong> Error pattern analysis, peak hour visualization, real-time stats</li>
-                <li><strong>Production Ready:</strong> Max file size protection, smart pagination, performance optimized</li>
+                <li><strong>Powerful Analytics:</strong> Error pattern analysis, peak hour visualization, frequent entries, real-time stats</li>
+                <li><strong>Row Bookmarks:</strong> localStorage-persisted bookmarks with gold highlight for critical entries</li>
+                <li><strong>Production Ready:</strong> 172 tests, max file size protection, smart pagination, optimized parsers</li>
                 <li><strong>Highly Customizable:</strong> Extensive configuration options for every aspect</li>
-                <li><strong>Wide Support:</strong> Laravel 5.5-12.x, PHP 7.0-8.4</li>
+                <li><strong>Modern Support:</strong> Laravel 10-12.x, PHP 8.1+</li>
             </ul>
         </section>
 
@@ -1312,23 +1333,19 @@
                     <tr>
                         <td>12.x</td>
                         <td>8.1, 8.2, 8.3, 8.4</td>
-                        <td>✅ Fully Tested</td>
+                        <td>&#x2705; Fully Tested</td>
                     </tr>
                     <tr>
                         <td>11.x</td>
                         <td>8.1, 8.2, 8.3</td>
-                        <td>✅ Fully Tested</td>
+                        <td>&#x2705; Fully Tested</td>
                     </tr>
                     <tr>
                         <td>10.x</td>
                         <td>8.0, 8.1, 8.2</td>
-                        <td>✅ Fully Tested</td>
+                        <td>&#x2705; Fully Tested</td>
                     </tr>
-                    <tr>
-                        <td>5.5 - 9.x</td>
-                        <td>7.0 - 8.1</td>
-                        <td>✅ Supported</td>
-                    </tr>
+
                 </tbody>
             </table>
             </div>
@@ -1390,7 +1407,7 @@
             <p>This publishes the configuration file to <code>config/log-tracker.php</code></p>
 
             <div class="doc-alert success">
-                <strong>✅ Installation Complete!</strong> You can now access the dashboard at <code>/log-tracker</code>
+                <strong>&#x2705; Installation Complete!</strong> You can now access the dashboard at <code>/log-tracker</code>
             </div>
         </section>
 
@@ -1409,7 +1426,7 @@
             </div>
 
             <div class="doc-alert warning">
-                <strong>⚠️ Authentication Required:</strong> By default, the dashboard is protected by <code>web</code> and <code>auth</code> middleware. 
+                <strong>&#x26A0;&#xFE0F; Authentication Required:</strong> By default, the dashboard is protected by <code>web</code> and <code>auth</code> middleware. 
                 Users must be logged in to access it.
             </div>
 
@@ -1449,14 +1466,14 @@ return [
 
     // Log levels with colors and icons
     'levels' => [
-        'emergency' => ['color' => '#dc2626', 'icon' => '🔴'],
-        'alert' => ['color' => '#ea580c', 'icon' => '🟠'],
-        'critical' => ['color' => '#f59e0b', 'icon' => '🟡'],
-        'error' => ['color' => '#ef4444', 'icon' => '❌'],
-        'warning' => ['color' => '#eab308', 'icon' => '⚠️'],
-        'notice' => ['color' => '#3b82f6', 'icon' => 'ℹ️'],
-        'info' => ['color' => '#06b6d4', 'icon' => '📘'],
-        'debug' => ['color' => '#8b5cf6', 'icon' => '🐛'],
+        'emergency' => ['color' => '#dc2626', 'icon' => '&#x1F6A8;'],
+        'alert' => ['color' => '#ea580c', 'icon' => '&#x1F514;'],
+        'critical' => ['color' => '#f59e0b', 'icon' => '&#x26A0;&#xFE0F;'],
+        'error' => ['color' => '#ef4444', 'icon' => '&#x274C;'],
+        'warning' => ['color' => '#eab308', 'icon' => '&#x26A0;&#xFE0F;'],
+        'notice' => ['color' => '#3b82f6', 'icon' => '&#x2139;&#xFE0F;'],
+        'info' => ['color' => '#06b6d4', 'icon' => '&#x1F4CB;'],
+        'debug' => ['color' => '#8b5cf6', 'icon' => '&#x1F41E;'],
     ],
 
     // Pagination settings
@@ -1521,49 +1538,49 @@ return [
                     <tr>
                         <td>emergency</td>
                         <td>#dc2626</td>
-                        <td>🔴</td>
+                        <td>&#x1F6A8;</td>
                         <td>System is unusable</td>
                     </tr>
                     <tr>
                         <td>alert</td>
                         <td>#ea580c</td>
-                        <td>🟠</td>
+                        <td>&#x1F514;</td>
                         <td>Action must be taken immediately</td>
                     </tr>
                     <tr>
                         <td>critical</td>
                         <td>#f59e0b</td>
-                        <td>🟡</td>
+                        <td>&#x26A0;&#xFE0F;</td>
                         <td>Critical conditions</td>
                     </tr>
                     <tr>
                         <td>error</td>
                         <td>#ef4444</td>
-                        <td>❌</td>
+                        <td>&#x274C;</td>
                         <td>Runtime errors</td>
                     </tr>
                     <tr>
                         <td>warning</td>
                         <td>#eab308</td>
-                        <td>⚠️</td>
+                        <td>&#x26A0;&#xFE0F;</td>
                         <td>Warning messages</td>
                     </tr>
                     <tr>
                         <td>notice</td>
                         <td>#3b82f6</td>
-                        <td>ℹ️</td>
+                        <td>&#x2139;&#xFE0F;</td>
                         <td>Normal but significant</td>
                     </tr>
                     <tr>
                         <td>info</td>
                         <td>#06b6d4</td>
-                        <td>📘</td>
+                        <td>&#x1F4CB;</td>
                         <td>Informational messages</td>
                     </tr>
                     <tr>
                         <td>debug</td>
                         <td>#8b5cf6</td>
-                        <td>🐛</td>
+                        <td>&#x1F41E;</td>
                         <td>Debug information</td>
                     </tr>
                 </tbody>
@@ -1595,7 +1612,7 @@ return [
 ],</code></pre>
 
             <div class="doc-alert warning">
-                <strong>⚠️ Performance Note:</strong> Large log files (>10MB) may cause memory issues. The package will skip files exceeding the limit.
+                <strong>&#x26A0;&#xFE0F; Performance Note:</strong> Large log files (>10MB) may cause memory issues. The package will skip files exceeding the limit.
             </div>
         </section>
 
@@ -1650,7 +1667,7 @@ return [
             <p>Use the search box to find logs containing specific text, error messages, or stack traces.</p>
 
             <div class="doc-alert info">
-                <strong>💡 Pro Tip:</strong> Combine multiple filters for precise log analysis. For example, filter by "error" level + specific date range + keyword search.
+                <strong>&#x1F4A1; Pro Tip:</strong> Combine multiple filters for precise log analysis. For example, filter by "error" level + specific date range + keyword search.
             </div>
         </section>
 
@@ -1672,16 +1689,16 @@ return [
             <p>Click the delete button to remove log files. A confirmation dialog will appear.</p>
 
             <div class="doc-alert warning">
-                <strong>⚠️ Warning:</strong> Deleting log files is permanent and cannot be undone. Make sure to backup important logs before deletion.
+                <strong>&#x26A0;&#xFE0F; Warning:</strong> Deleting log files is permanent and cannot be undone. Make sure to backup important logs before deletion.
             </div>
         </section>
 
         <!-- Searching -->
         <section id="searching" class="doc-section">
-            <h2>Searching Logs</h2>
+            <h2>Searching Logs (In-File)</h2>
 
             <h3>Full-Text Search</h3>
-            <p>The search feature looks for matches in:</p>
+            <p>Use the search box on any log file view page to filter entries within that file. The search looks for matches in:</p>
             <ul>
                 <li>Log messages</li>
                 <li>Stack traces</li>
@@ -1694,8 +1711,328 @@ return [
                 <li>Search is case-insensitive</li>
                 <li>Use specific error codes or exception names</li>
                 <li>Search for file paths or class names</li>
-                <li>Combine with filters for better results</li>
+                <li>Combine with level filters for better results</li>
             </ul>
+
+            <div class="doc-alert info">
+                <strong>&#128269; Need to search across all files?</strong> Use the <a href="#global-search">Global Multi-File Search</a> feature available at <code>/log-tracker/search</code>.
+            </div>
+        </section>
+
+        <!-- Global Search -->
+        <section id="global-search" class="doc-section">
+            <h2>Global Multi-File Search</h2>
+
+            <p>Global Search lets you search across <em>all</em> log files simultaneously, so you don't need to open each file individually. Access it at:</p>
+            <pre class="code-window"><code>https://your-domain.com/log-tracker/search</code></pre>
+
+            <h3>Search Parameters</h3>
+            <div class="doc-table-wrapper">
+            <table class="doc-table">
+                <thead><tr><th>Parameter</th><th>Description</th><th>Example</th></tr></thead>
+                <tbody>
+                    <tr><td>Keyword</td><td>Text to search in messages and stack traces</td><td><code>QueryException</code></td></tr>
+                    <tr><td>Level</td><td>Filter by log level</td><td><code>error</code>, <code>warning</code></td></tr>
+                    <tr><td>Date</td><td>Restrict results to a specific date</td><td><code>2026-02-23</code></td></tr>
+                    <tr><td>File</td><td>Limit search to a specific log file</td><td><code>laravel-2026-02-23.log</code></td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h3>How It Works</h3>
+            <ol>
+                <li>Navigate to <code>/log-tracker/search</code></li>
+                <li>Enter a keyword, choose an optional log level and date</li>
+                <li>Click <strong>Search</strong> &mdash; results from all files matching your criteria are displayed with the source filename and entry context</li>
+            </ol>
+
+            <div class="doc-alert info">
+                <strong>&#128161; Performance note:</strong> Global search scans every log file. For large installations consider narrowing by date or file to keep response times fast.
+            </div>
+        </section>
+
+        <!-- Log Comparison -->
+        <section id="log-comparison" class="doc-section">
+            <h2>Log File Comparison</h2>
+
+            <p>The comparison tool lets you place two log files side-by-side to identify differences, track regressions, or understand what changed between deployments.</p>
+
+            <h3>Accessing the Comparison</h3>
+            <pre class="code-window"><code>https://your-domain.com/log-tracker/compare</code></pre>
+
+            <h3>Usage</h3>
+            <ol>
+                <li>Select <strong>File A</strong> from the first dropdown</li>
+                <li>Select <strong>File B</strong> from the second dropdown</li>
+                <li>Click <strong>Compare</strong> &mdash; entries unique to each file are highlighted in the side-by-side view</li>
+            </ol>
+
+            <h3>Comparison Columns</h3>
+            <div class="doc-table-wrapper">
+            <table class="doc-table">
+                <thead><tr><th>Column</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td>Only in File A</td><td>Entries present in the left file but absent in the right</td></tr>
+                    <tr><td>Common</td><td>Entries that appear in both files</td></tr>
+                    <tr><td>Only in File B</td><td>Entries present in the right file but absent in the left</td></tr>
+                </tbody>
+            </table>
+            </div>
+        </section>
+
+        <!-- Alerts -->
+        <section id="alerts" class="doc-section">
+            <h2>Alerts &amp; Notifications</h2>
+
+            <p>Laravel Log Tracker can send real-time alerts when new error entries are detected. Four channels are supported out of the box, all configurable in <code>config/log-tracker.php</code>.</p>
+
+            <h3>Supported Channels</h3>
+            <div class="doc-table-wrapper">
+            <table class="doc-table">
+                <thead><tr><th>Channel</th><th>Config Key</th><th>Requirements</th></tr></thead>
+                <tbody>
+                    <tr><td>Mail</td><td><code>alerts.channels.mail</code></td><td>Laravel mail configured (<code>MAIL_*</code> env vars)</td></tr>
+                    <tr><td>Slack</td><td><code>alerts.channels.slack</code></td><td>Slack Incoming Webhook URL</td></tr>
+                    <tr><td>Discord</td><td><code>alerts.channels.discord</code></td><td>Discord Webhook URL</td></tr>
+                    <tr><td>Webhook</td><td><code>alerts.channels.webhook</code></td><td>Any HTTP endpoint accepting POST JSON</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h3>Full Configuration</h3>
+            <pre class="code-window"><code class="language-php">'alerts' => [
+    'enabled' => true,
+    'levels'  => ['emergency', 'alert', 'critical', 'error'],
+    'cooldown_minutes' => 30,
+
+    'channels' => [
+        'mail' => [
+            'enabled' => true,
+            'to'      => 'admin@example.com',
+        ],
+        'slack' => [
+            'enabled'     => false,
+            'webhook_url' => env('LOG_TRACKER_SLACK_WEBHOOK'),
+        ],
+        'discord' => [
+            'enabled'     => false,
+            'webhook_url' => env('LOG_TRACKER_DISCORD_WEBHOOK'),
+        ],
+        'webhook' => [
+            'enabled' => false,
+            'url'     => env('LOG_TRACKER_WEBHOOK_URL'),
+        ],
+    ],
+],</code></pre>
+
+            <div class="doc-alert warning">
+                <strong>&#9888; Cooldown:</strong> Alerts respect the <code>cooldown_minutes</code> setting to prevent notification fatigue. The same log file won't trigger another alert until the cooldown expires.
+            </div>
+
+            <!-- Step-by-step channel setup -->
+            <h3>&#x1F4E7; Channel 1 — Mail</h3>
+            <p>Mail uses your existing Laravel mailer — no extra packages required.</p>
+
+            <p><strong>Step 1:</strong> Make sure your <code>.env</code> has a working mail driver configured:</p>
+            <pre class="code-window"><code class="language-ini">MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=no-reply@yourdomain.com
+MAIL_FROM_NAME="Laravel Log Tracker"</code></pre>
+
+            <p><strong>Step 2:</strong> Enable mail alerts in <code>config/log-tracker.php</code>:</p>
+            <pre class="code-window"><code class="language-php">'mail' => [
+    'enabled' => true,
+    'to'      => 'admin@yourdomain.com', // recipient address
+],</code></pre>
+
+            <div class="doc-alert info">
+                <strong>&#128161; Tip:</strong> You can use any supported Laravel mail driver — SMTP, Mailgun, SES, Postmark, Sendmail, or <code>log</code> (for local testing). The <code>log</code> driver writes emails to <code>storage/logs/laravel.log</code> so you can verify alerts work without a real mail server.
+            </div>
+
+            <h3>&#x1F4AC; Channel 2 — Slack</h3>
+            <p><strong>Step 1: Create a Slack Incoming Webhook</strong></p>
+            <ol>
+                <li>Go to <a href="https://api.slack.com/apps" target="_blank" rel="noopener">api.slack.com/apps</a> and click <strong>Create New App</strong> &rarr; <strong>From scratch</strong>.</li>
+                <li>Give it a name (e.g. <em>Log Tracker Alerts</em>) and select your workspace.</li>
+                <li>In the left sidebar, go to <strong>Incoming Webhooks</strong> and toggle it <strong>On</strong>.</li>
+                <li>Click <strong>Add New Webhook to Workspace</strong>, pick a channel (e.g. <code>#alerts</code>), and authorize.</li>
+                <li>Copy the generated <strong>Webhook URL</strong> — it looks like:<br>
+                    <code>https://hooks.slack.com/services/T00/B0000/XXXXXXX</code></li>
+            </ol>
+
+            <p><strong>Step 2:</strong> Add the webhook URL to your <code>.env</code>:</p>
+            <pre class="code-window"><code class="language-ini">LOG_TRACKER_SLACK_WEBHOOK=https://hooks.slack.com/services/T00/B0000/XXXXXXX</code></pre>
+
+            <p><strong>Step 3:</strong> Enable Slack in <code>config/log-tracker.php</code>:</p>
+            <pre class="code-window"><code class="language-php">'slack' => [
+    'enabled'     => true,
+    'webhook_url' => env('LOG_TRACKER_SLACK_WEBHOOK'),
+],</code></pre>
+
+            <h3>&#x1F3AE; Channel 3 — Discord</h3>
+            <p><strong>Step 1: Create a Discord Webhook</strong></p>
+            <ol>
+                <li>Open your Discord server and go to the channel you want to receive alerts in.</li>
+                <li>Click the <strong>Edit Channel</strong> (&#x2699;) gear icon next to the channel name.</li>
+                <li>Navigate to <strong>Integrations</strong> &rarr; <strong>Webhooks</strong> &rarr; <strong>New Webhook</strong>.</li>
+                <li>Give it a name and optionally upload an avatar, then click <strong>Copy Webhook URL</strong>.<br>
+                    It looks like: <code>https://discord.com/api/webhooks/1234567890/XXXXXXXX</code></li>
+            </ol>
+
+            <p><strong>Step 2:</strong> Add the webhook URL to your <code>.env</code>:</p>
+            <pre class="code-window"><code class="language-ini">LOG_TRACKER_DISCORD_WEBHOOK=https://discord.com/api/webhooks/1234567890/XXXXXXXXXXXXXXXX</code></pre>
+
+            <p><strong>Step 3:</strong> Enable Discord in <code>config/log-tracker.php</code>:</p>
+            <pre class="code-window"><code class="language-php">'discord' => [
+    'enabled'     => true,
+    'webhook_url' => env('LOG_TRACKER_DISCORD_WEBHOOK'),
+],</code></pre>
+
+            <h3>&#x1F517; Channel 4 — Custom Webhook</h3>
+            <p>Send alert payloads to any HTTP endpoint — useful for integrating with PagerDuty, custom dashboards, n8n, Zapier, or your own API.</p>
+
+            <p><strong>Step 1:</strong> Add your endpoint URL to <code>.env</code>:</p>
+            <pre class="code-window"><code class="language-ini">LOG_TRACKER_WEBHOOK_URL=https://your-app.com/api/log-alerts</code></pre>
+
+            <p><strong>Step 2:</strong> Enable the webhook channel in <code>config/log-tracker.php</code>:</p>
+            <pre class="code-window"><code class="language-php">'webhook' => [
+    'enabled' => true,
+    'url'     => env('LOG_TRACKER_WEBHOOK_URL'),
+],</code></pre>
+
+            <p><strong>Payload format</strong> — your endpoint will receive a <code>POST</code> request with a JSON body like this:</p>
+            <pre class="code-window"><code class="language-json">{
+    "level": "error",
+    "message": "Uncaught Exception: ...",
+    "file": "laravel-2026-02-24.log",
+    "occurred_at": "2026-02-24T10:35:00Z",
+    "app_url": "https://your-domain.com"
+}</code></pre>
+
+            <div class="doc-alert info">
+                <strong>&#128161; Tip:</strong> Your endpoint should return a <code>2xx</code> HTTP status code. Non-2xx responses are logged as a warning in <code>storage/logs/laravel.log</code> but won't crash the alert process.
+            </div>
+
+            <h3>&#x1F6A8; Controlling Which Levels Trigger Alerts</h3>
+            <p>By default, only <code>emergency</code>, <code>alert</code>, <code>critical</code>, and <code>error</code> levels trigger notifications. You can customize this list:</p>
+            <pre class="code-window"><code class="language-php">'levels' => ['emergency', 'alert', 'critical', 'error', 'warning'],</code></pre>
+
+            <h3>&#x23F1; Running Alerts Automatically (Scheduler)</h3>
+            <p>For continuous monitoring, schedule the alert check command in <code>routes/console.php</code>:</p>
+            <pre class="code-window"><code class="language-php">use Illuminate\Support\Facades\Schedule;
+
+Schedule::command('log-tracker:check-alerts')->everyFiveMinutes();
+Schedule::command('log-tracker:cleanup')->daily();</code></pre>
+
+            <p>Make sure your Laravel scheduler is running. Add this cron entry to your server:</p>
+            <pre class="code-window"><code class="language-bash">* * * * * cd /path-to-your-project &amp;&amp; php artisan schedule:run &gt;&gt; /dev/null 2&gt;&amp;1</code></pre>
+
+            <div class="doc-alert info">
+                <strong>&#128161; Local Testing:</strong> To test alerts without a cron job, run the scheduler worker in your terminal:
+                <pre style="margin: 0.75rem 0 0; background: var(--color-bg); border-radius: var(--radius-sm); padding: var(--spacing-md); font-size: 0.85rem;"><code>php artisan schedule:work</code></pre>
+            </div>
+
+            <h3>&#x1F9EA; Manually Trigger an Alert Check</h3>
+            <p>You can trigger an alert check at any time without waiting for the scheduler:</p>
+            <pre class="code-window"><code class="language-bash">php artisan log-tracker:check-alerts</code></pre>
+
+            <div class="doc-alert warning">
+                <strong>&#9888; Cooldown:</strong> If an alert was already sent for a log file within the <code>cooldown_minutes</code> window, the check will skip it silently. Reset cooldowns by clearing the cache: <code>php artisan cache:clear</code>.
+            </div>
+        </section>
+
+        <!-- Clipboard & Bookmarks -->
+        <section id="clipboard-bookmark" class="doc-section">
+            <h2>Copy to Clipboard &amp; Row Bookmarks</h2>
+
+            <h3>Copy to Clipboard</h3>
+            <p>Every log entry row has a <strong>Copy</strong> button that copies the full log message (and stack trace if expanded) to the clipboard in one click. Useful for pasting into Slack, bug trackers, or emails.</p>
+
+            <h3>Row Bookmarks</h3>
+            <p>Click the bookmark icon on any log row to mark it with a gold highlight. Bookmarks are stored in <code>localStorage</code> and persist across page reloads and browser sessions for the same log file.</p>
+
+            <ul>
+                <li>Bookmarks survive page refreshes &mdash; no re-finding critical entries</li>
+                <li>Clear all bookmarks for the current file with the <strong>Clear Marks</strong> button</li>
+                <li>Bookmarks are keyed by log file name + entry index, so they stay accurate even after adding new lines</li>
+            </ul>
+        </section>
+
+        <!-- Frequent Entries -->
+        <section id="frequent-entries" class="doc-section">
+            <h2>Frequent Entries Panel</h2>
+
+            <p>When viewing a log file, the <strong>Frequent Entries</strong> panel automatically surfaces the top 15 most repeated log messages so you can immediately identify persistent issues without scrolling through thousands of lines.</p>
+
+            <h3>Panel Columns</h3>
+            <div class="doc-table-wrapper">
+            <table class="doc-table">
+                <thead><tr><th>Column</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td>Message</td><td>The repeated log message (first 120 chars)</td></tr>
+                    <tr><td>Count</td><td>How many times this exact message appeared</td></tr>
+                    <tr><td>First Seen</td><td>Timestamp of the first occurrence in this file</td></tr>
+                    <tr><td>Last Seen</td><td>Timestamp of the most recent occurrence</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <div class="doc-alert info">
+                <strong>&#128161; Tip:</strong> Frequent Entries are calculated from the pre-parsed entry list &mdash; there is no second file read, so performance impact is minimal even for large files.
+            </div>
+        </section>
+
+        <!-- Artisan Commands -->
+        <section id="artisan-commands" class="doc-section">
+            <h2>Artisan Commands</h2>
+
+            <div class="doc-table-wrapper">
+            <table class="doc-table">
+                <thead><tr><th>Command</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><code>log-tracker:theme set {theme}</code></td>
+                        <td>Switch the active theme (<code>GlowStack</code> or <code>LiteFlow</code>) by updating the config/env</td>
+                    </tr>
+                    <tr>
+                        <td><code>log-tracker:theme current</code></td>
+                        <td>Display the currently active theme</td>
+                    </tr>
+                    <tr>
+                        <td><code>log-tracker:check-alerts</code></td>
+                        <td>Scan log files for new errors and dispatch alert notifications to configured channels</td>
+                    </tr>
+                    <tr>
+                        <td><code>log-tracker:cleanup</code></td>
+                        <td>Delete exported files older than <code>cleanup_after_days</code> from the export storage directory</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h3>Examples</h3>
+            <pre class="code-window"><code class="language-bash"># Switch to LiteFlow theme
+php artisan log-tracker:theme set LiteFlow
+
+# Check which theme is active
+php artisan log-tracker:theme current
+
+# Manually send alerts for new errors detected since last check
+php artisan log-tracker:check-alerts
+
+# Clean up old export files
+php artisan log-tracker:cleanup</code></pre>
+
+            <div class="doc-alert info">
+                <strong>&#128336; Scheduled Alerts:</strong> Add <code>log-tracker:check-alerts</code> to your Laravel scheduler for automatic alerting:
+            </div>
+            <pre class="code-window"><code class="language-php">// routes/console.php
+Schedule::command('log-tracker:check-alerts')->everyFiveMinutes();
+Schedule::command('log-tracker:cleanup')->daily();</code></pre>
         </section>
 
         <!-- Themes Overview -->
@@ -1705,7 +2042,7 @@ return [
             <p>Laravel Log Tracker comes with two beautiful themes designed for different preferences and use cases.</p>
 
             <div class="doc-alert info">
-                <strong>✨ Dual Theme System:</strong> Switch between GlowStack (modern & colorful) and LiteFlow (minimal & clean) instantly.
+                <strong>&#x2705; Dual Theme System:</strong> Switch between GlowStack (modern & colorful) and LiteFlow (minimal & clean) instantly.
             </div>
         </section>
 
@@ -1782,7 +2119,7 @@ php artisan log-tracker:theme current</code></pre>
 LOG_TRACKER_THEME=LiteFlow</code></pre>
 
             <div class="doc-alert success">
-                <strong>✅ No Cache Clear Required:</strong> Theme changes take effect immediately without clearing cache.
+                <strong>&#x2705; No Cache Clear Required:</strong> Theme changes take effect immediately without clearing cache.
             </div>
         </section>
 
@@ -1932,7 +2269,7 @@ LOG_TRACKER_THEME=LiteFlow</code></pre>
             <pre class="code-window"><code class="language-php">'levels' => [
     'custom' => [
         'color' => '#10b981',
-        'icon' => '🎯'
+        'icon' => '&#x1F3C6;'
     ],
     // ... other levels
 ],</code></pre>
@@ -2064,7 +2401,7 @@ chown -R www-data:www-data storage/logs</code></pre>
             <div style="background: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--spacing-xl); margin-top: var(--spacing-lg);">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
                     <a href="https://github.com/KsSadi/Laravel-Log-Tracker" target="_blank" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateX(0)';">
-                        <div style="font-size: 1.75rem; flex-shrink: 0;">⭐</div>
+                        <div style="font-size: 1.75rem; flex-shrink: 0;">&#x2B50;</div>
                         <div style="flex: 1;">
                             <h4 style="color: var(--color-text); font-size: 0.9375rem; font-weight: 600; margin: 0 0 0.25rem 0;">Star on GitHub</h4>
                             <p style="color: var(--color-text-tertiary); font-size: 0.8125rem; margin: 0; line-height: 1.4;">Show your support</p>
@@ -2075,7 +2412,7 @@ chown -R www-data:www-data storage/logs</code></pre>
                     </a>
 
                     <a href="https://www.buymeacoffee.com/kssadi" target="_blank" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateX(0)';">
-                        <div style="font-size: 1.75rem; flex-shrink: 0;">☕</div>
+                        <div style="font-size: 1.75rem; flex-shrink: 0;">&#x2615;</div>
                         <div style="flex: 1;">
                             <h4 style="color: var(--color-text); font-size: 0.9375rem; font-weight: 600; margin: 0 0 0.25rem 0;">Buy Me a Coffee</h4>
                             <p style="color: var(--color-text-tertiary); font-size: 0.8125rem; margin: 0; line-height: 1.4;">Support development</p>
@@ -2086,7 +2423,7 @@ chown -R www-data:www-data storage/logs</code></pre>
                     </a>
 
                     <a href="https://twitter.com/intent/tweet?text=Check%20out%20Laravel%20Log%20Tracker%20-%20Powerful%20log%20management!&url=https://github.com/KsSadi/Laravel-Log-Tracker" target="_blank" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateX(0)';">
-                        <div style="font-size: 1.75rem; flex-shrink: 0;">📣</div>
+                        <div style="font-size: 1.75rem; flex-shrink: 0;">&#x1F4E2;</div>
                         <div style="flex: 1;">
                             <h4 style="color: var(--color-text); font-size: 0.9375rem; font-weight: 600; margin: 0 0 0.25rem 0;">Share the Project</h4>
                             <p style="color: var(--color-text-tertiary); font-size: 0.8125rem; margin: 0; line-height: 1.4;">Spread the word</p>
@@ -2097,7 +2434,7 @@ chown -R www-data:www-data storage/logs</code></pre>
                     </a>
 
                     <a href="https://github.com/KsSadi/Laravel-Log-Tracker/issues" target="_blank" style="display: flex; align-items: center; gap: var(--spacing-md); padding: var(--spacing-md); background: var(--color-bg); border: 1px solid var(--color-border); border-radius: var(--radius-md); text-decoration: none; transition: all var(--transition-fast);" onmouseover="this.style.borderColor='var(--color-primary)'; this.style.transform='translateX(4px)';" onmouseout="this.style.borderColor='var(--color-border)'; this.style.transform='translateX(0)';">
-                        <div style="font-size: 1.75rem; flex-shrink: 0;">🐛</div>
+                        <div style="font-size: 1.75rem; flex-shrink: 0;">&#x1F41B;</div>
                         <div style="flex: 1;">
                             <h4 style="color: var(--color-text); font-size: 0.9375rem; font-weight: 600; margin: 0 0 0.25rem 0;">Contribute</h4>
                             <p style="color: var(--color-text-tertiary); font-size: 0.8125rem; margin: 0; line-height: 1.4;">Report issues & ideas</p>
@@ -2123,7 +2460,7 @@ chown -R www-data:www-data storage/logs</code></pre>
                         Star on GitHub
                     </a>
                     <a href="https://www.buymeacoffee.com/kssadi" target="_blank" rel="noopener" class="doc-footer-btn secondary">
-                        ☕ Buy Me a Coffee
+                        &#x2615; Buy Me a Coffee
                     </a>
                     <a href="https://github.com/KsSadi/Laravel-Log-Tracker/issues" target="_blank" rel="noopener" class="doc-footer-btn secondary">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -2132,7 +2469,7 @@ chown -R www-data:www-data storage/logs</code></pre>
                 </div>
             </div>
             <p class="doc-page-footer-copy">
-                Laravel Log Tracker is open-source under the <a href="https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> &mdash; Built with ❤️ by <a href="https://www.linkedin.com/in/kssadi/" target="_blank" rel="noopener">Khaled Saifullah Sadi</a>
+                Laravel Log Tracker is open-source under the <a href="https://github.com/KsSadi/Laravel-Log-Tracker/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a> &mdash; Built with &#x2764;&#xFE0F; by <a href="https://www.linkedin.com/in/kssadi/" target="_blank" rel="noopener">Khaled Saifullah Sadi</a>
             </p>
         </div>
 
@@ -2142,14 +2479,23 @@ chown -R www-data:www-data storage/logs</code></pre>
     <script>
         // Documentation sidebar toggle for mobile
         const docSidebarToggle = document.getElementById('docSidebarToggle');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const docSidebar = document.getElementById('docSidebar');
         const docSidebarOverlay = document.getElementById('docSidebarOverlay');
-        
-        if (docSidebarToggle && docSidebar && docSidebarOverlay) {
-            docSidebarToggle.addEventListener('click', () => {
-                docSidebar.classList.toggle('active');
-                docSidebarOverlay.classList.toggle('active');
-            });
+
+        function toggleSidebar() {
+            docSidebar.classList.toggle('active');
+            docSidebarOverlay.classList.toggle('active');
+        }
+
+        if (docSidebar && docSidebarOverlay) {
+            if (docSidebarToggle) {
+                docSidebarToggle.addEventListener('click', toggleSidebar);
+            }
+            // Wire the navbar hamburger button to open the sidebar on mobile
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', toggleSidebar);
+            }
             
             // Close sidebar when clicking overlay
             docSidebarOverlay.addEventListener('click', () => {
@@ -2184,14 +2530,11 @@ chown -R www-data:www-data storage/logs</code></pre>
                     
                     console.log('Latest version:', latestVersion);
                     
-                    // Update all version displays
+                    // Update all version displays (not the sidebar badge — kept static)
                     const versionElements = document.querySelectorAll('#version-text, .version-display');
                     versionElements.forEach(el => {
                         el.textContent = 'Version ' + latestVersion;
                     });
-                    // Update sidebar version badge
-                    const sidebarVer = document.getElementById('sidebar-version');
-                    if (sidebarVer) sidebarVer.textContent = 'v' + latestVersion;
                 } else {
                     console.error('No versions found in API response');
                 }
@@ -2200,7 +2543,7 @@ chown -R www-data:www-data storage/logs</code></pre>
                 // Fallback to default version if API fails
                 const versionElements = document.querySelectorAll('#version-text, .version-display');
                 versionElements.forEach(el => {
-                    el.textContent = 'Version 2.3';
+                    el.textContent = 'Version 3.0';
                 });
             }
         }
