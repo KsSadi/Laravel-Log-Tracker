@@ -2,51 +2,53 @@
 
 namespace Kssadi\LogTracker\Services;
 
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
 
 class LogExportService
 {
-    protected $logParserService;
+    public function __construct(
+        private readonly LogParserService $logParserService
+    ) {}
 
-    public function __construct(LogParserService $logParserService)
+    /**
+     * Generate a timestamped export file path and ensure the directory exists.
+     */
+    private function generateExportPath(string $extension): string
     {
-        $this->logParserService = $logParserService;
+        $filename = 'logs_export_'.Carbon::now()->format('Y-m-d_H-i-s').'.'.$extension;
+        $filepath = storage_path('app/exports/'.$filename);
+        $this->ensureExportDirectory($filepath);
+
+        return $filepath;
     }
 
     /**
      * Export logs to CSV format
      */
-    public function exportToCsv($logFiles, $filters = [])
+    public function exportToCsv(array|string $logFiles, array $filters = []): string
     {
         $data = $this->prepareExportData($logFiles, $filters);
-
-        $filename = 'logs_export_' . date('Y-m-d_H-i-s') . '.csv';
-        $filepath = storage_path('app/exports/' . $filename);
-
-        // Ensure directory exists
-        if (!File::exists(dirname($filepath))) {
-            File::makeDirectory(dirname($filepath), 0755, true);
-        }
+        $filepath = $this->generateExportPath('csv');
 
         $file = fopen($filepath, 'w');
 
-        // Add CSV headers with BOM for Excel compatibility
-        fwrite($file, "\xEF\xBB\xBF");
-        fputcsv($file, ['Timestamp', 'Level', 'Message', 'File', 'Stack Trace']);
+        try {
+            fwrite($file, "\xEF\xBB\xBF");
+            fputcsv($file, ['Timestamp', 'Level', 'Message', 'File', 'Stack Trace']);
 
-        foreach ($data as $entry) {
-            fputcsv($file, [
-                $entry['timestamp'],
-                $entry['level'],
-                $this->cleanTextForCsv($entry['message']),
-                $entry['file'],
-                $this->cleanTextForCsv(isset($entry['stack']) ? $entry['stack'] : '')
-            ]);
+            foreach ($data as $entry) {
+                fputcsv($file, [
+                    $entry['timestamp'],
+                    $entry['level'],
+                    $this->cleanTextForCsv($entry['message']),
+                    $entry['file'],
+                    $this->cleanTextForCsv($entry['stack'] ?? ''),
+                ]);
+            }
+        } finally {
+            fclose($file);
         }
-
-        fclose($file);
 
         return $filepath;
     }
@@ -54,27 +56,19 @@ class LogExportService
     /**
      * Export logs to JSON format
      */
-    public function exportToJson($logFiles, $filters = [])
+    public function exportToJson(array|string $logFiles, array $filters = []): string
     {
         $data = $this->prepareExportData($logFiles, $filters);
-
-        $filename = 'logs_export_' . date('Y-m-d_H-i-s') . '.json';
-        $filepath = storage_path('app/exports/' . $filename);
-
-        // Ensure directory exists
-        if (!File::exists(dirname($filepath))) {
-            File::makeDirectory(dirname($filepath), 0755, true);
-        }
+        $filepath = $this->generateExportPath('json');
 
         $exportData = [
             'export_info' => [
                 'generated_at' => Carbon::now()->toISOString(),
                 'total_entries' => count($data),
                 'filters_applied' => $filters,
-                'exported_by' => (auth()->user() && auth()->user()->name) ? auth()->user()->name : 'System',
-                'version' => '1.5.0'
+                'exported_by' => auth()->user()?->name ?? 'System',
             ],
-            'logs' => $data
+            'logs' => $data,
         ];
 
         File::put($filepath, json_encode($exportData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
@@ -85,19 +79,12 @@ class LogExportService
     /**
      * Export logs to Excel XML format (Native Excel without dependencies)
      */
-    public function exportToExcel($logFiles, $filters = [])
+    public function exportToExcel(array|string $logFiles, array $filters = []): string
     {
         $data = $this->prepareExportData($logFiles, $filters);
+        $filepath = $this->generateExportPath('xls');
 
-        $filename = 'logs_export_' . date('Y-m-d_H-i-s') . '.xls';
-        $filepath = storage_path('app/exports/' . $filename);
-
-        // Ensure directory exists
-        if (!File::exists(dirname($filepath))) {
-            File::makeDirectory(dirname($filepath), 0755, true);
-        }
-
-        $excel = $this->generateExcelXml($data, $filters);
+        $excel = $this->generateExcelXml($data);
         File::put($filepath, $excel);
 
         return $filepath;
@@ -106,91 +93,112 @@ class LogExportService
     /**
      * Generate PDF-style HTML report (Print-ready)
      */
-    public function exportToPdf($logFiles, $filters = [])
+    public function exportToPdf(array|string $logFiles, array $filters = []): string
     {
         $data = $this->prepareExportData($logFiles, $filters);
         $summary = $this->generateSummary($data);
+        $filepath = $this->generateExportPath('html');
 
-        $filename = 'logs_export_' . date('Y-m-d_H-i-s') . '.html';
-        $filepath = storage_path('app/exports/' . $filename);
-
-        // Ensure directory exists
-        if (!File::exists(dirname($filepath))) {
-            File::makeDirectory(dirname($filepath), 0755, true);
-        }
-
-        $html = $this->generatePrintableHtml($data, $summary, $filters);
+        $html = $this->generatePrintableHtml($data, $summary);
         File::put($filepath, $html);
 
         return $filepath;
     }
 
     /**
-     * Generate Excel XML format using native PHP
+     * Generate Excel XML format using native PHP.
      */
-    protected function generateExcelXml($data, $filters)
+    private function generateExcelXml(array $data): string
     {
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
-        $xml .= '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
-        $xml .= ' xmlns:o="urn:schemas-microsoft-com:office:office"' . "\n";
-        $xml .= ' xmlns:x="urn:schemas-microsoft-com:office:excel"' . "\n";
-        $xml .= ' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"' . "\n";
-        $xml .= ' xmlns:html="http://www.w3.org/TR/REC-html40">' . "\n";
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n"
+            .'<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"'."\n"
+            .' xmlns:o="urn:schemas-microsoft-com:office:office"'."\n"
+            .' xmlns:x="urn:schemas-microsoft-com:office:excel"'."\n"
+            .' xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"'."\n"
+            .' xmlns:html="http://www.w3.org/TR/REC-html40">'."\n"
+            .'<Styles>'."\n"
+            .'<Style ss:ID="Header"><Font ss:Bold="1"/><Interior ss:Color="#D3D3D3" ss:Pattern="Solid"/></Style>'."\n"
+            .'<Style ss:ID="Error"><Font ss:Color="#FF0000"/></Style>'."\n"
+            .'<Style ss:ID="Warning"><Font ss:Color="#FFA500"/></Style>'."\n"
+            .'</Styles>'."\n"
+            .'<Worksheet ss:Name="Log Export"><Table>'."\n"
+            .'<Row>'
+            .'<Cell ss:StyleID="Header"><Data ss:Type="String">Timestamp</Data></Cell>'
+            .'<Cell ss:StyleID="Header"><Data ss:Type="String">Level</Data></Cell>'
+            .'<Cell ss:StyleID="Header"><Data ss:Type="String">Message</Data></Cell>'
+            .'<Cell ss:StyleID="Header"><Data ss:Type="String">File</Data></Cell>'
+            .'</Row>'."\n";
 
-        // Styles
-        $xml .= '<Styles>' . "\n";
-        $xml .= '<Style ss:ID="Header">' . "\n";
-        $xml .= '<Font ss:Bold="1"/>' . "\n";
-        $xml .= '<Interior ss:Color="#D3D3D3" ss:Pattern="Solid"/>' . "\n";
-        $xml .= '</Style>' . "\n";
-        $xml .= '<Style ss:ID="Error"><Font ss:Color="#FF0000"/></Style>' . "\n";
-        $xml .= '<Style ss:ID="Warning"><Font ss:Color="#FFA500"/></Style>' . "\n";
-        $xml .= '</Styles>' . "\n";
-
-        // Worksheet
-        $xml .= '<Worksheet ss:Name="Log Export">' . "\n";
-        $xml .= '<Table>' . "\n";
-
-        // Headers
-        $xml .= '<Row>' . "\n";
-        $xml .= '<Cell ss:StyleID="Header"><Data ss:Type="String">Timestamp</Data></Cell>' . "\n";
-        $xml .= '<Cell ss:StyleID="Header"><Data ss:Type="String">Level</Data></Cell>' . "\n";
-        $xml .= '<Cell ss:StyleID="Header"><Data ss:Type="String">Message</Data></Cell>' . "\n";
-        $xml .= '<Cell ss:StyleID="Header"><Data ss:Type="String">File</Data></Cell>' . "\n";
-        $xml .= '</Row>' . "\n";
-
-        // Data rows
         foreach ($data as $entry) {
-            $style = '';
-            if ($entry['level'] === 'error') {
-                $style = ' ss:StyleID="Error"';
-            } elseif ($entry['level'] === 'warning') {
-                $style = ' ss:StyleID="Warning"';
-            }
+            $style = match ($entry['level']) {
+                'error' => ' ss:StyleID="Error"',
+                'warning' => ' ss:StyleID="Warning"',
+                default => '',
+            };
 
-            $xml .= '<Row>' . "\n";
-            $xml .= '<Cell><Data ss:Type="String">' . htmlspecialchars($entry['timestamp']) . '</Data></Cell>' . "\n";
-            $xml .= '<Cell' . $style . '><Data ss:Type="String">' . htmlspecialchars(strtoupper($entry['level'])) . '</Data></Cell>' . "\n";
-            $xml .= '<Cell><Data ss:Type="String">' . htmlspecialchars($this->truncateText($entry['message'], 500)) . '</Data></Cell>' . "\n";
-            $xml .= '<Cell><Data ss:Type="String">' . htmlspecialchars($entry['file']) . '</Data></Cell>' . "\n";
-            $xml .= '</Row>' . "\n";
+            $xml .= '<Row>'
+                .'<Cell><Data ss:Type="String">'.htmlspecialchars($entry['timestamp']).'</Data></Cell>'
+                .'<Cell'.$style.'><Data ss:Type="String">'.htmlspecialchars(strtoupper($entry['level'])).'</Data></Cell>'
+                .'<Cell><Data ss:Type="String">'.htmlspecialchars($this->truncateText($entry['message'], 500)).'</Data></Cell>'
+                .'<Cell><Data ss:Type="String">'.htmlspecialchars($entry['file']).'</Data></Cell>'
+                .'</Row>'."\n";
         }
 
-        $xml .= '</Table></Worksheet></Workbook>';
-        return $xml;
+        return $xml.'</Table></Worksheet></Workbook>';
     }
 
     /**
-     * Generate print-ready HTML
+     * Generate print-ready HTML report.
      */
-    protected function generatePrintableHtml($data, $summary, $filters)
+    private function generatePrintableHtml(array $data, array $summary): string
     {
-        return '<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Laravel Log Export Report</title>
-    <style>
+        $date = Carbon::now()->format('F j, Y \a\t g:i A');
+        $total = number_format(count($data));
+        $levelCards = $this->buildLevelSummaryCards($summary);
+        $tableRows = $this->buildLogTableRows(array_slice($data, 0, 1000));
+        $css = $this->getExportCss();
+
+        return <<<HTML
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Laravel Log Export Report</title>
+            <style>{$css}</style>
+        </head>
+        <body>
+            <div class="print-controls no-print">
+                <button class="btn" onclick="window.print()">🖨️ Print to PDF</button>
+                <button class="btn" onclick="history.back()">✕ Back</button>
+            </div>
+            <div class="header">
+                <h1>📊 Laravel Log Export Report</h1>
+                <p>Generated on {$date}</p>
+            </div>
+            <div class="summary-grid">
+                <div class="summary-card"><h3>{$total}</h3><p>Total Log Entries</p></div>
+                {$levelCards}
+            </div>
+            <h2>📝 Log Entries</h2>
+            <table class="log-table">
+                <thead><tr><th>Timestamp</th><th>Level</th><th>Message</th><th>File</th></tr></thead>
+                <tbody>{$tableRows}</tbody>
+            </table>
+            <script>
+                if (window.location.hash === "#print") { window.print(); }
+                window.addEventListener("afterprint", function() { if (window.opener) { window.close(); } });
+            </script>
+        </body>
+        </html>
+        HTML;
+    }
+
+    /**
+     * Get CSS styles for the export report.
+     */
+    private function getExportCss(): string
+    {
+        return <<<'CSS'
         @page { margin: 1in; size: A4; }
         @media print { .no-print { display: none !important; } }
         body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 20px; }
@@ -207,60 +215,50 @@ class LogExportService
         .level-info { color: #0d6efd; font-weight: bold; }
         .print-controls { position: fixed; top: 20px; right: 20px; z-index: 1000; }
         .btn { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 0 5px; }
-    </style>
-</head>
-<body>
-    <div class="print-controls no-print">
-        <button class="btn" onclick="window.print()">🖨️ Print to PDF</button>
-        <button class="btn" onclick="history.back()">✕ Back</button>
-    </div>
+        CSS;
+    }
 
-    <div class="header">
-        <h1>📊 Laravel Log Export Report</h1>
-        <p>Generated on ' . Carbon::now()->format('F j, Y \a\t g:i A') . '</p>
-    </div>
+    /**
+     * Build HTML summary cards for each log level.
+     */
+    private function buildLevelSummaryCards(array $summary): string
+    {
+        if (empty($summary['levels'])) {
+            return '';
+        }
 
-    <div class="summary-grid">
-        <div class="summary-card">
-            <h3>' . number_format(count($data)) . '</h3>
-            <p>Total Log Entries</p>
-        </div>' .
-            (isset($summary['levels']) ?
-                implode('', array_map(function($level, $count) {
-                    return '<div class="summary-card"><h3 class="level-' . $level . '">' . number_format($count) . '</h3><p>' . ucfirst($level) . ' Logs</p></div>';
-                }, array_keys($summary['levels']), $summary['levels'])) : ''
-            ) .
-            '</div>
+        $cards = '';
+        foreach ($summary['levels'] as $level => $count) {
+            $formatted = number_format($count);
+            $label = ucfirst($level);
+            $cards .= "<div class=\"summary-card\"><h3 class=\"level-{$level}\">{$formatted}</h3><p>{$label} Logs</p></div>";
+        }
 
-    <h2>📝 Log Entries</h2>
-    <table class="log-table">
-        <thead>
-            <tr><th>Timestamp</th><th>Level</th><th>Message</th><th>File</th></tr>
-        </thead>
-        <tbody>' .
-            implode('', array_map(function($entry) {
-                return '<tr>
-                <td>' . htmlspecialchars($entry['timestamp']) . '</td>
-                <td class="level-' . $entry['level'] . '">' . strtoupper($entry['level']) . '</td>
-                <td>' . htmlspecialchars($this->truncateText($entry['message'], 200)) . '</td>
-                <td>' . htmlspecialchars($entry['file']) . '</td>
-            </tr>';
-            }, array_slice($data, 0, 1000))) .
-            '</tbody>
-    </table>
+        return $cards;
+    }
 
-    <script>
-        if (window.location.hash === "#print") { window.print(); }
-        window.addEventListener("afterprint", function() { if (window.opener) { window.close(); } });
-    </script>
-</body>
-</html>';
+    /**
+     * Build HTML table rows for log entries.
+     */
+    private function buildLogTableRows(array $data): string
+    {
+        $rows = '';
+        foreach ($data as $entry) {
+            $timestamp = htmlspecialchars($entry['timestamp']);
+            $level = $entry['level'];
+            $levelUpper = strtoupper($level);
+            $message = htmlspecialchars($this->truncateText($entry['message'], 200));
+            $file = htmlspecialchars($entry['file']);
+            $rows .= "<tr><td>{$timestamp}</td><td class=\"level-{$level}\">{$levelUpper}</td><td>{$message}</td><td>{$file}</td></tr>";
+        }
+
+        return $rows;
     }
 
     /**
      * Prepare export data with filtering
      */
-    protected function prepareExportData($logFiles, $filters = [])
+    private function prepareExportData(array|string $logFiles, array $filters = []): array
     {
         $allEntries = collect();
 
@@ -269,7 +267,7 @@ class LogExportService
         }
 
         foreach ($logFiles as $logFile) {
-            $logData = $this->logParserService->getLogEntries($logFile);
+            $logData = $this->logParserService->getAllLogEntries($logFile);
 
             foreach ($logData['entries'] as $entry) {
                 $entry['file'] = $logFile;
@@ -277,93 +275,91 @@ class LogExportService
             }
         }
 
-        // Apply filters
-        if (!empty($filters['levels'])) {
+        if (! empty($filters['levels'])) {
             $allEntries = $allEntries->whereIn('level', $filters['levels']);
         }
 
-        if (!empty($filters['date_from'])) {
-            $allEntries = $allEntries->filter(function ($entry) use ($filters) {
+        $dateFrom = $filters['date_from'] ?? null;
+        $dateTo = $filters['date_to'] ?? null;
+
+        if ($dateFrom || $dateTo) {
+            $allEntries = $allEntries->filter(function ($entry) use ($dateFrom, $dateTo) {
                 $entryDate = Carbon::parse($entry['timestamp'])->format('Y-m-d');
-                return $entryDate >= $filters['date_from'];
+
+                return (! $dateFrom || $entryDate >= $dateFrom)
+                    && (! $dateTo || $entryDate <= $dateTo);
             });
         }
 
-        if (!empty($filters['date_to'])) {
-            $allEntries = $allEntries->filter(function ($entry) use ($filters) {
-                $entryDate = Carbon::parse($entry['timestamp'])->format('Y-m-d');
-                return $entryDate <= $filters['date_to'];
-            });
-        }
-
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $allEntries = $allEntries->filter(function ($entry) use ($filters) {
                 return stripos($entry['message'], $filters['search']) !== false;
             });
         }
 
-        return $allEntries->sortByDesc('timestamp')->values()->toArray();
+        $maxEntries = (int) config('log-tracker.export.limits.max_entries', 50000);
+
+        return $allEntries->sortByDesc('timestamp')->take($maxEntries)->values()->toArray();
     }
 
     /**
      * Generate summary statistics
      */
-    protected function generateSummary($data)
+    private function generateSummary(array $data): array
     {
-        $summary = [
-            'total_logs' => count($data),
-            'levels' => [],
-            'date_range' => []
+        $collection = collect($data);
+        $timestamps = $collection->pluck('timestamp')->filter();
+
+        return [
+            'total_logs' => $collection->count(),
+            'levels' => $collection->countBy('level')->toArray(),
+            'date_range' => $timestamps->isNotEmpty()
+                ? ['from' => $timestamps->min(), 'to' => $timestamps->max()]
+                : [],
         ];
-
-        foreach ($data as $entry) {
-            $level = $entry['level'];
-            if (!isset($summary['levels'][$level])) {
-                $summary['levels'][$level] = 0;
-            }
-            $summary['levels'][$level]++;
-        }
-
-        if (!empty($data)) {
-            $timestamps = array_column($data, 'timestamp');
-            $summary['date_range'] = [
-                'from' => min($timestamps),
-                'to' => max($timestamps)
-            ];
-        }
-
-        return $summary;
     }
 
     /**
      * Clean text for CSV export
      */
-    protected function cleanTextForCsv($text)
+    private function cleanTextForCsv(string $text): string
     {
-        $text = str_replace(["\r\n", "\r", "\n"], " | ", $text);
+        $text = str_replace(["\r\n", "\r", "\n"], ' | ', $text);
         $text = preg_replace('/\s+/', ' ', $text);
+
         return trim($text);
     }
 
     /**
      * Truncate text to specified length
      */
-    protected function truncateText($text, $length = 100)
+    private function truncateText(string $text, int $length = 100): string
     {
         if (strlen($text) <= $length) {
             return $text;
         }
-        return substr($text, 0, $length - 3) . '...';
+
+        return substr($text, 0, $length - 3).'...';
+    }
+
+    /**
+     * Ensure the export directory exists, creating it if necessary.
+     */
+    private function ensureExportDirectory(string $filepath): void
+    {
+        if (! File::exists(dirname($filepath))) {
+            File::makeDirectory(dirname($filepath), 0755, true);
+        }
     }
 
     /**
      * Clean up old export files
      */
-    public function cleanupOldExports($daysOld = 7)
+    public function cleanupOldExports(int $daysOld = 7): void
     {
         $exportPath = storage_path('app/exports');
 
-        if (!File::exists($exportPath)) {
+        if (! File::exists($exportPath)) {
             return;
         }
 

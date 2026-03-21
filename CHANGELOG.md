@@ -2,6 +2,136 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.0] - 2026-03-21
+### � Major Release — Version 3.0
+
+A full architectural overhaul. Version 3.0 introduces five major new features, a complete performance rewrite, production-grade security hardening, and a comprehensive test suite — all while remaining **zero external dependencies**.
+
+---
+
+#### ✨ New Features
+
+**Global Multi-File Search**
+- New `SearchController` and `LogSearchService` for searching across all log files simultaneously
+- Keyword search (case-insensitive, matches message body and stack trace content)
+- Filter by log level, date range (`date_from` / `date_to`), or a specific file
+- Paginated results sorted newest-first, with source filename shown per result
+- Dedicated `LogSearchRequest` Form Request with full validation
+- Search views for both GlowStack and LiteFlow themes
+
+**Log Comparison**
+- New `CompareController` for side-by-side diff between any two log files
+- Three tabs: Only in File A / Only in File B / Shared (matched by level + message fingerprint)
+- Per-level count breakdown table and total entry counts for both files
+- Guard against selecting the same file twice (null comparison returned)
+- Compare views for both themes
+
+**Advanced Export System** *(zero external dependencies)*
+- New `ExportController` and `LogExportService`
+- Four formats: CSV (UTF-8 BOM), JSON (with `export_info` metadata), Excel (native Office XML), PDF (print-ready HTML, first 1 000 entries)
+- Filters on export: specific files, log levels, date range, keyword
+- Quick export directly from the log viewer page
+- Export files stored temporarily and auto-cleaned after configurable days
+- Export format `enabled` flag enforced — `ExportController` checks `config("log-tracker.export.formats.{$format}.enabled")` in both `export()` and `quickExport()`; disabled formats return `403`
+
+**Alert & Notification System**
+- New `LogAlertService` with threshold-based monitoring on a rolling time window
+- Anti-spam cooldown per file + level via Laravel Cache
+- Four notification channels: **Mail**, **Slack webhook**, **Discord webhook**, **Generic HTTP webhook** (POST/GET + custom headers)
+- Per-level threshold configuration: `emergency`, `critical`, `alert`, `error`, `warning`
+- Auto-registered once-per-minute scheduler entry when `alerts.enabled = true`
+- Professional branded HTML alert email with details table, level badge, monospace message block, and footer
+
+**Log Viewer — Copy to Clipboard**
+- One-click copy button on every log message (hover-reveal)
+- One-click copy button on every stack trace (top-right of expanded panel)
+- Clipboard API with `execCommand` fallback for older browsers
+- Icon changes to ✓ with green feedback for 2 s, then resets
+
+**Log Viewer — Row Bookmark / Mark**
+- Bookmark icon (🔖) per row in the Actions column
+- Marked rows highlighted with a gold left-border and subtle background tint
+- Bookmarks persisted in `localStorage` (key: `logtracker_marks_{logName}`) — survive page reloads and tab closes
+- "Show Marked Only" toggle button in the content header with live count display
+- Both GlowStack and LiteFlow themes supported
+
+**Log Viewer — Frequent Entries Panel**
+- Collapsible panel showing top 15 most repeated log messages
+- Displays: occurrence count, first seen, last seen timestamps
+- Colour and icon decorated per log level
+
+**Dashboard Enhancements**
+- Dashboard caching via new `dashboard_cache_ttl` config key (default `60` seconds, `0` = disabled); stats served from `Cache::remember()` with dedicated refresh endpoint
+- Last 5 recent logs, top 5 error types (by message prefix), top 5 peak error hours
+- Live auto-refresh JSON endpoint (`GET /api/dashboard-refresh`) polled by the UI
+
+**Dynamic Footer Version**
+- Footer version now resolved at runtime via `Composer\InstalledVersions::getPrettyVersion()`
+- No more hardcoded version string — footer always shows the actually installed release
+- Falls back to `dev` in path-repository / development environments
+
+**New Artisan Commands**
+- `log-tracker:check-alerts` — check all log files against thresholds, dispatch notifications
+- `log-tracker:cleanup [--days=7]` — delete temporary export files older than N days
+- `log-tracker:theme list|current|set {name}` — manage active theme without editing config
+
+**Laravel 13 Support**
+- `composer.json` now declares `illuminate/support: ^10.0|^11.0|^12.0|^13.0`; minimum PHP for L13 is `^8.3`
+- CI matrix covers PHP 8.1 – 8.4 × Laravel 10 – 13 (10 jobs) with correct testbench version per release
+
+---
+
+#### 🔒 Security
+
+- **Wildcard route constrained** — `{logName}` route parameter now has `->where('logName', '.+\.log')`, preventing path traversal via URL
+- **`allow_download` config enforced** — `download()` now checks `config('log-tracker.allow_download')` and aborts `403` when disabled
+- **Defence-in-depth `basename()` in parser** — `LogParserService::loadEntries()` applies `basename()` to the log name, blocking path traversal regardless of caller sanitization
+- **GlowStack view `file_exists()` guard** — `filesize()` / `filemtime()` calls in `log-details.blade.php` now wrapped in `@if(file_exists(...))` to prevent PHP errors on deleted files
+- **ExportController `readonly`** — injected `LogExportService` dependency declared `readonly`
+
+---
+
+#### 🐛 Bug Fixes
+
+- **Stack trace assignment** — `array_reverse()` was incorrectly applied to raw file lines before parsing, causing stack traces to attach to the wrong entry with reversed frame order. Lines are now parsed in forward order and only the finished entries array is reversed.
+- **Export format flag ignored** — disabled export formats are now properly rejected with `403`.
+- **Bare mail alert view** — replaced plain `{{ $body }}` with a full branded HTML email template.
+
+---
+
+#### 🚀 Performance
+
+- **Eliminated double file parse in log viewer** — `calculateFrequency()` now accepts pre-loaded entries; the log file is read only once per request instead of twice
+- **Fast level count on file listing** — replaced full entry-struct parse with a single `preg_match_all()` scan of raw file content, avoiding all entry allocation
+- **Bounded `recentLogs` buffer in dashboard** — adaptive sort+trim every 200 entries keeps memory usage constant regardless of total log volume
+- **Combined stack trace detection regexes** — reduced from 17 individual `preg_match()` calls per line to 2 combined alternation patterns
+
+---
+
+#### 🧪 Testing
+
+- Full PHPUnit test suite: **177 tests, 461 assertions — all passing**
+- Feature tests: `LogFileControllerTest`, `DashboardControllerTest`, `SearchControllerTest`, `CompareControllerTest`, `ExportControllerTest`, `LogFrequencyTest`, `CheckLogAlertsCommandTest`, `CleanupCommandTest`, `ThemeCommandTest`, `ServiceProviderTest`, `LogAlertServiceTest`
+- Unit tests: `LogParserServiceTest`, `LogExportServiceTest`, `ThemeManagerTest`
+- Uses `orchestra/testbench` — no parent Laravel project needed
+- CI coverage job (push-only) uploads to Codecov; badge added to README
+- **CONTRIBUTING.md** — setup, testing, Pint formatting, and PR guidelines
+
+---
+
+#### 🗺️ New Routes
+
+| Method | URI | Description |
+|--------|-----|-------------|
+| GET | `/log-tracker/search` | Global multi-file search |
+| GET | `/log-tracker/compare` | Side-by-side file comparison |
+| GET | `/log-tracker/export` | Export form |
+| POST | `/log-tracker/export` | Trigger export download |
+| GET | `/log-tracker/export/{logName}/{format}` | Quick export from viewer |
+| GET | `/log-tracker/api/dashboard-refresh` | Live dashboard JSON refresh |
+
+---
+
 ## [2.3] - 2025-09-29
 ### 🧹 Log Management & UI Polish Release - Version 2.3
 #### ✨ Added
@@ -107,7 +237,7 @@ All notable changes to this project will be documented in this file.
 - Solved stack trace issue where **stack trace was not displayed** for certain log entries.
 
 
-## [1.2.0] - 2025-03-12
+## [1.1.0] - 2025-03-12
 
 ### Added
 - **PHP 5.6+ Compatibility**

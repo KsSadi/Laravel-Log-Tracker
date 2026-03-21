@@ -635,6 +635,8 @@
 
         .analysis-table {
             margin: 0;
+            table-layout: fixed;
+            width: 100%;
         }
 
         .analysis-table tbody tr {
@@ -660,6 +662,10 @@
             font-size: 0.875rem;
             color: var(--gray-700);
             font-weight: 500;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .error-count-badge {
@@ -1052,6 +1058,20 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('log-tracker.search') ? 'active' : '' }}"
+                       href="{{ route('log-tracker.search') }}">
+                        <i class="fas fa-search"></i>
+                        Search
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('log-tracker.compare') ? 'active' : '' }}"
+                       href="{{ route('log-tracker.compare') }}">
+                        <i class="fas fa-code-branch"></i>
+                        Compare
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('log-tracker.export.form') ? 'active' : '' }}"
                        href="{{ route('log-tracker.export.form') }}">
                         <i class="fas fa-download"></i>
@@ -1071,7 +1091,7 @@
     <div class="container">
         <div class="footer-content">
             <div class="footer-brand">
-                <i class="fa-brands fa-searchengin"></i> LogTracker <v2 class="3">v2.3</v2>
+                <i class="fa-brands fa-searchengin"></i> LogTracker <span>{{ $logTrackerVersion }}</span>
             </div>
             <p class="footer-text">
                 © <span id="year"></span>

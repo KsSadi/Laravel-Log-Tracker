@@ -2,53 +2,42 @@
 
 namespace Kssadi\LogTracker\Traits;
 
+use Illuminate\Contracts\View\View;
 use Kssadi\LogTracker\Services\ThemeManager;
 
 trait HasThemeSupport
 {
-    protected ThemeManager $themeManager;
+    protected ?ThemeManager $themeManager = null;
 
     /**
-     * Initialize theme support
+     * Lazily resolve the ThemeManager singleton.
      */
-    protected function initializeTheme(): void
+    private function resolveThemeManager(): ThemeManager
     {
-        $this->themeManager = app(ThemeManager::class);
+        return $this->themeManager ??= app(ThemeManager::class);
     }
 
     /**
-     * Get themed view
+     * Get themed view.
      */
-    protected function themedView($view, $data = array())
+    protected function themedView(string $view, array $data = []): View
     {
-        if (!isset($this->themeManager)) {
-            $this->initializeTheme();
-        }
-
-        return $this->themeManager->view($view, $data);
+        return $this->resolveThemeManager()->view($view, $data);
     }
 
     /**
-     * Get current theme
+     * Get current theme.
      */
     protected function getCurrentTheme(): string
     {
-        if (!isset($this->themeManager)) {
-            $this->initializeTheme();
-        }
-
-        return $this->themeManager->getCurrentTheme();
+        return $this->resolveThemeManager()->getCurrentTheme();
     }
 
     /**
-     * Get available themes for selection
+     * Get available themes for selection.
      */
     protected function getAvailableThemes(): array
     {
-        if (!isset($this->themeManager)) {
-            $this->initializeTheme();
-        }
-
-        return $this->themeManager->getAvailableThemes();
+        return $this->resolveThemeManager()->getAvailableThemes();
     }
 }

@@ -2,19 +2,23 @@
 
 namespace Kssadi\LogTracker\Services;
 
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\View as ViewFacade;
 use InvalidArgumentException;
 
 class ThemeManager
 {
-    protected $currentTheme;
-    protected $availableThemes;
-    protected $themePath;
+    private ?string $currentTheme = null;
+
+    private array $availableThemes = [];
+
+    private string $themePath;
 
     public function __construct()
     {
-        $this->themePath = __DIR__ . '/../resources/views/theme';
+        $this->themePath = __DIR__.'/../resources/views/theme';
         $this->loadAvailableThemes();
         $this->setTheme(config('log-tracker.theme', 'LiteFlow'));
     }
@@ -22,11 +26,10 @@ class ThemeManager
     /**
      * Load available themes from filesystem
      */
-    protected function loadAvailableThemes(): void
+    private function loadAvailableThemes(): void
     {
-        $this->availableThemes = [];
         $themeDirectories = File::directories($this->themePath);
-        
+
         foreach ($themeDirectories as $dir) {
             $themeName = basename($dir);
             $this->availableThemes[] = $themeName;
@@ -36,15 +39,15 @@ class ThemeManager
     /**
      * Set the current theme
      */
-    public function setTheme($theme)
+    public function setTheme(string $theme): static
     {
-        if (!$this->isThemeAvailable($theme)) {
-            \Log::warning("LogTracker: Invalid theme '{$theme}' configured. Available themes: " . implode(', ', $this->availableThemes));
+        if (! $this->isThemeAvailable($theme)) {
+            Log::warning("LogTracker: Invalid theme '{$theme}' configured. Available themes: ".implode(', ', $this->availableThemes));
             $theme = $this->getDefaultTheme();
         }
 
         $this->currentTheme = $theme;
-        
+
         return $this;
     }
 
@@ -53,7 +56,7 @@ class ThemeManager
      */
     public function getCurrentTheme(): string
     {
-        return $this->currentTheme;
+        return $this->currentTheme ?? $this->getDefaultTheme();
     }
 
     /**
@@ -67,7 +70,7 @@ class ThemeManager
     /**
      * Check if theme is available
      */
-    public function isThemeAvailable($theme)
+    public function isThemeAvailable(string $theme): bool
     {
         return in_array($theme, $this->availableThemes);
     }
@@ -75,35 +78,36 @@ class ThemeManager
     /**
      * Get default theme
      */
-    public function getDefaultTheme()
+    public function getDefaultTheme(): string
     {
-        return isset($this->availableThemes[0]) ? $this->availableThemes[0] : 'LiteFlow';
+        return $this->availableThemes[0] ?? 'LiteFlow';
     }
 
     /**
      * Get themed view
      */
-    public function view($view, $data = array())
+    public function view(string $view, array $data = []): View
     {
         $viewName = $this->resolveViewName($view);
+
         return view($viewName, $data);
     }
 
     /**
      * Resolve view name with fallback
      */
-    protected function resolveViewName($view)
+    private function resolveViewName(string $view): string
     {
         $primaryView = "log-tracker::theme.{$this->currentTheme}.{$view}";
-        
+
         // Check if view exists
-        if (View::exists($primaryView)) {
+        if (ViewFacade::exists($primaryView)) {
             return $primaryView;
         }
 
         // Fallback to default theme
         $fallbackView = "log-tracker::theme.{$this->getDefaultTheme()}.{$view}";
-        if (View::exists($fallbackView)) {
+        if (ViewFacade::exists($fallbackView)) {
             return $fallbackView;
         }
 

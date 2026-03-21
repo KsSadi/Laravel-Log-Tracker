@@ -653,6 +653,122 @@
             color: #f87171;
         }
 
+        /* Copy to Clipboard */
+        .stack-trace-container {
+            position: relative;
+        }
+
+        .message-cell {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.35rem;
+        }
+
+        .msg-copy-btn {
+            flex-shrink: 0;
+            opacity: 0;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #94a3b8;
+            padding: 2px 5px;
+            font-size: 0.72rem;
+            line-height: 1;
+            transition: all 0.15s;
+        }
+
+        tr:hover .msg-copy-btn {
+            opacity: 1;
+        }
+
+        .msg-copy-btn:hover,
+        .stack-copy-btn:hover {
+            color: #60a5fa;
+            background: rgba(96, 165, 250, 0.1);
+            border-color: rgba(96, 165, 250, 0.2);
+        }
+
+        .msg-copy-btn.copied,
+        .stack-copy-btn.copied {
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.2);
+            background: rgba(16, 185, 129, 0.08);
+        }
+
+        .stack-copy-btn {
+            position: absolute;
+            top: calc(1.5rem + 7px);
+            right: calc(1rem + 8px);
+            z-index: 2;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            cursor: pointer;
+            color: #64748b;
+            padding: 3px 7px;
+            font-size: 0.7rem;
+            line-height: 1;
+            transition: all 0.15s;
+        }
+
+        /* Row Mark / Highlight */
+        .marked-row {
+            background: rgba(234, 179, 8, 0.1) !important;
+            border-left: 3px solid #eab308;
+        }
+
+        .mark-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #64748b;
+            padding: 3px 6px;
+            font-size: 0.82rem;
+            line-height: 1;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .mark-btn:hover {
+            color: #eab308;
+            background: rgba(234, 179, 8, 0.1);
+            border-color: rgba(234, 179, 8, 0.25);
+        }
+
+        .mark-btn.active {
+            color: #eab308;
+            background: rgba(234, 179, 8, 0.1);
+            border-color: rgba(234, 179, 8, 0.25);
+        }
+
+        .show-marked-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            cursor: pointer;
+            color: #94a3b8;
+            padding: 0.3rem 0.85rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .show-marked-btn:hover {
+            color: #eab308;
+            border-color: #eab308;
+        }
+
+        .show-marked-btn.active {
+            color: #eab308;
+            border-color: #eab308;
+            background: rgba(234, 179, 8, 0.1);
+        }
+
         .no-data-row {
             text-align: center;
             padding: 3rem 2rem;
@@ -987,6 +1103,146 @@
             align-items: center;
             gap: 0;
         }
+
+        /* ── Frequent / Repeated Entries ── */
+        .freq-section {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .freq-header {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+        .freq-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .freq-pulse {
+            width: 10px;
+            height: 10px;
+            background: #f97316;
+            border-radius: 50%;
+            animation: freq-blink 1.6s ease-in-out infinite;
+        }
+        @keyframes freq-blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.4; transform: scale(0.75); }
+        }
+        .freq-title {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #7c2d12;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .freq-badge {
+            background: rgba(249,115,22,0.2);
+            color: #c2410c;
+            padding: 0.2rem 0.65rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+        .freq-collapse-btn {
+            background: rgba(255,255,255,0.5);
+            border: none;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7c2d12;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .freq-collapse-btn:hover { background: rgba(255,255,255,0.8); }
+        .freq-body { padding: 1.25rem; }
+        .freq-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .freq-card {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            background: #fafafa;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            padding: 0.9rem 1.1rem;
+            transition: var(--transition);
+        }
+        .freq-card:hover { border-color: #fcb69f; background: #fff7f0; }
+        .freq-count-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 54px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 8px;
+            padding: 0.4rem 0.5rem;
+        }
+        .freq-count {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #c2410c;
+            line-height: 1;
+        }
+        .freq-count-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #9a3412;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .freq-detail-col { flex: 1; min-width: 0; }
+        .freq-message {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: #1e293b;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0.4rem;
+        }
+        .freq-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .freq-level-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.18rem 0.55rem;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: white;
+        }
+        .freq-seen {
+            font-size: 0.75rem;
+            color: #64748b;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .freq-seen i { color: #94a3b8; font-size: 0.7rem; }
     </style>
 @endpush
 
@@ -1059,6 +1315,7 @@
                     Analyze and explore log entries with advanced filtering and export options
                 </p>
                 <div class="header-meta">
+                    @if(isset($logName) && file_exists(storage_path('logs/' . $logName)))
                     <div class="meta-item">
                         <i class="fas fa-hdd"></i>
                         <span>{{ round(filesize(storage_path('logs/' . $logName)) / 1024, 2) }} KB</span>
@@ -1071,6 +1328,7 @@
                         <i class="fas fa-clock"></i>
                         <span>{{ date('h:i A', filemtime(storage_path('logs/' . $logName))) }}</span>
                     </div>
+                    @endif
                 </div>
             </div>
 
@@ -1117,6 +1375,53 @@
             </div>
         </div>
     </div>
+
+    <!-- Frequent / Repeated Entries Section -->
+    @if(!empty($frequentEntries))
+    <div class="freq-section" id="freqSection">
+        <div class="freq-header" onclick="toggleFreq()">
+            <div class="freq-header-left">
+                <div class="freq-pulse"></div>
+                <h5 class="freq-title">
+                    <i class="fas fa-redo-alt"></i>
+                    Repeated Entries
+                </h5>
+                <span class="freq-badge">{{ count($frequentEntries) }} patterns</span>
+            </div>
+            <button class="freq-collapse-btn" type="button" id="freqCollapseBtn">
+                <i class="fas fa-chevron-down" id="freqCollapseIcon"></i>
+            </button>
+        </div>
+        <div class="freq-body" id="freqBody" style="display: none">
+            <div class="freq-grid">
+                @foreach($frequentEntries as $item)
+                <div class="freq-card">
+                    <div class="freq-count-col">
+                        <div class="freq-count">{{ $item['count'] }}</div>
+                        <div class="freq-count-label">times</div>
+                    </div>
+                    <div class="freq-detail-col">
+                        <div class="freq-message" title="{{ $item['message'] }}">{{ $item['message'] }}</div>
+                        <div class="freq-meta">
+                            <span class="freq-level-badge" style="background:{{ $item['color'] }};">
+                                <i class="{{ $item['icon'] }}"></i> {{ ucfirst($item['level']) }}
+                            </span>
+                            <span class="freq-seen">
+                                <i class="fas fa-clock"></i>
+                                First: {{ $item['first_seen'] }}
+                            </span>
+                            <span class="freq-seen">
+                                <i class="fas fa-history"></i>
+                                Last: {{ $item['last_seen'] }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
 
     <!-- Main Layout -->
     <div class="main-layout">
@@ -1165,8 +1470,12 @@
         <div class="content-card">
             <div class="content-header">
                 <h5 class="content-title">Log Entries</h5>
-                <div style="display: flex; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
                     <div class="content-badge" id="entriesCount">{{ number_format(count($entries)) }} total entries</div>
+                    <button type="button" class="show-marked-btn" id="showMarkedBtn" onclick="toggleShowMarked()" title="Show marked rows only">
+                        <i class="fas fa-bookmark"></i>
+                        <span>Marked</span>
+                    </button>
                     @if(config('log-tracker.allow_delete', false) && count($entries) > 0)
                         <button type="button" class="clear-logs-btn" onclick="confirmClearLogs('{{ $logName }}')">
                             <i class="fas fa-trash-alt"></i>
@@ -1203,7 +1512,7 @@
                         <th style="width: 120px;">Level</th>
                         <th style="width: 180px;">Timestamp</th>
                         <th>Message</th>
-                        <th style="width: 100px;">Actions</th>
+                        <th style="width: 150px;">Actions</th>
                     </tr>
                     </thead>
                     <tbody id="logTableBody">
@@ -1219,21 +1528,36 @@
                                 <div class="timestamp">{{ $log['timestamp'] }}</div>
                             </td>
                             <td>
-                                <div class="log-message">{{ $log['message'] }}</div>
+                                <div class="message-cell">
+                                    <div class="log-message" style="flex:1;">{{ $log['message'] }}</div>
+                                    <button class="msg-copy-btn" onclick="copyText(this, this.closest('.message-cell').querySelector('.log-message').textContent.trim())" title="Copy message">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </div>
                             </td>
                             <td>
-                                @if (!empty($log['stack']))
-                                    <button class="stack-btn" onclick="toggleStackTrace({{ $index }})">
-                                        <i class="fas fa-code"></i>
-                                        <span>Stack</span>
+                                <div style="display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap;">
+                                    @if (!empty($log['stack']))
+                                        <button class="stack-btn" onclick="toggleStackTrace({{ $index }})">
+                                            <i class="fas fa-code"></i>
+                                            <span>Stack</span>
+                                        </button>
+                                    @endif
+                                    <button class="mark-btn" id="mark-btn-{{ $index }}" onclick="toggleMark({{ $index }})" title="Mark this row">
+                                        <i class="far fa-bookmark"></i>
                                     </button>
-                                @endif
+                                </div>
                             </td>
                         </tr>
                         @if (!empty($log['stack']))
                             <tr id="stacktrace-{{ $index }}" class="stack-trace-row d-none">
                                 <td colspan="4">
-                                    <div class="stack-trace" id="stack-{{ $index }}">{{ $log['stack'] }}</div>
+                                    <div class="stack-trace-container">
+                                        <div class="stack-trace" id="stack-{{ $index }}" data-raw="{{ e($log['stack']) }}">{{ $log['stack'] }}</div>
+                                        <button class="stack-copy-btn" id="copy-stack-{{ $index }}" onclick="copyStack({{ $index }})" title="Copy stack trace">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         @endif
@@ -1267,6 +1591,7 @@
             </div>
         </div>
     </div>
+
 @endsection
 
 @push('scripts')
@@ -1288,6 +1613,9 @@
             
             // Initialize event listeners
             initializeEventListeners();
+
+            // Initialize row marks from localStorage
+            initMarks();
         });
         
         function initializeEventListeners() {
@@ -1348,14 +1676,18 @@
                 }
             }
             
+            const activeMarks = showMarkedOnly ? getMarks() : null;
+
             filteredRows = allRows.filter(row => {
                 const level = row.getAttribute('data-level');
                 const text = row.textContent.toLowerCase();
-                
+                const index = parseInt(row.getAttribute('data-index'), 10);
+
                 const levelMatch = activeLevels.includes(level);
                 const textMatch = searchTerm === '' || text.includes(searchTerm);
-                
-                return levelMatch && textMatch;
+                const markMatch = !showMarkedOnly || (activeMarks && activeMarks.includes(index));
+
+                return levelMatch && textMatch && markMatch;
             });
             
             // Reset to first page when filtering
@@ -1573,6 +1905,14 @@
             stackElement.innerHTML = stackContent;
         }
 
+        function toggleFreq() {
+            const body = document.getElementById('freqBody');
+            const icon = document.getElementById('freqCollapseIcon');
+            const isOpen = body.style.display !== 'none';
+            body.style.display = isOpen ? 'none' : 'block';
+            icon.className = isOpen ? 'fas fa-chevron-down' : 'fas fa-chevron-up';
+        }
+
         function toggleFilters() {
             const body = document.getElementById('filtersBody');
             const icon = document.getElementById('collapseIcon');
@@ -1654,6 +1994,93 @@
             document.body.appendChild(form);
             form.submit();
         }
+
+        // Row Mark / Highlight
+        const MARK_KEY = 'logtracker_marks_{{ $logName }}';
+        let showMarkedOnly = false;
+
+        function getMarks() {
+            try { return JSON.parse(localStorage.getItem(MARK_KEY) || '[]'); } catch (e) { return []; }
+        }
+
+        function saveMarks(marks) {
+            localStorage.setItem(MARK_KEY, JSON.stringify(marks));
+        }
+
+        function toggleMark(index) {
+            let marks = getMarks();
+            const pos = marks.indexOf(index);
+            const btn = document.getElementById('mark-btn-' + index);
+            const row = document.querySelector('.log-row[data-index="' + index + '"]');
+            if (pos === -1) {
+                marks.push(index);
+                if (btn) { btn.querySelector('i').className = 'fas fa-bookmark'; btn.classList.add('active'); }
+                if (row) { row.classList.add('marked-row'); }
+            } else {
+                marks.splice(pos, 1);
+                if (btn) { btn.querySelector('i').className = 'far fa-bookmark'; btn.classList.remove('active'); }
+                if (row) { row.classList.remove('marked-row'); }
+            }
+            saveMarks(marks);
+            updateMarkCount();
+            if (showMarkedOnly) { filterLogs(); }
+        }
+
+        function updateMarkCount() {
+            const count = getMarks().length;
+            const btn = document.getElementById('showMarkedBtn');
+            if (!btn) { return; }
+            btn.querySelector('span').textContent = count > 0 ? 'Marked (' + count + ')' : 'Marked';
+        }
+
+        function toggleShowMarked() {
+            showMarkedOnly = !showMarkedOnly;
+            const btn = document.getElementById('showMarkedBtn');
+            if (btn) { btn.classList.toggle('active', showMarkedOnly); }
+            filterLogs();
+        }
+
+        function initMarks() {
+            const marks = getMarks();
+            marks.forEach(function (index) {
+                const btn = document.getElementById('mark-btn-' + index);
+                const row = document.querySelector('.log-row[data-index="' + index + '"]');
+                if (btn) { btn.querySelector('i').className = 'fas fa-bookmark'; btn.classList.add('active'); }
+                if (row) { row.classList.add('marked-row'); }
+            });
+            updateMarkCount();
+        }
+
+        // Copy to Clipboard
+        function copyText(btn, text) {
+            navigator.clipboard.writeText(text).then(function () {
+                const icon = btn.querySelector('i');
+                btn.classList.add('copied');
+                icon.className = 'fas fa-check';
+                setTimeout(function () {
+                    btn.classList.remove('copied');
+                    icon.className = 'fas fa-copy';
+                }, 2000);
+            }).catch(function () {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            });
+        }
+
+        function copyStack(index) {
+            const el = document.getElementById('stack-' + index);
+            const btn = document.getElementById('copy-stack-' + index);
+            if (!el || !btn) { return; }
+            const text = el.dataset.raw || el.textContent;
+            copyText(btn, text);
+        }
+
     </script>
 @endpush
 

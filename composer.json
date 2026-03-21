@@ -3,7 +3,6 @@
   "description": "A powerful, intuitive, and efficient log viewer for Laravel applications.",
   "keywords": ["laravel", "logs", "log viewer", "log tracker", "debugging", "monitoring", "Ks Sadi", "Log Tracker By Sadi","Laravel Log Viewer","Laravel Log Tracker"],
   "type": "library",
-  "version": "2.3",
   "license": "MIT",
   "homepage": "https://github.com/kssadi/log-tracker",
   "authors": [
@@ -15,12 +14,13 @@
     }
   ],
   "require": {
-    "php": ">=5.6",
-    "illuminate/support": ">=5.1"
+    "php": "^8.1",
+    "illuminate/support": "^10.0|^11.0|^12.0|^13.0"
   },
 
   "require-dev": {
-    "orchestra/testbench": ">=3.6 <=9.0"
+    "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+    "phpunit/phpunit": "^10.0|^11.0"
   },
   "autoload": {
     "psr-4": {

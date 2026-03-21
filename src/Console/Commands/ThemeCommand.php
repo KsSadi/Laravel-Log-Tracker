@@ -3,6 +3,7 @@
 namespace Kssadi\LogTracker\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use Kssadi\LogTracker\Services\ThemeManager;
 
 class ThemeCommand extends Command
@@ -13,32 +14,29 @@ class ThemeCommand extends Command
 
     protected $description = 'Manage Log Tracker themes';
 
-    protected $themeManager;
-
-    public function __construct(ThemeManager $themeManager)
+    public function __construct(private ThemeManager $themeManager)
     {
         parent::__construct();
-        $this->themeManager = $themeManager;
     }
 
-    public function handle()
+    public function handle(): int
     {
         $action = $this->argument('action');
 
-        switch ($action) {
-            case 'list':
-                return $this->listThemes();
-            case 'current':
-                return $this->showCurrentTheme();
-            case 'set':
-                return $this->setTheme();
-            default:
-                $this->error("Invalid action: {$action}. Available: list, current, set");
-                return 1;
+        if (! in_array($action, ['list', 'current', 'set'])) {
+            $this->error("Invalid action: {$action}. Available: list, current, set");
+
+            return self::FAILURE;
         }
+
+        return match ($action) {
+            'list' => $this->listThemes(),
+            'current' => $this->showCurrentTheme(),
+            'set' => $this->setTheme(),
+        };
     }
 
-    protected function listThemes()
+    private function listThemes(): int
     {
         $themes = $this->themeManager->getAvailableThemes();
         $current = $this->themeManager->getCurrentTheme();
@@ -51,41 +49,44 @@ class ThemeCommand extends Command
             $this->line("  • {$theme}{$marker}");
         }
 
-        return 0;
+        return self::SUCCESS;
     }
 
-    protected function showCurrentTheme()
+    private function showCurrentTheme(): int
     {
         $current = $this->themeManager->getCurrentTheme();
         $this->info("Current Theme: {$current}");
-        return 0;
+
+        return self::SUCCESS;
     }
 
-    protected function setTheme()
+    private function setTheme(): int
     {
         $theme = $this->argument('theme');
 
-        if (!$theme) {
+        if (! $theme) {
             $this->error('Theme name is required when using set action');
-            return 1;
+
+            return self::FAILURE;
         }
 
-        if (!$this->themeManager->isThemeAvailable($theme)) {
+        if (! $this->themeManager->isThemeAvailable($theme)) {
             $this->error("Theme '{$theme}' is not available");
             $this->call('log-tracker:theme', ['action' => 'list']);
-            return 1;
+
+            return self::FAILURE;
         }
 
         // Update config file
         $configPath = config_path('log-tracker.php');
-        if (file_exists($configPath)) {
-            $content = file_get_contents($configPath);
+        if (File::exists($configPath)) {
+            $content = File::get($configPath);
             $pattern = "/'theme'\s*=>\s*'[^']*'/";
             $replacement = "'theme' => '{$theme}'";
             $newContent = preg_replace($pattern, $replacement, $content);
 
             if ($newContent !== $content) {
-                file_put_contents($configPath, $newContent);
+                File::put($configPath, $newContent);
                 $this->info("Theme set to '{$theme}' in config file");
             } else {
                 $this->warn("Could not update config file. Please manually set 'theme' => '{$theme}' in config/log-tracker.php");
@@ -97,6 +98,6 @@ class ThemeCommand extends Command
         $this->themeManager->setTheme($theme);
         $this->info("Active theme changed to: {$theme}");
 
-        return 0;
+        return self::SUCCESS;
     }
 }

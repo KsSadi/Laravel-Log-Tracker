@@ -519,6 +519,20 @@
                     </a>
                 </li>
                 <li class="nav-item modern-nav-item">
+                    <a class="modern-nav-link {{ request()->routeIs('log-tracker.search') ? 'active' : '' }}"
+                       href="{{ route('log-tracker.search') }}">
+                        <i class="fas fa-search"></i>
+                        <span>Search</span>
+                    </a>
+                </li>
+                <li class="nav-item modern-nav-item">
+                    <a class="modern-nav-link {{ request()->routeIs('log-tracker.compare') ? 'active' : '' }}"
+                       href="{{ route('log-tracker.compare') }}">
+                        <i class="fas fa-code-branch"></i>
+                        <span>Compare</span>
+                    </a>
+                </li>
+                <li class="nav-item modern-nav-item">
                     <a class="modern-nav-link {{ request()->routeIs('log-tracker.export.form') ? 'active' : '' }}"
                        href="{{ route('log-tracker.export.form') }}">
                         <i class="fas fa-download"></i>
@@ -540,7 +554,7 @@
     <div class="container">
         <div class="footer-content">
             <div class="footer-brand">
-                <i class="fa-brands fa-searchengin"></i> LogTracker <v2 class="3">v2.3</v2>
+                <i class="fa-brands fa-searchengin"></i> LogTracker <span>{{ $logTrackerVersion }}</span>
             </div>
             <p class="footer-text">
                 © <span id="year"></span>

@@ -447,6 +447,8 @@
 
         .analysis-table {
             margin: 0;
+            table-layout: fixed;
+            width: 100%;
         }
 
         .analysis-table tbody tr {
@@ -468,6 +470,10 @@
             font-size: 0.9rem;
             color: #374151;
             font-weight: 500;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .error-count-badge {
@@ -979,7 +985,7 @@
                                             <span class="error-type">{{ $error }}</span>
                                         </div>
                                     </td>
-                                    <td style="text-align: right;">
+                                    <td style="text-align: right; width: 70px; white-space: nowrap;">
                                         <span class="error-count-badge">{{ $count }}</span>
                                     </td>
                                 </tr>
@@ -1532,7 +1538,7 @@
                                     <span class="error-type">${error}</span>
                                 </div>
                             </td>
-                            <td style="text-align: right;">
+                            <td style="text-align: right; width: 70px; white-space: nowrap;">
                                 <span class="error-count-badge">${count}</span>
                             </td>
                         </tr>

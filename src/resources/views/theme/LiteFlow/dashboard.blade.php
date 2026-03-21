@@ -199,7 +199,7 @@
                                                 <span class="error-type">{{ $error }}</span>
                                             </div>
                                         </td>
-                                        <td style="text-align: right;">
+                                        <td style="text-align: right; width: 70px; white-space: nowrap;">
                                             <span class="error-count-badge">{{ $count }}</span>
                                         </td>
                                     </tr>

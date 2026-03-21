@@ -3,189 +3,231 @@
 namespace Kssadi\LogTracker\Services;
 
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Log;
 
 class LogParserService
 {
-    public function getLogFiles()
+    /**
+     * Reject pattern: lines matching this are NOT stack traces.
+     * Combined alternation — replaces 4 individual preg_match calls.
+     */
+    private const STACK_TRACE_REJECT_PATTERN = '/^[a-zA-Z][a-zA-Z0-9\s]*:|^\d{4}-\d{2}-\d{2}|^(?:GET|POST|PUT|DELETE|PATCH)\s|^(?:INFO|DEBUG|ERROR|WARNING)/';
+
+    /**
+     * Accept pattern: lines matching this ARE stack traces.
+     * Combined alternation — replaces 12 individual preg_match calls.
+     */
+    private const STACK_TRACE_ACCEPT_PATTERN = '/^#\d+\s|^Stack trace:|^[a-zA-Z]:\\\\.*\.php\(\d+\)|^\/.*\.php\(\d+\)|\s+at\s.*\(|\s+in\s.*\.php:\d+|thrown in\s.*\.php\son\sline\s\d+|^\s+Object\(.*\)|^\s+Closure\(.*\)|Illuminate\\\\.*::|^\s*\}\s*$|^Previous exception:|[\\\\\/].*\.[a-z]+\(\d+\)/';
+
+    /**
+     * Get configured log level names (excluding display-only 'total').
+     *
+     * @return array<int, string>
+     */
+    public static function logLevelNames(): array
+    {
+        return array_values(array_filter(
+            array_keys(config('log-tracker.log_levels', [])),
+            fn (string $level): bool => $level !== 'total'
+        ));
+    }
+
+    public function getLogFiles(): array
     {
         $logPath = storage_path('logs');
         $logFiles = File::files($logPath);
 
-        return array_map(function ($file) {
-            return $file->getFilename();
-        }, $logFiles);
+        $logFiles = array_filter($logFiles, fn ($file) => $file->getExtension() === 'log');
+
+        return array_map(fn ($file) => $file->getFilename(), array_values($logFiles));
     }
-    public function getLogEntries($logName, $page = 1, $perPage = null)
+
+    public function getLogEntries(string $logName, int $page = 1, ?int $perPage = null): array
     {
-        // Use config value if perPage is not provided
-        if ($perPage === null) {
-            $perPage = config('log-tracker.log_per_page', 50);
+        $perPage ??= config('log-tracker.log_per_page', 50);
+
+        $result = $this->loadEntries($logName);
+
+        if (isset($result['error'])) {
+            return array_merge(
+                ['entries' => [], 'total' => 0, 'current_page' => $page, 'per_page' => $perPage, 'last_page' => 1, 'from' => 0, 'to' => 0],
+                $result,
+            );
         }
 
-        $logFile = storage_path("logs/{$logName}");
-
-        if (!File::exists($logFile)) {
-            return [
-                'entries' => [],
-                'total' => 0,
-                'current_page' => $page,
-                'per_page' => $perPage,
-                'last_page' => 1,
-                'from' => 0,
-                'to' => 0,
-                'error' => 'Log file not found',
-            ];
-        }
-
-        // Check file size limit
-        $maxFileSizeMB = config('log-tracker.max_file_size', 50);
-        $fileSizeBytes = filesize($logFile);
-        $fileSizeMB = $fileSizeBytes / 1024 / 1024;
-
-        if ($fileSizeMB > $maxFileSizeMB) {
-            return [
-                'entries' => [],
-                'total' => 0,
-                'current_page' => $page,
-                'per_page' => $perPage,
-                'last_page' => 1,
-                'from' => 0,
-                'to' => 0,
-                'error' => "File size (" . round($fileSizeMB, 2) . " MB) exceeds maximum allowed size ({$maxFileSizeMB} MB)",
-                'file_size_mb' => $fileSizeMB,
-                'max_size_mb' => $maxFileSizeMB,
-            ];
-        }
-
-        $logContents = File::get($logFile);
-        $logLines = explode("\n", trim($logContents));
-        $logLines = array_reverse($logLines); // Show newest logs first
-
-        $entries = [];
-        $currentEntry = null;
-
-        foreach ($logLines as $line) {
-            // Match Laravel log format: [timestamp] environment.LEVEL: message
-            if (preg_match('/\[(.*?)\]\s(\w+)\.(\w+):\s(.*)/', $line, $matches)) {
-                // Save previous entry before starting a new one
-                if ($currentEntry) {
-                    // Clean up stack trace - remove leading/trailing empty lines
-                    $currentEntry['stack'] = trim($currentEntry['stack']);
-                    $entries[] = $currentEntry;
-                }
-
-                // Start new log entry
-                $currentEntry = [
-                    'timestamp' => $matches[1],
-                    'level' => strtolower($matches[3]), // Extract log level correctly
-                    'message' => $matches[4],
-                    'stack' => '', // Stack trace will be collected separately
-                ];
-            } elseif ($currentEntry && !empty(trim($line))) {
-                // Only append non-empty lines that look like stack trace content
-                $trimmedLine = trim($line);
-                
-                // Check if this looks like a stack trace line
-                if ($this->isStackTraceLine($trimmedLine)) {
-                    if (!empty($currentEntry['stack'])) {
-                        $currentEntry['stack'] .= "\n";
-                    }
-                    $currentEntry['stack'] .= $line;
-                }
-            }
-        }
-
-        // Save the last log entry
-        if ($currentEntry) {
-            // Clean up final stack trace
-            $currentEntry['stack'] = trim($currentEntry['stack']);
-            $entries[] = $currentEntry;
-        }
-
+        $entries = $result['entries'];
         $total = count($entries);
-        $lastPage = max(ceil($total / $perPage), 1);
-        
-        // Calculate pagination
+        $lastPage = (int) max(ceil($total / $perPage), 1);
         $page = max(1, min($page, $lastPage));
         $offset = ($page - 1) * $perPage;
-        $paginatedEntries = array_slice($entries, $offset, $perPage);
-        
-        $from = $total > 0 ? $offset + 1 : 0;
-        $to = min($offset + $perPage, $total);
 
         return [
-            'entries' => $paginatedEntries,
+            'entries' => array_slice($entries, $offset, $perPage),
             'total' => $total,
             'current_page' => $page,
             'per_page' => $perPage,
             'last_page' => $lastPage,
-            'from' => $from,
-            'to' => $to,
+            'from' => $total > 0 ? $offset + 1 : 0,
+            'to' => min($offset + $perPage, $total),
         ];
     }
 
     /**
-     * Get all log entries without pagination for overview/counting purposes
+     * Get repeated log entries grouped by message, sorted by occurrence count descending.
+     *
+     * Only entries that appear more than once are included.
+     * Returns at most $limit groups, newest-last / oldest-first per group timestamps.
+     *
+     * @return array<int, array{message: string, level: string, count: int, first_seen: string, last_seen: string}>
      */
-    public function getAllLogEntries($logName)
+    public function getEntryFrequency(string $logName, int $limit = 15): array
     {
-        $logFile = storage_path("logs/{$logName}");
+        $result = $this->loadEntries($logName);
 
-        if (!File::exists($logFile)) {
-            return [
-                'entries' => [],
-                'total' => 0,
-                'error' => 'Log file not found',
-            ];
+        if (isset($result['error'])) {
+            return [];
         }
 
-        // Check file size limit
+        return $this->calculateFrequency($result['entries'], $limit);
+    }
+
+    /**
+     * Calculate entry frequency from an already-loaded entries array.
+     *
+     * Use this when you already hold the parsed entries (e.g. from getAllLogEntries)
+     * to avoid reading and parsing the log file a second time.
+     *
+     * @param  array<int, array<string, mixed>>  $entries
+     * @return array<int, array{message: string, level: string, count: int, first_seen: string, last_seen: string}>
+     */
+    public function calculateFrequency(array $entries, int $limit = 15): array
+    {
+        $groups = [];
+
+        foreach ($entries as $entry) {
+            $key = $entry['message'];
+            $level = strtolower($entry['level']);
+            $ts = $entry['timestamp'];
+
+            if (! isset($groups[$key])) {
+                $groups[$key] = [
+                    'message' => $entry['message'],
+                    'level' => $level,
+                    'count' => 0,
+                    'first_seen' => $ts,
+                    'last_seen' => $ts,
+                ];
+            }
+
+            $groups[$key]['count']++;
+
+            if ($ts < $groups[$key]['first_seen']) {
+                $groups[$key]['first_seen'] = $ts;
+            }
+
+            if ($ts > $groups[$key]['last_seen']) {
+                $groups[$key]['last_seen'] = $ts;
+            }
+        }
+
+        $groups = array_filter($groups, fn (array $g): bool => $g['count'] > 1);
+
+        usort($groups, fn (array $a, array $b): int => $b['count'] <=> $a['count']);
+
+        return array_slice(array_values($groups), 0, $limit);
+    }
+
+    /**
+     * Get all log entries without pagination for overview/counting purposes.
+     */
+    public function getAllLogEntries(string $logName): array
+    {
+        $result = $this->loadEntries($logName);
+
+        if (isset($result['error'])) {
+            return array_merge(['entries' => [], 'total' => 0], $result);
+        }
+
+        return [
+            'entries' => $result['entries'],
+            'total' => count($result['entries']),
+        ];
+    }
+
+    /**
+     * Load and parse all entries from a log file.
+     *
+     * @return array{entries?: array, error?: string, file_size_mb?: float, max_size_mb?: int}
+     */
+    private function loadEntries(string $logName): array
+    {
+        $logName = basename($logName);
+        $logFile = storage_path("logs/{$logName}");
+
+        $validation = $this->validateLogFile($logFile);
+        if ($validation !== null) {
+            return $validation;
+        }
+
+        $logContents = File::get($logFile);
+        $logLines = explode("\n", trim($logContents));
+
+        return ['entries' => array_reverse($this->parseRawLogLines($logLines))];
+    }
+
+    /**
+     * Validate that a log file exists and is within the configured size limit.
+     *
+     * Returns null when valid, or an error array when invalid.
+     *
+     * @return array{error: string, file_size_mb?: float, max_size_mb?: int}|null
+     */
+    private function validateLogFile(string $logFile): ?array
+    {
+        if (! File::exists($logFile)) {
+            return ['error' => 'Log file not found'];
+        }
+
         $maxFileSizeMB = config('log-tracker.max_file_size', 50);
-        $fileSizeBytes = filesize($logFile);
-        $fileSizeMB = $fileSizeBytes / 1024 / 1024;
+        $fileSizeMB = File::size($logFile) / 1024 / 1024;
 
         if ($fileSizeMB > $maxFileSizeMB) {
             return [
-                'entries' => [],
-                'total' => 0,
-                'error' => "File size (" . round($fileSizeMB, 2) . " MB) exceeds maximum allowed size ({$maxFileSizeMB} MB)",
+                'error' => 'File size ('.round($fileSizeMB, 2)." MB) exceeds maximum allowed size ({$maxFileSizeMB} MB)",
                 'file_size_mb' => $fileSizeMB,
                 'max_size_mb' => $maxFileSizeMB,
             ];
         }
 
-        $logContents = File::get($logFile);
-        $logLines = explode("\n", trim($logContents));
-        $logLines = array_reverse($logLines); // Show newest logs first
+        return null;
+    }
 
+    /**
+     * Parse raw log lines into structured log entry arrays.
+     *
+     * Lines are expected in forward (chronological) order; callers reverse
+     * the resulting entries array for newest-first display.
+     */
+    private function parseRawLogLines(array $logLines): array
+    {
         $entries = [];
         $currentEntry = null;
 
         foreach ($logLines as $line) {
-            // Match Laravel log format: [timestamp] environment.LEVEL: message
             if (preg_match('/\[(.*?)\]\s(\w+)\.(\w+):\s(.*)/', $line, $matches)) {
-                // Save previous entry before starting a new one
-                if ($currentEntry) {
-                    // Clean up stack trace - remove leading/trailing empty lines
+                if ($currentEntry !== null) {
                     $currentEntry['stack'] = trim($currentEntry['stack']);
                     $entries[] = $currentEntry;
                 }
 
-                // Start new log entry
                 $currentEntry = [
                     'timestamp' => $matches[1],
-                    'level' => strtolower($matches[3]), // Extract log level correctly
+                    'level' => strtolower($matches[3]),
                     'message' => $matches[4],
-                    'stack' => '', // Stack trace will be collected separately
+                    'stack' => '',
                 ];
-            } elseif ($currentEntry && !empty(trim($line))) {
-                // Only append non-empty lines that look like stack trace content
-                $trimmedLine = trim($line);
-                
-                // Check if this looks like a stack trace line
-                if ($this->isStackTraceLine($trimmedLine)) {
-                    if (!empty($currentEntry['stack'])) {
+            } elseif ($currentEntry !== null && ! empty(trim($line))) {
+                if ($this->isStackTraceLine(trim($line))) {
+                    if (! empty($currentEntry['stack'])) {
                         $currentEntry['stack'] .= "\n";
                     }
                     $currentEntry['stack'] .= $line;
@@ -193,74 +235,27 @@ class LogParserService
             }
         }
 
-        // Save the last log entry
-        if ($currentEntry) {
-            // Clean up final stack trace
+        if ($currentEntry !== null) {
             $currentEntry['stack'] = trim($currentEntry['stack']);
             $entries[] = $currentEntry;
         }
 
-        return [
-            'entries' => $entries,
-            'total' => count($entries),
-        ];
+        return $entries;
     }
 
     /**
-     * Check if a line looks like part of a stack trace
+     * Check if a line looks like part of a stack trace.
      */
-    private function isStackTraceLine($line)
+    private function isStackTraceLine(string $line): bool
     {
-        // Skip completely empty lines
         if (empty(trim($line))) {
             return false;
         }
 
-        // Common stack trace patterns - ordered by specificity
-        $patterns = [
-            '/^#\d+\s/',                        // #0, #1, #2, etc. (most common)
-            '/^Stack trace:/',                  // Stack trace header
-            '/^[a-zA-Z]:\\\\.*\.php\(\d+\)/',  // Windows file paths with line numbers
-            '/^\/.*\.php\(\d+\)/',             // Unix file paths with line numbers
-            '/\s+at\s.*\(/',                   // Java-style stack traces
-            '/\s+in\s.*\.php:\d+/',            // PHP error traces
-            '/thrown in\s.*\.php\son\sline\s\d+/', // Exception thrown messages
-            '/^\s+Object\(.*\)/',              // Object references in traces
-            '/^\s+Closure\(.*\)/',             // Closure references
-            '/Illuminate\\\\.*::/',            // Laravel framework references
-            '/^\s*\}\s*$/',                    // Closing braces (end of objects)
-            '/^Previous exception:/',          // Previous exception headers
-        ];
-
-        // Quick rejection for obvious non-stack lines
-        $rejectPatterns = [
-            '/^[a-zA-Z][a-zA-Z0-9\s]*:/',     // Simple key-value pairs
-            '/^\d{4}-\d{2}-\d{2}/',           // Date formats
-            '/^(GET|POST|PUT|DELETE|PATCH)\s/', // HTTP methods
-            '/^(INFO|DEBUG|ERROR|WARNING)/',   // Log level indicators
-        ];
-
-        // First check if it should be rejected
-        foreach ($rejectPatterns as $pattern) {
-            if (preg_match($pattern, $line)) {
-                return false;
-            }
+        if (preg_match(self::STACK_TRACE_REJECT_PATTERN, $line)) {
+            return false;
         }
 
-        // Then check if it matches stack trace patterns
-        foreach ($patterns as $pattern) {
-            if (preg_match($pattern, $line)) {
-                return true;
-            }
-        }
-
-        // Additional heuristic: if line contains file paths and parentheses, likely stack trace
-        if (preg_match('/[\\\\\/].*\.[a-z]+\(\d+\)/', $line)) {
-            return true;
-        }
-
-        return false;
+        return (bool) preg_match(self::STACK_TRACE_ACCEPT_PATTERN, $line);
     }
-
-
 }
