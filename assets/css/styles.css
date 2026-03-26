@@ -1104,15 +1104,15 @@ section {
 }
 
 .dark-mode-logo {
-    display: none;
+    display: none !important;
 }
 
 [data-theme="dark"] .light-mode-logo {
-    display: none;
+    display: none !important;
 }
 
 [data-theme="dark"] .dark-mode-logo {
-    display: block;
+    display: block !important;
 }
 
 /* Tablet & Mobile Responsive */
