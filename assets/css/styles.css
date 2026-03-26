@@ -653,34 +653,49 @@ body {
 .hero-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-lg);
+    gap: 0;
     margin-top: var(--spacing-3xl);
     padding-top: var(--spacing-xl);
     border-top: 1px solid var(--color-border);
-    max-width: 600px;
+    max-width: 560px;
     margin-left: auto;
     margin-right: auto;
 }
 
 .stat {
     text-align: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    position: relative;
+}
+
+.stat:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: var(--color-border);
 }
 
 .stat-value {
     font-family: var(--font-display);
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: 900;
     background: var(--gradient-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: var(--spacing-xs);
+    line-height: 1;
+    margin-bottom: 0.35rem;
 }
 
 .stat-label {
-    font-size: 0.875rem;
+    font-size: 0.7rem;
     color: var(--color-text-secondary);
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
 }
 
 /* ===========================
@@ -1883,12 +1898,15 @@ section {
     padding: var(--spacing-md) var(--spacing-lg);
     margin-bottom: var(--spacing-sm);
     overflow-x: auto;
+    max-width: 100%;
 }
 
 .code-block code {
     font-family: "SF Mono", "Monaco", "Consolas", monospace;
     font-size: 0.9375rem;
     color: #e2e8f0;
+    white-space: nowrap;
+    display: block;
 }
 
 .step-note {
@@ -3129,6 +3147,30 @@ code.hljs,
         gap: var(--spacing-lg);
     }
 
+    .step {
+        gap: var(--spacing-md);
+    }
+
+    .step-number {
+        width: 44px;
+        height: 44px;
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    .step-title {
+        font-size: 1.125rem;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .code-block {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .code-block code {
+        font-size: 0.8125rem;
+    }
+
     .footer-links {
         grid-template-columns: 1fr;
     }
@@ -3238,9 +3280,8 @@ code.hljs,
     }
 
     .hero-stats {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-sm);
-        margin-top: var(--spacing-xl);
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
     }
     
     .stat-value {
