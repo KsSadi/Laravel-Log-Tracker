@@ -1103,6 +1103,18 @@ section {
     display: block;
 }
 
+.dark-mode-logo {
+    display: none;
+}
+
+[data-theme="dark"] .light-mode-logo {
+    display: none;
+}
+
+[data-theme="dark"] .dark-mode-logo {
+    display: block;
+}
+
 /* Tablet & Mobile Responsive */
 @media (max-width: 1024px) {
     .social-proof-stats {
@@ -1171,7 +1183,7 @@ section {
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: var(--spacing-sm);
     }
 
@@ -1188,13 +1200,17 @@ section {
     }
 
     .package-badges {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
         gap: var(--spacing-xs);
     }
     
     .supported-by-logos {
         gap: var(--spacing-lg);
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
     }
     
     .supporter-logo {
@@ -1274,17 +1290,31 @@ section {
 
 .screenshots-slider {
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .screenshots-track-wrapper {
     overflow: hidden;
-    flex: 1;
+    width: 100%;
     border-radius: var(--radius-lg);
+}
+
+.slider-controls {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+    padding: 0 var(--spacing-sm);
+    z-index: 2;
+}
+
+.slider-controls .slider-btn {
+    pointer-events: all;
 }
 
 .screenshots-track {
@@ -1375,28 +1405,20 @@ section {
 
 /* Screenshots Mobile Responsive */
 @media (max-width: 768px) {
-    .screenshots-slider {
-        flex-direction: column;
-        gap: var(--spacing-md);
-    }
-    
-    .screenshots-track-wrapper {
-        order: 1;
-    }
-    
     .slider-controls {
-        display: flex;
+        position: static;
+        transform: none;
         justify-content: center;
-        gap: var(--spacing-md);
-        order: 2;
-        width: 100%;
+        gap: var(--spacing-xl);
+        padding: 0;
+        margin-top: var(--spacing-md);
     }
-    
+
     .slider-btn {
         width: 44px;
         height: 44px;
     }
-    
+
     .screenshot-label {
         font-size: 0.875rem;
         padding: var(--spacing-sm) var(--spacing-md);
@@ -3295,12 +3317,12 @@ code.hljs,
     }
 
     .layout-tabs {
-        flex-direction: column;
+        flex-direction: row;
         gap: var(--spacing-xs);
     }
 
     .layout-tab {
-        width: 100%;
+        flex: 1;
         justify-content: center;
         padding: var(--spacing-md);
     }

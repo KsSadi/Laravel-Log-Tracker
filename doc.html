@@ -92,13 +92,17 @@
         .doc-page-hero {
             background: linear-gradient(135deg, rgba(5, 150, 105, 0.06) 0%, rgba(16, 185, 129, 0.03) 50%, var(--color-bg-secondary) 100%);
             border-bottom: 1px solid var(--color-border);
-            padding: var(--spacing-xl) 0 var(--spacing-lg);
+            padding: var(--spacing-md) 0;
             margin-left: 280px;
             margin-top: 72px;
+            border-bottom: 1px solid var(--color-border);
+            background: var(--color-bg-secondary);
         }
 
         .doc-page-hero .container {
-            max-width: 900px;
+            max-width: 100%;
+            margin-left: 0;
+            margin-right: 0;
         }
 
         .doc-breadcrumb {
@@ -127,10 +131,10 @@
         }
 
         .doc-hero-title {
-            font-size: 2.25rem;
+            font-size: 1.5rem;
             font-weight: 800;
             color: var(--color-text);
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -138,7 +142,7 @@
         }
 
         .doc-hero-subtitle {
-            font-size: 1rem;
+            font-size: 0.875rem;
             color: var(--color-text-secondary);
             margin: 0;
         }
@@ -1099,7 +1103,7 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="container navbar-content">
-            <a href="/" class="navbar-logo">
+            <a href="index.html" class="navbar-logo">
                 <div class="logo-container">
                     <div class="logo-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1117,11 +1121,12 @@
                 </div>
             </a>
             <div class="navbar-links">
-                <a href="/" class="nav-link">Home</a>
+                <a href="index.html" class="nav-link">Home</a>
                 <a href="index.html#features" class="nav-link">Features</a>
                 <a href="index.html#screenshots" class="nav-link">Screenshots</a>
                 <a href="index.html#themes" class="nav-link">Themes</a>
                 <a href="index.html#exports" class="nav-link">Exports</a>
+                <a href="index.html#installation" class="nav-link">Install</a>
                 <a href="doc.html" class="nav-link active">Docs</a>
                 <a href="https://github.com/KsSadi/Laravel-Log-Tracker" class="btn btn-secondary btn-sm" target="_blank" rel="noopener">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
