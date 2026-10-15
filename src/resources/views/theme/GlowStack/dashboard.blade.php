@@ -1535,7 +1535,7 @@
                             <td>
                                 <div style="display: flex; align-items: center; gap: 0.75rem;">
                                     <i class="fas fa-bug" style="color: #ef4444;"></i>
-                                    <span class="error-type">${error}</span>
+                                    <span class="error-type">${escapeHtml(error)}</span>
                                 </div>
                             </td>
                             <td style="text-align: right; width: 70px; white-space: nowrap;">
@@ -1616,7 +1616,7 @@
                                         <div class="log-timestamp">${formatTimestamp(log.timestamp)}</div>
                                     </td>
                                     <td>
-                                        <div class="log-message">${log.message}</div>
+                                        <div class="log-message">${escapeHtml(log.message)}</div>
                                     </td>
                                     <td>
                                         <div class="log-level-badge" style="background-color: ${levelConfig.color};">
@@ -1637,6 +1637,15 @@
         }
 
         // Helper Functions
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         function numberFormat(num) {
             return new Intl.NumberFormat().format(num || 0);
         }

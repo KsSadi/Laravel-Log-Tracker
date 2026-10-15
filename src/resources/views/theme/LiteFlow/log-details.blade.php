@@ -1909,7 +1909,12 @@
             const stackElement = document.getElementById(`stack-${index}`);
             if (!stackElement) return;
 
-            let stackContent = stackElement.textContent;
+            // Escape the raw text first: it comes from the log file, so it
+            // must not be interpreted as HTML once assigned to innerHTML.
+            let stackContent = stackElement.textContent
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
             
             // Enhanced stack trace formatting
             stackContent = stackContent
