@@ -3,6 +3,7 @@
 namespace Kssadi\LogTracker\Tests\Unit;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
 use Kssadi\LogTracker\Services\ThemeManager;
 use Kssadi\LogTracker\Tests\TestCase;
@@ -128,5 +129,23 @@ class ThemeManagerTest extends TestCase
         $view = $this->themeManager->view('dashboard');
 
         $this->assertInstanceOf(View::class, $view);
+    }
+
+    #[Test]
+    public function it_discovers_custom_themes_in_the_published_views_directory(): void
+    {
+        $customThemePath = resource_path('views/vendor/log-tracker/theme/MyTheme');
+        File::ensureDirectoryExists($customThemePath);
+
+        try {
+            $this->app['config']->set('log-tracker.theme', 'MyTheme');
+            $manager = new ThemeManager;
+
+            $this->assertContains('MyTheme', $manager->getAvailableThemes());
+            $this->assertSame('MyTheme', $manager->getCurrentTheme());
+            $this->assertSame('GlowStack', $manager->getDefaultTheme());
+        } finally {
+            File::deleteDirectory(resource_path('views/vendor/log-tracker'));
+        }
     }
 }

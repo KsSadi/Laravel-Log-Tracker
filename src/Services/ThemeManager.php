@@ -24,15 +24,27 @@ class ThemeManager
     }
 
     /**
-     * Load available themes from filesystem
+     * Load available themes from filesystem.
+     *
+     * Built-in themes come first so the default theme stays the same;
+     * custom themes placed in the published views directory
+     * (resources/views/vendor/log-tracker/theme) are added after them.
      */
     private function loadAvailableThemes(): void
     {
         $themeDirectories = File::directories($this->themePath);
 
+        $customThemePath = resource_path('views/vendor/log-tracker/theme');
+        if (File::isDirectory($customThemePath)) {
+            $themeDirectories = array_merge($themeDirectories, File::directories($customThemePath));
+        }
+
         foreach ($themeDirectories as $dir) {
             $themeName = basename($dir);
-            $this->availableThemes[] = $themeName;
+
+            if (! in_array($themeName, $this->availableThemes, true)) {
+                $this->availableThemes[] = $themeName;
+            }
         }
     }
 
