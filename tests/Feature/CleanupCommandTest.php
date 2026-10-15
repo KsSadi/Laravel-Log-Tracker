@@ -46,6 +46,22 @@ class CleanupCommandTest extends TestCase
     }
 
     #[Test]
+    public function it_uses_the_configured_retention_when_no_option_is_given(): void
+    {
+        $this->app['config']->set('log-tracker.export.storage.cleanup_after_days', 3);
+
+        $file = $this->exportPath.'/five_days_old.csv';
+        File::put($file, 'data');
+        touch($file, time() - (86400 * 5));
+
+        $this->artisan('log-tracker:cleanup')
+            ->expectsOutputToContain('Cleaned up log export files older than 3 day(s)')
+            ->assertSuccessful();
+
+        $this->assertFileDoesNotExist($file);
+    }
+
+    #[Test]
     public function it_removes_old_export_files(): void
     {
         $oldFile = $this->exportPath.'/old_export.csv';

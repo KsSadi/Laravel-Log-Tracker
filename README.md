@@ -386,7 +386,7 @@ Two production-ready themes are bundled. Switching theme requires no cache clear
 | Command | Description |
 |---------|-------------|
 | `log-tracker:check-alerts` | Check all log files against thresholds and send configured notifications |
-| `log-tracker:cleanup [--days=7]` | Delete temporary export files older than N days |
+| `log-tracker:cleanup [--days=N]` | Delete temporary export files older than N days (default: `cleanup_after_days`) |
 | `log-tracker:theme list` | List all available themes |
 | `log-tracker:theme current` | Show the currently active theme |
 | `log-tracker:theme set {name}` | Switch to the specified theme |
