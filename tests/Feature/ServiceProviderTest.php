@@ -44,6 +44,14 @@ class ServiceProviderTest extends TestCase
     }
 
     #[Test]
+    public function shipped_config_requires_authentication_by_default(): void
+    {
+        $config = require __DIR__.'/../../config/log-tracker.php';
+
+        $this->assertSame(['web', 'auth'], $config['middleware']);
+    }
+
+    #[Test]
     public function it_registers_the_facade(): void
     {
         $resolved = LogTracker::getFacadeRoot();

@@ -37,7 +37,7 @@ return [
     | - 'auth': Restricts access to authenticated users only.
     |
     */
-    'middleware' => ['web'],
+    'middleware' => ['web', 'auth'],
 
     /*
     |--------------------------------------------------------------------------
