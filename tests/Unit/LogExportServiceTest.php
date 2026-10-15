@@ -259,4 +259,29 @@ class LogExportServiceTest extends TestCase
         $this->assertStringContainsString('summary-card', $content);
         $this->assertStringContainsString('Total Log Entries', $content);
     }
+
+    #[Test]
+    public function csv_export_neutralizes_spreadsheet_formulas(): void
+    {
+        File::put(
+            $this->logPath,
+            "[2025-06-01 10:00:00] local.WARNING: =HYPERLINK(\"https://example.com\",\"Click\")\n"
+            ."[2025-06-01 10:01:00] local.INFO: @SUM(1+1)\n"
+            ."[2025-06-01 10:02:00] local.INFO: Plain message\n"
+        );
+
+        $filePath = $this->exportService->exportToCsv('test-export.log');
+
+        $handle = fopen($filePath, 'r');
+        fgets($handle); // header row (with BOM)
+        $messages = [];
+        while (($row = fgetcsv($handle, null, ',', '"', '\\')) !== false) {
+            $messages[] = $row[2];
+        }
+        fclose($handle);
+
+        $this->assertContains("'=HYPERLINK(\"https://example.com\",\"Click\")", $messages);
+        $this->assertContains("'@SUM(1+1)", $messages);
+        $this->assertContains('Plain message', $messages);
+    }
 }

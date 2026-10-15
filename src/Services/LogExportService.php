@@ -41,9 +41,9 @@ class LogExportService
                 fputcsv($file, [
                     $entry['timestamp'],
                     $entry['level'],
-                    $this->cleanTextForCsv($entry['message']),
-                    $entry['file'],
-                    $this->cleanTextForCsv($entry['stack'] ?? ''),
+                    $this->neutralizeCsvFormula($this->cleanTextForCsv($entry['message'])),
+                    $this->neutralizeCsvFormula($entry['file']),
+                    $this->neutralizeCsvFormula($this->cleanTextForCsv($entry['stack'] ?? '')),
                 ]);
             }
         } finally {
@@ -328,6 +328,22 @@ class LogExportService
         $text = preg_replace('/\s+/', ' ', $text);
 
         return trim($text);
+    }
+
+    /**
+     * Prefix values that spreadsheet applications would evaluate as a formula.
+     *
+     * Log messages often contain user input, so a message such as
+     * "=HYPERLINK(...)" must be exported as text rather than executed when
+     * the CSV is opened in Excel, LibreOffice or Google Sheets.
+     */
+    private function neutralizeCsvFormula(string $value): string
+    {
+        if ($value !== '' && str_contains("=+-@\t\r", $value[0])) {
+            return "'".$value;
+        }
+
+        return $value;
     }
 
     /**
