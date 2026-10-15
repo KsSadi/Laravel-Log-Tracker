@@ -259,4 +259,19 @@ class LogExportServiceTest extends TestCase
         $this->assertStringContainsString('summary-card', $content);
         $this->assertStringContainsString('Total Log Entries', $content);
     }
+
+    #[Test]
+    public function excel_export_is_valid_xml_when_messages_contain_control_characters(): void
+    {
+        File::put(
+            $this->logPath,
+            "[2025-06-01 10:00:00] local.ERROR: \e[31mImport failed\e[0m for row 12\n"
+        );
+
+        $filePath = $this->exportService->exportToExcel('test-export.log');
+
+        $document = new \DOMDocument;
+        $this->assertTrue(@$document->loadXML(File::get($filePath)), 'Excel export is not well-formed XML');
+        $this->assertStringContainsString('[31mImport failed[0m for row 12', $document->textContent);
+    }
 }

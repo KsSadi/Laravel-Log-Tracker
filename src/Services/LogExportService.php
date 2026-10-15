@@ -137,14 +137,28 @@ class LogExportService
             };
 
             $xml .= '<Row>'
-                .'<Cell><Data ss:Type="String">'.htmlspecialchars($entry['timestamp']).'</Data></Cell>'
-                .'<Cell'.$style.'><Data ss:Type="String">'.htmlspecialchars(strtoupper($entry['level'])).'</Data></Cell>'
-                .'<Cell><Data ss:Type="String">'.htmlspecialchars($this->truncateText($entry['message'], 500)).'</Data></Cell>'
-                .'<Cell><Data ss:Type="String">'.htmlspecialchars($entry['file']).'</Data></Cell>'
+                .'<Cell><Data ss:Type="String">'.$this->escapeXml($entry['timestamp']).'</Data></Cell>'
+                .'<Cell'.$style.'><Data ss:Type="String">'.$this->escapeXml(strtoupper($entry['level'])).'</Data></Cell>'
+                .'<Cell><Data ss:Type="String">'.$this->escapeXml($this->truncateText($entry['message'], 500)).'</Data></Cell>'
+                .'<Cell><Data ss:Type="String">'.$this->escapeXml($entry['file']).'</Data></Cell>'
                 .'</Row>'."\n";
         }
 
         return $xml.'</Table></Worksheet></Workbook>';
+    }
+
+    /**
+     * Escape a value for use as XML character data.
+     *
+     * Besides escaping markup, this drops control characters that XML 1.0
+     * does not allow (e.g. the ANSI colour codes written by console
+     * commands), which would otherwise make the whole workbook unreadable.
+     */
+    private function escapeXml(string $value): string
+    {
+        $escaped = htmlspecialchars($value, ENT_QUOTES | ENT_XML1 | ENT_SUBSTITUTE, 'UTF-8');
+
+        return preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $escaped);
     }
 
     /**
