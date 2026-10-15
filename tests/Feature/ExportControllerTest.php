@@ -183,6 +183,20 @@ class ExportControllerTest extends TestCase
     }
 
     #[Test]
+    public function quick_export_returns_error_when_export_is_disabled(): void
+    {
+        $this->app['config']->set('log-tracker.export.enabled', false);
+
+        $response = $this->get(route('log-tracker.export.quick', [
+            'logName' => 'test-export-ctrl.log',
+            'format' => 'csv',
+        ]));
+
+        $response->assertRedirect(route('log-tracker.show', 'test-export-ctrl.log'));
+        $response->assertSessionHas('error', 'Export functionality is disabled.');
+    }
+
+    #[Test]
     public function quick_export_returns_error_when_format_is_disabled(): void
     {
         $this->app['config']->set('log-tracker.export.formats.json.enabled', false);

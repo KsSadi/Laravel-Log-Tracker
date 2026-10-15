@@ -77,6 +77,11 @@ class ExportController extends Controller
     {
         $logName = basename($logName);
 
+        if (! config('log-tracker.export.enabled', true)) {
+            return redirect()->route('log-tracker.show', $logName)
+                ->with('error', 'Export functionality is disabled.');
+        }
+
         if (! in_array($format, ['csv', 'json', 'excel', 'pdf'])) {
             $format = 'csv';
         }
