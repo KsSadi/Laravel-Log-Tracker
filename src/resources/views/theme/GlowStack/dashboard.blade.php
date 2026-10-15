@@ -1340,7 +1340,7 @@
             showUpdatingState();
 
             try {
-                const response = await fetch('/log-tracker/api/dashboard-refresh', {
+                const response = await fetch(@json(route('log-tracker.api.dashboard.refresh')), {
                     method: 'GET',
                     headers: {
                         'Accept': 'application/json',
