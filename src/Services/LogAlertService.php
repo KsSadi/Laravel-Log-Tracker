@@ -104,10 +104,23 @@ class LogAlertService
     {
         $message = $this->buildMessage($payload);
 
-        $this->sendMail($payload, $message);
-        $this->sendSlack($message);
-        $this->sendDiscord($message);
-        $this->sendWebhook($payload, $message);
+        // A failing channel (e.g. an unreachable webhook) must not stop the
+        // remaining channels or prevent the cooldown from being recorded,
+        // otherwise the channels that did succeed are re-notified every run.
+        $senders = [
+            fn () => $this->sendMail($payload, $message),
+            fn () => $this->sendSlack($message),
+            fn () => $this->sendDiscord($message),
+            fn () => $this->sendWebhook($payload, $message),
+        ];
+
+        foreach ($senders as $send) {
+            try {
+                $send();
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
     }
 
     /**

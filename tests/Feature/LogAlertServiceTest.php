@@ -3,6 +3,7 @@
 namespace Kssadi\LogTracker\Tests\Feature;
 
 use Carbon\Carbon;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -353,5 +354,32 @@ class LogAlertServiceTest extends TestCase
         $this->service->checkAndNotify();
 
         Http::assertNothingSent();
+    }
+
+    #[Test]
+    public function a_failing_channel_does_not_block_other_channels_or_the_cooldown(): void
+    {
+        // The failure is reported; keep it out of the shared test log directory.
+        $this->app['config']->set('logging.default', 'null');
+
+        Mail::fake();
+        Http::fake([
+            'hooks.slack.test/*' => fn () => throw new ConnectionException('Connection timed out'),
+            '*' => Http::response('ok'),
+        ]);
+
+        $this->app['config']->set('log-tracker.alerts.channels.mail', ['enabled' => true, 'to' => 'admin@example.com']);
+        $this->app['config']->set('log-tracker.alerts.channels.slack', ['enabled' => true, 'webhook_url' => 'https://hooks.slack.test/services/x']);
+        $this->app['config']->set('log-tracker.alerts.channels.discord', ['enabled' => true, 'webhook_url' => 'https://discord.test/api/webhooks/x']);
+
+        $ts = now()->format('Y-m-d H:i:s');
+        File::put($this->logPath, "[{$ts}] local.ERROR: Isolation test\n[{$ts}] local.ERROR: Isolation test\n");
+
+        $alerts = $this->service->checkAndNotify();
+
+        $this->assertCount(1, $alerts);
+        Mail::assertSent(LogAlertMail::class);
+        Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://discord.test/'));
+        $this->assertTrue(Cache::has("log-tracker:cooldown:{$this->logName}:error"));
     }
 }
