@@ -236,7 +236,8 @@ class LogFileController extends Controller
         $content = File::get($logPath);
 
         // Match only the level token from each log header line, e.g. "local.error:"
-        preg_match_all('/\]\s\w+\.(\w+):\s/', $content, $matches);
+        // (the channel is the app environment, which may contain hyphens).
+        preg_match_all('/\]\s[\w-]+\.(\w+):\s/', $content, $matches);
 
         foreach ($matches[1] as $raw) {
             $level = strtolower($raw);

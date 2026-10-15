@@ -156,4 +156,23 @@ class LogParserServiceTest extends TestCase
         $this->assertArrayHasKey('stack', $entry);
         $this->assertSame('warning', $entry['level']);
     }
+
+    #[Test]
+    public function it_parses_entries_from_environments_with_hyphens(): void
+    {
+        $logPath = storage_path('logs/test-hyphen-env.log');
+        $this->tempLogFiles[] = $logPath;
+        $logContent = "[2025-01-01 10:00:00] pre-prod.ERROR: Payment gateway timeout\n";
+        $logContent .= "[2025-01-01 10:01:00] local-docker.INFO: Queue worker started\n";
+
+        File::put($logPath, $logContent);
+
+        $result = $this->service->getAllLogEntries('test-hyphen-env.log');
+
+        $this->assertSame(2, $result['total']);
+        $this->assertSame('info', $result['entries'][0]['level']);
+        $this->assertSame('Queue worker started', $result['entries'][0]['message']);
+        $this->assertSame('error', $result['entries'][1]['level']);
+        $this->assertSame('Payment gateway timeout', $result['entries'][1]['message']);
+    }
 }

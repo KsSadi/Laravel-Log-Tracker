@@ -246,4 +246,21 @@ class LogFileControllerTest extends TestCase
         $this->assertArrayHasKey('total', $counts);
         $this->assertSame(2, $counts['total']);
     }
+
+    #[Test]
+    public function index_counts_entries_from_environments_with_hyphens(): void
+    {
+        File::put(
+            $this->logPath,
+            "[2025-06-01 10:00:00] pre-prod.ERROR: Something went wrong\n"
+            ."[2025-06-01 10:01:00] pre-prod.INFO: All good\n"
+        );
+
+        $response = $this->get(route('log-tracker.index'));
+
+        $counts = $response->viewData('counts')[$this->logName];
+        $this->assertSame(2, $counts['total']);
+        $this->assertSame(1, $counts['error']);
+        $this->assertSame(1, $counts['info']);
+    }
 }

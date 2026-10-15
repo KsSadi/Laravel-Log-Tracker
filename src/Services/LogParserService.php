@@ -213,7 +213,7 @@ class LogParserService
         $currentEntry = null;
 
         foreach ($logLines as $line) {
-            if (preg_match('/\[(.*?)\]\s(\w+)\.(\w+):\s(.*)/', $line, $matches)) {
+            if (preg_match('/\[(.*?)\]\s([\w-]+)\.(\w+):\s(.*)/', $line, $matches)) {
                 if ($currentEntry !== null) {
                     $currentEntry['stack'] = trim($currentEntry['stack']);
                     $entries[] = $currentEntry;
