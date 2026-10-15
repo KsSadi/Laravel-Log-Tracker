@@ -259,4 +259,21 @@ class LogExportServiceTest extends TestCase
         $this->assertStringContainsString('summary-card', $content);
         $this->assertStringContainsString('Total Log Entries', $content);
     }
+
+    #[Test]
+    public function json_export_handles_invalid_utf8_in_messages(): void
+    {
+        File::put(
+            $this->logPath,
+            "[2025-06-01 10:00:00] local.ERROR: Upload failed for caf\xE9.txt\n"
+            ."[2025-06-01 10:01:00] local.INFO: User logged in\n"
+        );
+
+        $filePath = $this->exportService->exportToJson('test-export.log');
+
+        $data = json_decode(File::get($filePath), true);
+        $this->assertIsArray($data, 'JSON export is empty or invalid');
+        $this->assertSame(2, $data['export_info']['total_entries']);
+        $this->assertStringStartsWith('Upload failed for caf', $data['logs'][1]['message']);
+    }
 }
