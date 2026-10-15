@@ -4,6 +4,7 @@ namespace Kssadi\LogTracker\Tests\Feature;
 
 use Illuminate\Support\Facades\File;
 use Kssadi\LogTracker\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
 class SearchControllerTest extends TestCase
@@ -323,5 +324,25 @@ class SearchControllerTest extends TestCase
         $this->assertArrayHasKey('to', $results);
         $this->assertArrayHasKey('per_page', $results);
         $this->assertSame(1, $results['current_page']);
+    }
+
+    #[Test]
+    #[DataProvider('themes')]
+    public function highlighting_does_not_break_escaped_characters(string $theme): void
+    {
+        $this->app['config']->set('log-tracker.theme', $theme);
+        File::append($this->logPathA, "[2025-06-01 12:00:00] local.ERROR: Sample <tag> & example\n");
+
+        $response = $this->get(route('log-tracker.search', ['query' => 'amp']));
+
+        $response->assertStatus(200);
+        $response->assertSee('&lt;tag&gt; &amp; ex', false);
+        $response->assertDontSee('&<mark', false);
+        $response->assertSee('>amp</mark>le', false);
+    }
+
+    public static function themes(): array
+    {
+        return [['LiteFlow'], ['GlowStack']];
     }
 }

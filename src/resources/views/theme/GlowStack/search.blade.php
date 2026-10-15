@@ -579,14 +579,18 @@
                                     <td>
                                         <div class="entry-message {{ !empty($entry['stack']) ? 'has-stack' : '' }}">
                                             @php
+                                                // Highlight on the raw text and escape each piece, so the query
+                                                // can never match inside an HTML entity such as &amp; or &lt;.
                                                 $message = e($entry['message']);
-                                                $q = request('query');
-                                                if ($q && strlen(trim($q)) > 0) {
-                                                    $message = preg_replace(
-                                                        '/('.preg_quote(e(trim($q)), '/').')/iu',
-                                                        '<mark class="highlight">$1</mark>',
-                                                        $message
-                                                    );
+                                                $q = trim((string) request('query'));
+                                                if ($q !== '') {
+                                                    $parts = preg_split('/('.preg_quote($q, '/').')/iu', $entry['message'], -1, PREG_SPLIT_DELIM_CAPTURE);
+                                                    if ($parts !== false) {
+                                                        $message = '';
+                                                        foreach ($parts as $i => $part) {
+                                                            $message .= $i % 2 ? '<mark class="highlight">'.e($part).'</mark>' : e($part);
+                                                        }
+                                                    }
                                                 }
                                             @endphp
                                             {!! $message !!}
